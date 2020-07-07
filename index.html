@@ -1,49 +1,25 @@
-<html><head>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <title>THOG WORLD</title>
-    <link rel="shortcut icon" type="image/png" href="icon.png">
-  </head>
-  <body>
-    <h1>THOG WORLD</h1>
-    <h3>purgatory</h3>
-    <div style="text-align:center;">
-    <img src="bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
-    <img src="bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
-    <img src="bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
-	<video width="320" height="240" controls="controls" preload="none">
-		<source src="fan_is_epic.mp4" type="video/mp4" autostart="false">
-		Youre unepic
-	  </video>
-      <map name="bongo">
-  <area shape="poly" coords="36,122,56,86,71,75,123,59,173,59,206,66,242,93,241,135,217,153,186,165,127,169,64,156,48,145" href="#" alt ="bongo" onclick="low()">
-        <area shape="poly" coords="271,115,281,95,310,72,341,65,384,65,421,74,454,103,459,132,423,154,394,160,371,161,332,157,293,143" href="#" alt ="bongo" onclick="high()">
-        </map>
-        <script>
-            var open = new Audio('bongo1.wav');
-            var low1 = new Audio('bongo2.wav');
-            var low2 = new Audio('bongo4.wav');
-            var rand = Math.floor(Math.random() * 3)
-            if (rand < 1) {
-                low1.play();
-            }
-            else if (rand < 2) {
-                low2.play();
-            }
-            else {
-                open.play();
-            }
-          }
-            function high() {
-                var high = new Audio('bongo3.wav');
-                var rand = Math.floor(Math.random() * 2)
-                if (rand < 1) {
-                    high.play();
-                }
-                else {
-                    open.play();
-                }
-            }
-        </script>
-    </div>
-</body>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<title>THOG WORLD</title>
+		<link rel="shortcut icon" type="image/png" href="img/icon.png">
+	</head>
+	<body>
+		<h1>THOG WORLD</h1>
+		<h3>purgatory</h3>
+		<div style="text-align:center;">
+		<img src="img/bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
+		<img src="img/bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
+		<img src="img/bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
+		<video width="320" height="240" controls="controls">
+			<source src="fan_is_epic.mp4" type="video/mp4" autostart="false">
+			Youre unepic
+		</video>
+		<map name="bongo">
+			<area shape="poly" coords="36,122,56,86,71,75,123,59,173,59,206,66,242,93,241,135,217,153,186,165,127,169,64,156,48,145" href="#" alt ="bongo" onclick="low()">
+			<area shape="poly" coords="271,115,281,95,310,72,341,65,384,65,421,74,454,103,459,132,423,154,394,160,371,161,332,157,293,143" href="#" alt ="bongo" onclick="high()">
+		</map>
+        <script type="text/javascript" src="bongos.js"></script>
+		</div>
+	</body>
 </html>
