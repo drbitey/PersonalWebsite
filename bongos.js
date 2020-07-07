@@ -15,7 +15,7 @@ function low() {
 }
 function high() {
     var high = new Audio('sfx/bongo3.wav');
-	rand = Math.floor(Math.random() * 2)
+    rand = Math.floor(Math.random() * 2)
     if (rand < 1) {
         high.play();
     }
