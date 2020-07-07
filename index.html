@@ -1,17 +1,17 @@
 <html><head>
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>THOG WORLD</title>
-    <link rel="shortcut icon" type="image/png" href="https://cdn.discordapp.com/attachments/643229383259193345/645797008548036631/vivec.png">
+    <link rel="shortcut icon" type="image/png" href="icon.png">
   </head>
   <body>
     <h1>THOG WORLD</h1>
     <h3>purgatory</h3>
     <div style="text-align:center;">
-    <img src="/bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
-    <img src="/bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
-    <img src="/bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
-	<video width="320" height="240" autoplay>
-		<source src="fan_is_epic.mp4" type="video/mp4">
+    <img src="bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
+    <img src="bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
+    <img src="bongo.png" alt="bongg" width="500" style="margin:25px;" usemap="#bongo">
+	<video width="320" height="240" controls="controls" preload="none">
+		<source src="fan_is_epic.mp4" type="video/mp4" autostart="false">
 		Youre unepic
 	  </video>
       <map name="bongo">
@@ -19,9 +19,9 @@
         <area shape="poly" coords="271,115,281,95,310,72,341,65,384,65,421,74,454,103,459,132,423,154,394,160,371,161,332,157,293,143" href="#" alt ="bongo" onclick="high()">
         </map>
         <script>
-            var open = new Audio('/bongo1.wav');
-            var low1 = new Audio('/bongo2.wav');
-            var low2 = new Audio('/bongo4.wav');
+            var open = new Audio('bongo1.wav');
+            var low1 = new Audio('bongo2.wav');
+            var low2 = new Audio('bongo4.wav');
             var rand = Math.floor(Math.random() * 3)
             if (rand < 1) {
                 low1.play();
@@ -34,7 +34,7 @@
             }
           }
             function high() {
-                var high = new Audio('/bongo3.wav');
+                var high = new Audio('bongo3.wav');
                 var rand = Math.floor(Math.random() * 2)
                 if (rand < 1) {
                     high.play();
@@ -45,4 +45,5 @@
             }
         </script>
     </div>
-</body></html>
+</body>
+</html>
