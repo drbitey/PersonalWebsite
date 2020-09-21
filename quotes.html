@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<title>THOG WORLD</title>
+		<link rel="shortcut icon" type="image/png" href="img/icon.png">
+		<meta name="keywords" content="thog world, purgatory, bongo, beyond skyrim, skyrim">
+		<meta name="description" content="THOG IS THE ONE TRUE EMPEROR THOG WORLD THOG WORLD THOG WORLD THOG WORLD">
+		<script language="JavaScript" type="text/javascript" src="./quotes.js"></script>
+		<script language="JavaScript" type="text/javascript">
+		function getQuote(){
+			var thisquote=quotes[Math.floor(Math.random()*(quotes.length))];
+			document.getElementById("quote").innerHTML = thisquote
+		}
+		</script>
+	</head>
+	<body>
+		<h1>THOG WORLD</h1>
+		<h3><i>beyond skyrim inspiration machine</i></h3><br>
+		<div style="text-align:center; margin-right:25%; margin-left:25%;">
+			<button onclick="getQuote()">get quote</button><br><br>
+			<h4 id="quote">Beyond will never release</h4>
+		</div>
+	</body>
+</html>
