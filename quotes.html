@@ -7,19 +7,23 @@
 		<meta name="description" content="beyond skyrim will never release">
 		<script language="JavaScript" type="text/javascript" src="./quotes.js"></script>
 		<script language="JavaScript" type="text/javascript">
-		function getQuote(){
-			var thisquote=quotes[Math.floor(Math.random()*(quotes.length))];
-			document.getElementById("quote").innerHTML = thisquote
-		}
+			var lastquotenum;
+			function getQuote(){
+				var quotenum = Math.floor(Math.random()*quotes.length);
+				if (lastquotenum != quotenum){}
+				else if(lastquotenum == 0){quotenum += 1}
+				else{quotenum -= 1};
+				var lastquotenum = quotenum;
+				document.getElementById("quote").innerHTML = quotes[quotenum];
+			}
 		</script>
 	</head>
-	<body>
-		<h1>THOG WORLD</h1>
-		<h3><i>beyond skyrim inspiration machine</i></h3><br>
-		<h3><i>(real quotes from real people)</i></h3><br>
+	<body onload="getQuote()">
+		<h1>BEYOND SKYRIM INSPIRATION MACHINE</h1>
+		<h3 id="num"><i>(real quotes from real people)</i></h3><br>
 		<div style="text-align:center; margin-right:25%; margin-left:25%;">
-			<button onclick="getQuote()">get quote</button><br><br>
-			<h4 id="quote">Beyond will never release</h4>
+			<button onclick="getQuote()">new quote</button><br><br>
+			<h4 id="quote"></h4>
 		</div>
 	</body>
 </html>
