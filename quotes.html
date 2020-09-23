@@ -5,23 +5,20 @@
 		<link rel="shortcut icon" type="image/png" href="img/icon.png">
 		<meta name="keywords" content="beyond skyrim, release">
 		<meta name="description" content="beyond skyrim will never release">
-		<script language="JavaScript" type="text/javascript" src="quotes.js"></script>
+		<script language="JavaScript" type="text/javascript" src="./quotes.js"></script>
 		<script language="JavaScript" type="text/javascript">
+			var lastquotenum;
 			function getQuote(){
-				var quotenum = Math.floor(Math.random()*(quotes.length));
+				var quotenum = Math.floor(Math.random()*quotes.length);
 				if (lastquotenum != quotenum){}
 				else if(lastquotenum == 0){quotenum += 1}
 				else{quotenum -= 1};
 				var lastquotenum = quotenum;
 				document.getElementById("quote").innerHTML = quotes[quotenum];
 			}
-			function onStart(){
-				var lastquotenum;
-				getQuote();
-			}
 		</script>
 	</head>
-	<body onload="onStart()">
+	<body onload="getQuote()">
 		<h1>BEYOND SKYRIM MOTIVATION MACHINE</h1>
 		<h3 id="num"><i>(real quotes from real people)</i></h3><br>
 		<div style="text-align:center; margin-right:25%; margin-left:25%;">
