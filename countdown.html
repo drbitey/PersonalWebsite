@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<title>THOG WORLD</title>
+		<link rel="shortcut icon" type="image/png" href="img/icon.png">
+		<meta name="keywords" content="beyond skyrim">
+		<meta name="description" content="beyond skyrim release date accurate 2020 no virus">
+	</head>
+	<body>
+		<h1>BEYOND SKYRIM RELEASE COUNTDOWN</h1>
+		<h3>very accurate</h3>
+		<div style="text-align:center;">
+			<!-- Display the countdown timer in an element -->
+			<p id="demo"></p>
+
+			<script>
+				// Set the date we're counting down to
+				var countDownDate = new Date("May 5, 2076 00:00:00").getTime();
+
+				// Update the count down every 1 second
+				var x = setInterval(function() {
+
+					// Get today's date and time
+					var now = new Date().getTime();
+
+					// Find the distance between now and the count down date
+					var distance = countDownDate - now;
+	
+					// Time calculations for days, hours, minutes and seconds
+					var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+					var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+					var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+					var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+					// Display the result in the element with id="demo"
+					document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+				}, 1000);
+			</script>
+		</div>
+	</body>
+</html>
