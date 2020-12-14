@@ -19,6 +19,15 @@ h1{text-align:center;
   margin:20px;
 }
 
+code{
+	background-color:#212121;
+	margin:5px;
+	padding:5px;
+	padding-top:2px;
+	padding-bottom:2px;
+	font-family: 'Courier New', monospace;
+}
+
 h2{text-align:center;
   color:white;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
