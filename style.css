@@ -28,7 +28,8 @@ code{
 	font-family: 'Courier New', monospace;
 }
 
-h2{text-align:center;
+h2{
+	text-align:center;
   color:white;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size:36px;
@@ -55,4 +56,9 @@ h4{text-align:center;
 
 .footer-small{
 	font-size:12px;
+}
+.text-centered{
+	max-width: 640px;
+	margin: auto;
+	text-align:left;
 }
