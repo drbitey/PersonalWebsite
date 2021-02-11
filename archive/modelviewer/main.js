@@ -8,6 +8,8 @@ const canvas = document.querySelector('canvas');
 //html refs
 var x = document.getElementById("xrot");
 var y = document.getElementById("yrot");
+var wfcol = document.getElementById("wfcol");
+
 var outx = document.getElementById("testx");
 var outy = document.getElementById("testy");
 
@@ -67,7 +69,7 @@ function animate(time) {
 animate();
 */
 
-//rot anim
+//input responses
 x.oninput = function() {
 	mesh1.rotation.x = this.value / 100 * (314/360);
 	outx.innerHTML = x.value;
@@ -77,6 +79,11 @@ x.oninput = function() {
 y.oninput = function() {
 	mesh1.rotation.y = this.value / 100 * (314/360);
 	outy.innerHTML = y.value;
+	
+	render(scene, camera);
+}
+wfcol.oninput = function() {
+	mesh1.color = this.value;
 	
 	render(scene, camera);
 }
