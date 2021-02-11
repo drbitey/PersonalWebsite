@@ -5,6 +5,30 @@
     <script type="module" src="./modelviewer/main.js"></script>
 </head>
 <body>
-    <canvas width="320" height="156"></canvas>
+	<div style="z-index:1;">
+		<canvas width="320" height="156"></canvas>
+	</div>
+	<div style="z-index:2;position: absolute;left: 0px;top: 0px;">
+		<label for="xrot">x axis rot</label>
+		<input type="range" id="xrot" name="xrot" min="0" max="360" value="0">
+		<p><span id="testx"></span></p>
+		<label for="yrot">y axis rot</label>
+		<input type="range" id="yrot" name="yrot" min="0" max="360" value="0">
+		<p><span id="testy"></span></p>
+	</div>
+	<script>
+		var x = document.getElementById("xrot");
+		var y = document.getElementById("yrot");
+		var outx = document.getElementById("testx");
+		var outy = document.getElementById("testy");
+		outx.innerHTML = x.value;
+		outy.innerHTML = y.value;
+		x.oninput = function() {
+			outx.innerHTML = this.value;
+		}
+		y.oninput = function() {
+			outy.innerHTML = this.value;
+		}
+	</script>
 </body>
 </html>

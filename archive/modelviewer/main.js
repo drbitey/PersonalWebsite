@@ -5,6 +5,9 @@ import {createWireframeRenderer} from './render.js';
 
 const canvas = document.querySelector('canvas');
 
+var x = document.getElementById("xrot");
+var y = document.getElementById("yrot");
+
 const mesh1 = createMesh(pyramid);
 mesh1.color = '#81ff02';
 /*const mesh2 = createMesh(cube);
@@ -19,14 +22,14 @@ camera.pos.z = 200;
 camera.zoom = 12;
 
 const render = createWireframeRenderer(canvas);
-
+/*
 function animate(time) {
-	/*
+
     mesh1.position.x = Math.sin(time / 1000) * 100;
     mesh1.position.z = Math.sin(time / 1200) * 100;
     mesh1.rotation.x += 0.01;
     mesh1.rotation.y += 0.01;
-
+	
     mesh2.position.x = Math.sin(time / 500) * 75;
     mesh2.position.z = Math.sin(time / 2000) * 120;
     mesh2.rotation.x -= 0.01;
@@ -35,12 +38,25 @@ function animate(time) {
     mesh3.position.x = Math.sin(time / 500) * 100;
     mesh3.position.y = Math.cos(time / 500) * 100;
     mesh3.rotation.y -= 0.005;
-	*/
-	mesh1.rotation.x += event.clientX / 100;
-	mesh1.rotation.y += event.clientY / 100;
+	
+	
+	
     render(scene, camera);
 
     requestAnimationFrame(animate);
 }
 
 animate();
+*/
+
+x.oninput = function() {
+	mesh1.rotation.x = this.value / 360;
+	
+	render(scene, camera);
+}
+
+y.oninput = function() {
+	mesh1.rotation.y = this.value / 360;
+	
+	render(scene, camera);
+}
