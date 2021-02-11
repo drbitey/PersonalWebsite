@@ -71,13 +71,13 @@ animate();
 
 //input responses
 x.oninput = function() {
-	mesh1.rotation.x = this.value / 100 * (314/360);
+	mesh1.rotation.x = this.value / 200 * (147/180);
 	outx.innerHTML = x.value;
 	
 	render(scene, camera);
 }
 y.oninput = function() {
-	mesh1.rotation.y = this.value / 100 * (314/360);
+	mesh1.rotation.y = this.value / 200 * (147/180);
 	outy.innerHTML = y.value;
 	
 	render(scene, camera);
