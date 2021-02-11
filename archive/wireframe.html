@@ -16,19 +16,5 @@
 		<input type="range" id="yrot" name="yrot" min="0" max="360" value="0">
 		<p><span id="testy"></span></p>
 	</div>
-	<script>
-		var x = document.getElementById("xrot");
-		var y = document.getElementById("yrot");
-		var outx = document.getElementById("testx");
-		var outy = document.getElementById("testy");
-		outx.innerHTML = x.value;
-		outy.innerHTML = y.value;
-		x.oninput = function() {
-			outx.innerHTML = this.value;
-		}
-		y.oninput = function() {
-			outy.innerHTML = this.value;
-		}
-	</script>
 </body>
 </html>
