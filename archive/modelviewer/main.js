@@ -126,7 +126,9 @@ zpos.oninput = function() {
 	
 	render(scene, camera);
 }
-resetbutton.oninput = init()
+resetbutton.oninput = function() {
+	init()
+}
 wfcol.oninput = function() {
 	mesh1.color = this.value;
 	
