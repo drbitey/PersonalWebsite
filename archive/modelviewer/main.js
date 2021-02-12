@@ -13,9 +13,10 @@ var rotz = document.getElementById("zrot");
 var xpos = document.getElementById("xpos");
 var ypos = document.getElementById("ypos");
 var zpos = document.getElementById("zpos");
+var resetbutton = document.getElementById("resetbutton");
 var wfcol = document.getElementById("wfcol");
 
-var spanrotx = document.getElementById("testx"); //spans
+var spanrotx = document.getElementById("testx"); //spans / input displays
 var spanroty = document.getElementById("testy");
 var spanrotz = document.getElementById("testz");
 var spanposx = document.getElementById("posspanx");
@@ -125,6 +126,7 @@ zpos.oninput = function() {
 	
 	render(scene, camera);
 }
+resetbutton.oninput = init()
 wfcol.oninput = function() {
 	mesh1.color = this.value;
 	
