@@ -49,6 +49,12 @@ function init() {
 	mesh1.position.x = 0;
 	mesh1.position.y = 0;
 	mesh1.position.z = 0;
+	rotx.value = 0;
+	roty.value = 0;
+	rotz.value = 0;
+	posx.value = 0;
+	posy.value = 0;
+	posz.value = 0;
 	spanrotx.innerHTML = 0;
 	spanroty.innerHTML = 0;
 	spanrotz.innerHTML = 0;
