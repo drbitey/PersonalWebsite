@@ -42,13 +42,18 @@ const render = createWireframeRenderer(canvas);
 //init stuff, not really necessary to be in a function but nice housekeeping
 
 function init() {
-	//set rot value
 	mesh1.rotation.x = 0;
 	mesh1.rotation.y = 0;
 	mesh1.rotation.z = 0;
+	mesh1.position.x = 0;
+	mesh1.position.y = 0;
+	mesh1.position.z = 0;
 	spanrotx.innerHTML = 0;
 	spanroty.innerHTML = 0;
 	spanrotz.innerHTML = 0;
+	spanposx.innerHTML = 0;
+	spanposy.innerHTML = 0;
+	spanposz.innerHTML = 0;
 	
 	render(scene, camera);
 }
@@ -103,19 +108,19 @@ rotz.oninput = function() {
 	render(scene, camera);
 }
 xpos.oninput = function() {
-	mesh1.position.x = this.value;
+	mesh1.position.x = this.value / 50;
 	spanposx.innerHTML = this.value;
 	
 	render(scene, camera);
 }
 ypos.oninput = function() {
-	mesh1.position.y = this.value;
+	mesh1.position.y = this.value / 50;
 	spanposy.innerHTML = this.value;
 	
 	render(scene, camera);
 }
 zpos.oninput = function() {
-	mesh1.position.z = this.value;
+	mesh1.position.z = this.value / 50;
 	spanposz.innerHTML = this.value;
 	
 	render(scene, camera);
