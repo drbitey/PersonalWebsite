@@ -7,12 +7,20 @@ import {createWireframeRenderer} from './render.js';
 
 //html refs
 const canvas = document.querySelector('canvas');
-var x = document.getElementById("xrot");
-var y = document.getElementById("yrot");
+var rotx = document.getElementById("xrot"); //inputs
+var roty = document.getElementById("yrot");
+var rotz = document.getElementById("zrot");
+var xpos = document.getElementById("xpos");
+var ypos = document.getElementById("ypos");
+var zpos = document.getElementById("zpos");
 var wfcol = document.getElementById("wfcol");
 
-var outx = document.getElementById("testx");
-var outy = document.getElementById("testy");
+var spanrotx = document.getElementById("testx"); //spans
+var spanroty = document.getElementById("testy");
+var spanrotz = document.getElementById("testz");
+var spanposx = document.getElementById("posspanx");
+var spanposy = document.getElementById("posspany");
+var spanposz = document.getElementById("posspanz");
 
 const mesh1 = createMesh(cube);
 mesh1.color = '#81ff02'; //temp
@@ -37,8 +45,10 @@ function init() {
 	//set rot value
 	mesh1.rotation.x = 0;
 	mesh1.rotation.y = 0;
-	outx.innerHTML = x.value;
-	outy.innerHTML = y.value;
+	mesh1.rotation.z = 0;
+	spanrotx.innerHTML = 0;
+	spanroty.innerHTML = 0;
+	spanrotz.innerHTML = 0;
 	
 	render(scene, camera);
 }
@@ -74,15 +84,39 @@ animate();
 */
 
 //input responses
-x.oninput = function() {
+rotx.oninput = function() {
 	mesh1.rotation.x = this.value / 50 * (147/180) * (385/360);
-	outx.innerHTML = x.value;
+	spanrotx.innerHTML = rotx.value;
 	
 	render(scene, camera);
 }
-y.oninput = function() {
+roty.oninput = function() {
 	mesh1.rotation.y = this.value / 50 * (147/180) * (385/360);
-	outy.innerHTML = y.value;
+	spanroty.innerHTML = roty.value;
+	
+	render(scene, camera);
+}
+rotz.oninput = function() {
+	mesh1.rotation.z = this.value / 50 * (147/180) * (385/360);
+	spanrotz.innerHTML = rotz.value;
+	
+	render(scene, camera);
+}
+xpos.oninput = function() {
+	mesh1.position.x = this.value;
+	spanposx.innerHTML = this.value;
+	
+	render(scene, camera);
+}
+ypos.oninput = function() {
+	mesh1.position.y = this.value;
+	spanposy.innerHTML = this.value;
+	
+	render(scene, camera);
+}
+zpos.oninput = function() {
+	mesh1.position.z = this.value;
+	spanposz.innerHTML = this.value;
 	
 	render(scene, camera);
 }
