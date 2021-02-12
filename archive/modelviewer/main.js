@@ -108,19 +108,19 @@ rotz.oninput = function() {
 	render(scene, camera);
 }
 xpos.oninput = function() {
-	mesh1.position.x = this.value / 50;
+	mesh1.position.x = this.value / 5;
 	spanposx.innerHTML = this.value;
 	
 	render(scene, camera);
 }
 ypos.oninput = function() {
-	mesh1.position.y = this.value / 50;
+	mesh1.position.y = this.value / 5;
 	spanposy.innerHTML = this.value;
 	
 	render(scene, camera);
 }
 zpos.oninput = function() {
-	mesh1.position.z = this.value / 50;
+	mesh1.position.z = this.value / 5;
 	spanposz.innerHTML = this.value;
 	
 	render(scene, camera);
