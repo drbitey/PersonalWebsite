@@ -41,7 +41,7 @@ function init() {
 	outy.innerHTML = y.value;
 	
 	//random hex for wf col, from hsv for better value control
-	wfcolINIT = randomHex((Math.floor(360 * Math.Random())) 100% 100%);
+	wfcolINIT = randomHex(Math.floor(360 * Math.random()) 100% 100%)
 	mesh1.color = wfcolINIT;
 	wfcol.value = wfcolINIT;
 	
