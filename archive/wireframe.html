@@ -24,16 +24,18 @@
 		<p><span id="testz"></span></p>
 		
 		<label for="xpos">x axis pos</label>
-		<input type="range" id="xpos" name="xpos" min="-250" max="250" value="0">
+		<input type="range" id="xpos" name="xpos" min="-750" max="750" value="0">
 		<p><span id="posspanx"></span></p>
 		
 		<label for="ypos">y axis pos</label>
-		<input type="range" id="ypos" name="ypos" min="-250" max="250" value="0">
+		<input type="range" id="ypos" name="ypos" min="-300" max="300" value="0">
 		<p><span id="posspany"></span></p>
 		
 		<label for="zpos">z axis pos</label>
 		<input type="range" id="zpos" name="zpos" min="-1000" max="1000" value="0">
 		<p><span id="posspanz"></span></p>
+		
+		<button onClick="init()">reset pos/rot values</button><br>
 		
 		<label for="wfcol">wf col</label>
 		<input type="color" id="wfcol" name="wfcol" value="#81ff02">
