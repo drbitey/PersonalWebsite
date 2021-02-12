@@ -3,7 +3,7 @@ import {square, doubleSquare, cube, pyramid} from './models.js';
 import {Camera} from './camera.js';
 import {createMesh} from './mesh.js';
 import {createWireframeRenderer} from './render.js';
-import {randomHex} from './colorconvert.js';
+//import {randomHex} from './colorconvert.js';
 
 //html refs
 const canvas = document.querySelector('canvas');
@@ -39,11 +39,6 @@ function init() {
 	mesh1.rotation.y = 0;
 	outx.innerHTML = x.value;
 	outy.innerHTML = y.value;
-	
-	//random hex for wf col, from hsv for better value control
-	wfcolINIT = randomHex(Math.floor(360 * Math.random()) 100% 100%)
-	mesh1.color = wfcolINIT;
-	wfcol.value = wfcolINIT;
 	
 	render(scene, camera);
 }
