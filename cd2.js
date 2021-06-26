@@ -1,4 +1,4 @@
-var countDownDate = new Date("June 26, 2022 00:00:00").getTime();
+var countDownDate = new Date("October 31, 2021 00:00:00").getTime();
 //const text = document.getElementById("countdown").innerHTML;
 var interval = 100; //time between checking time in ms
 var x = setInterval(function() {
