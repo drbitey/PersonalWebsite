@@ -1,4 +1,4 @@
-var countDownDate = new Date("December 25, 2020 00:00:00").getTime();
+var countDownDate = new Date("July 1, 2023 00:00:00").getTime();
 //const text = document.getElementById("countdown").innerHTML;
 var interval = 11; //time between checking time in ms
 if ((countDownDate - new Date().getTime()) < 0) {} //do nothing if date has passed
