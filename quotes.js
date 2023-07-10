@@ -107,3 +107,4 @@ quotes[104]="Will to  my Account  in 14  Day  deleting, 🕴 🕴 👍\nHello  t
 quotes[105]="Well i can tel you this! This project and similar projects wil never see the light of day! Dont wait for them and continue with  your life!"
 quotes[106]="It's unfortunate that the management of this project is so poor. Take it from anybody who has worked on this project, there is absolutely no direction. That's why it's taken over 7 years and there are absolutely zero completed provinces (not even Atmora or Roscrea). The only people who know their roles and complete their tasks are the composers, hence why Beyond Skyrim has become little more than a music-to-study-to channel."
 quotes[107]="Talking  Here 🕴"
+quotes[108]="The mision on the mounten with te elder scrol do the dragon is not working on ps4 it bugg al the time and the dragon dont go to the spot where he need to go"
