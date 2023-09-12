@@ -1,10 +1,33 @@
-body{background-color:black;}
+/*FOR MOBILE*/
+@media all and (min-width:0px) and (max-width: 960px) {
+  #page-container {
+  position: relative;
+  min-height: 95vh;
+  margin: auto;
+  width: 75%;
+  border: 5px solid black;
+  padding: 10px;
+  background-color:#282828;
+}
+}
+
+body{
+	background-color:black;
+	background-image: url("./backgroundstripes.png");
+	background-attachment: fixed;
+}
+
 #page-container {
   position: relative;
   min-height: 95vh;
+  margin: auto;
+  width: 50%;
+  border: 5px solid black;
+  padding: 10px;
+  background-color:#282828;
 }
 #content-wrap {
-  padding-bottom: 3rem;/*Footer height*/
+  /*padding-bottom: 3rem;/*Footer height*/
 }
 #footer {
   position: absolute;
@@ -13,10 +36,12 @@ body{background-color:black;}
   height: 3rem;/*Footer height*/
 }
 h1{text-align:center;
-  color:red;
+  color:#6300C6;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  -webkit-text-stroke: 1px #320064;
   font-size:48px;
   margin:20px;
+  text-align:left;
 }
 
 code{
@@ -28,42 +53,43 @@ code{
 	font-family: 'Courier New', monospace;
 }
 
+a{
+	color:#707070;
+	text-decoration:none;
+}
+
 h2{
-	text-align:center;
-  color:white;
+  color:black;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size:36px;
   margin:5px;
 }
 
-a{
-target:"_blank";
-rel:"noopener noreferrer";
-}
-
-h3{text-align:center;
-  color:white;
+h3{
+  color:#A5A5A5;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size:24px;
-  margin:5px;
+  margin:20px;
 }
 
-h4{text-align:center;
-  color:white;
+h4{text-align:left;
+  color:#282828;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size:18px;
+  padding-left:20px;
   margin:5px;
 }
 
-#big{color:red;
-	font-size:24px;
+a:hover{
+	color:#6300C6;
+	-webkit-text-stroke: 0.5px #6300C6;
 }
 
-.footer-small{
-	font-size:12px;
-}
-.text-centered{
-	max-width: 640px;
-	margin: auto;
-	text-align:left;
+hr{
+	width:100%;
+	margin-left:0;
+	height:4px;
+	color:black;
+	background-color:black;
+	border: 1px solid black;
 }
