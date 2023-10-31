@@ -1,5 +1,14 @@
 <html>
 	<head>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PG0LKN1HJ"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+
+  			gtag('config', 'G-6PG0LKN1HJ');
+		</script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<title>THOG WORLD</title>
 		<link rel="shortcut icon" type="image/png" href="img/icon.png">
@@ -19,11 +28,16 @@
 		</script>
 	</head>
 	<body onload="getQuote()">
-		<h1>BEYOND SKYRIM MOTIVATION MACHINE</h1>
-		<h3 id="num"><i>(real quotes from real people)</i></h3><br>
-		<div style="text-align:center; margin-right:25%; margin-left:25%;">
-			<button onclick="getQuote()">click here for a new quote</button><br><br>
-			<h4 id="quote"></h4>
+		<div id="page-container">
+			<div id="content-wrap">
+				<h1 style="text-align:center;">BEYOND SKYRIM MOTIVATION MACHINE</h1>
+				<h3 id="num" style="text-align:center;"><i>(real quotes from real people)</i></h3>
+				<hr><br>
+				<div style="text-align:center; margin-right:5%; margin-left:5%;">
+					<button onclick="getQuote()">click here for a new quote</button><br><br>
+					<h4 id="quote"></h4>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
