@@ -1,6 +1,6 @@
 // Function to load and display song data
 async function loadSongData() {
-    const response = await fetch('https://mvoltz.com/sotd/sotdEntries.json');
+    const response = await fetch('https://cors.io/?https://mvoltz.com/sotd/sotdEntries.json');
     const data = await response.json();
 
     const songListContainer = document.getElementById('song-list-container');
