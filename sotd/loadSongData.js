@@ -8,8 +8,9 @@ async function loadSongData() {
     data.forEach((song) => {
         const songEntry = document.createElement('h4');
         const link = document.createElement('a');
+		const formattedDate = formatISODate(song.date);
         link.href = song.spotifyLink;
-        link.textContent = `${song.date}: ${song.songName}`;
+        link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
         songEntry.appendChild(link);
         songListContainer.appendChild(songEntry);
     });
