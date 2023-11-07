@@ -1,7 +1,7 @@
 // Function to format ISO date to "Month Day, Year" format
 function formatISODate(isoDate) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(isoDate).toLocaleDateString(undefined, options);
+    return new Date(isoDate).replace(/-/g, '\/').replace(/T.+/, '').toLocaleDateString(undefined, options);
 }
 
 // Function to load and display song data
