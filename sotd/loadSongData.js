@@ -1,7 +1,7 @@
 // Function to format ISO date to "Month Day, Year" format
 function formatISODate(isoDate) {
     // Parse the ISO date with time zone offset
-    const date = new Date(isoDate + 'T00:00:00Z'); // Assuming the time is midnight (00:00:00)
+    const date = new Date(isoDate + 'T12:00:00Z'); // Assuming the time is midnight (00:00:00)
     
     // Format the date as "Month Day, Year"
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
