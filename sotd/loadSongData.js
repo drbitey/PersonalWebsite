@@ -1,7 +1,11 @@
 // Function to format ISO date to "Month Day, Year" format
 function formatISODate(isoDate) {
+    // Parse the ISO date with time zone offset
+    const date = new Date(isoDate + 'T00:00:00Z'); // Assuming the time is midnight (00:00:00)
+    
+    // Format the date as "Month Day, Year"
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(isoDate).replace(/-/g, '\/').replace(/T.+/, '').toLocaleDateString(undefined, options);
+    return date.toLocaleDateString(undefined, options);
 }
 
 // Function to load and display song data
@@ -14,7 +18,7 @@ async function loadSongData() {
     data.forEach((song) => {
         const songEntry = document.createElement('h4');
         const link = document.createElement('a');
-		const formattedDate = formatISODate(song.date);
+        const formattedDate = formatISODate(song.date);
         link.href = song.spotifyLink;
         link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
         songEntry.appendChild(link);
