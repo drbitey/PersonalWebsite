@@ -1,14 +1,24 @@
-// Function to format ISO date to "Month Day, Year" format
-function formatISODate(isoDate) {
-    // Parse the ISO date with time zone offset
-    const date = new Date(isoDate + 'T12:00:00Z'); // Assuming the time is midnight (00:00:00)
-    
+function formatDateFromISO(isoDate) {
+    const parts = isoDate.split('-'); // Split the ISO date into parts
+    const year = parts[0];
+    const month = parseInt(parts[1], 10);
+    const day = parseInt(parts[2], 10);
+
+    // Array of month names. Starts at 0, hence 'x'
+    const monthNames = [
+        'x', 'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
     // Format the date as "Month Day, Year"
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString(undefined, options);
+    const formattedDate = `${monthNames[month]} ${day}, ${year}`;
+    return formattedDate;
 }
 
-// Function to load and display song data
+const isoDate = '2023-11-07';
+const formattedDate = formatDateFromISO(isoDate);
+console.log(formattedDate); // Outputs as Month Day, Year
+
 async function loadSongData() {
     const response = await fetch('./sotd/sotdEntries.json');
     const data = await response.json();
@@ -18,7 +28,7 @@ async function loadSongData() {
     data.forEach((song) => {
         const songEntry = document.createElement('h4');
         const link = document.createElement('a');
-        const formattedDate = formatISODate(song.date);
+        const formattedDate = formatDateFromISO(song.date);
         link.href = song.spotifyLink;
         link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
         songEntry.appendChild(link);
@@ -26,5 +36,5 @@ async function loadSongData() {
     });
 }
 
-// Call the function to load and display the song data
+
 loadSongData();
