@@ -33,7 +33,7 @@ async function loadSongData() {
 }
 
 // Function to perform the search
-function performSearch(query) {
+async function performSearch(query) {
     query = query.toLowerCase(); // Convert the query to lowercase for case-insensitive search
 	const response = await fetch('./sotd/sotdEntries.json');
 	const data = await response.json();
