@@ -15,10 +15,6 @@ function formatDateFromISO(isoDate) {
     return formattedDate;
 }
 
-const isoDate = '2023-11-07';
-const formattedDate = formatDateFromISO(isoDate);
-console.log(formattedDate); // Outputs as Month Day, Year
-
 async function loadSongData() {
     const response = await fetch('./sotd/sotdEntries.json');
     const data = await response.json();
