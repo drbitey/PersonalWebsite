@@ -80,10 +80,12 @@ function updateSearchResults(results) {
 }
 
 // Event listener for the search button
-const searchButton = document.getElementById('searchButton');
-searchButton.addEventListener('click', () => {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput.value.trim(); // Get the search query and trim leading/trailing spaces
-    const results = performSearch(query);
-    updateSearchResults(results);
+document.addEventListener('DOMContentLoaded', function() {
+	const searchButton = document.getElementById('searchButton');
+	searchButton.addEventListener('click', () => {
+		const searchInput = document.getElementById('searchInput');
+		const query = searchInput.value.trim(); // Get the search query and trim leading/trailing spaces
+		const results = performSearch(query);
+		updateSearchResults(results);
+	});
 });
