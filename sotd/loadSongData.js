@@ -31,3 +31,5 @@ async function loadSongData() {
         songListContainer.appendChild(songEntry);
     });
 }
+
+loadSongData();
