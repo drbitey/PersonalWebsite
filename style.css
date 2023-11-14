@@ -89,7 +89,7 @@ a:hover{
 }
 
 hr{
-	width:100%;
+	width:107%; /* Needs work */
 	margin-left:-10; /*Negates the padding of the page-container div so that hr reaches to ends*/
 	margin-right:-10; /* ^ */
 	height:4px;
