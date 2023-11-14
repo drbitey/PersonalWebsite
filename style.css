@@ -1,30 +1,32 @@
-/*FOR MOBILE*/
+/*FOR MOBILE VV*/
 @media all and (min-width:0px) and (max-width: 960px) {
   #page-container {
-  position: relative;
-  min-height: 95vh;
-  margin: auto;
-  width: 75%;
-  border: 5px solid black;
-  padding: 10px;
-  background-color:#282828;
+  	position: relative;
+  	min-height: 95vh;
+  	margin: auto;
+  	width: 75%;
+  	border: 5px solid black;
+  	padding: 10px;
+  	background-color:#282828;
+   }
 }
-}
+
+/* STANDARD STYLING BELOW */
 
 body{
 	background-color:black;
 	background-image: url("./backgroundstripes.png");
-	background-attachment: fixed;
+	background-attachment: fixed; /* Doesn't scroll. Parallax effect in future would be preferable */
 }
 
 #page-container {
-  position: relative;
-  min-height: 95vh;
-  margin: auto;
-  width: 66%;
-  border: 5px solid black;
-  padding: 10px;
-  background-color:#282828;
+	position: relative;
+	min-height: 95vh;
+	margin: auto;
+	width: 66%;
+	border: 5px solid black;
+	padding: 10px; /* Creates issues with <hr> elements. Look for better solution in future */
+	background-color:#282828;
 }
 #content-wrap {
   /*padding-bottom: 3rem;/*Footer height*/
@@ -33,15 +35,16 @@ body{
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 3rem;/*Footer height*/
+  height: 3rem;/*Footer height. Footer not used at this point*/
 }
-h1{text-align:center;
-  color:#6300C6;
-  font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  -webkit-text-stroke: 1px #320064;
-  font-size:48px;
-  margin:20px;
-  text-align:left;
+h1{
+	text-align:center;
+	color:#6300C6;
+	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	-webkit-text-stroke: 1px #320064;
+	font-size:48px;
+	margin:20px;
+	text-align:left;
 }
 
 code{
@@ -50,12 +53,12 @@ code{
 	padding:5px;
 	padding-top:2px;
 	padding-bottom:2px;
-	font-family: 'Courier New', monospace;
+	font-family: 'Courier New', monospace; /* Not used at this point, will be in future */
 }
 
 a{
 	color:#707070;
-	text-decoration:none;
+	text-decoration:none; /* Lets me style more later */
 }
 
 h2{
@@ -82,20 +85,21 @@ h4{text-align:left;
 
 a:hover{
 	color:#6300C6;
-	-webkit-text-stroke: 0.5px #6300C6;
+	-webkit-text-stroke: 0.5px #6300C6; /* Creates purple glow on <a> entries when hovered */
 }
 
 hr{
 	width:100%;
-	margin-left:0;
+	margin-left:-10; /*Negates the padding of the page-container div so that hr reaches to ends*/
+	margin-right:-10; /* ^ */
 	height:4px;
 	color:black;
 	background-color:black;
 	border: 1px solid black;
 }
 #h4_gray{
-	color:#707070;
+	color:#707070; /* For use on pages with h4 elements with different styles, ie sotdfaq */
 }
 #h4_gray_cd{
-	color:#707070;
+	color:#707070; /* Sotdfaq entries element */
 }
