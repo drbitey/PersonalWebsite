@@ -14,7 +14,7 @@ function formatDateFromISO(isoDate, language) {
     const monthName = monthNames[language][month];
 
     // Format the date by language
-    let formattedDate;a
+    let formattedDate;
 
     switch (language) {
         case 'en':
