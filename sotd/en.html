@@ -16,10 +16,19 @@
 		<meta name="description" content="Song of the Day">
 		<script type="text/javascript" src="../archive/lastmodifieddate.js"></script>
 		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
+		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
 	</head>
 	<body onload="getLastModified()">
 		<div id="page-container">
 			<div id="content-wrap">
+				<div id="language-selector" onclick="toggleLanguageDropdown()">◍</div>
+            			<div id="language-dropdown">
+               				<select id="language-select" onchange="changeLanguage()">
+                    				<option value="en" selected>English</option>
+                    				<option value="de">Deutsch</option>
+                    				<!--<option value="ar">Arabic</option>-->
+                			</select>
+            			</div>
 				<h1>Mike's Song of the Day</h1>
 				<h3>Click on a day to listen on Spotify</h3>
 				<h3 id=""><a href="https://lookerstudio.google.com/reporting/36574db2-41b2-4dab-b581-d2a17776207e" target="_blank">SOTD Charts and Statistics ⧉</a> / <a href="https://mvoltz.com/sotdfaq">FAQ</a></h3>
