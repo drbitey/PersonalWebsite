@@ -109,6 +109,10 @@ hr{
         right: 10px;
         cursor: pointer;
 }
+#language-selector:hover {
+	color:#6300C6;
+	-webkit-text-stroke: 0.5px #6300C6;
+}
 
 #language-dropdown {
         display: none;
