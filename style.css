@@ -103,3 +103,20 @@ hr{
 #h4_gray_cd{
 	color:#707070; /* Sotdfaq entries element */
 }
+#language-selector {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+}
+
+#language-dropdown {
+        display: none;
+        position: absolute;
+        top: 30px;
+        right: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        padding: 10px;
+        z-index: 1;
+}
