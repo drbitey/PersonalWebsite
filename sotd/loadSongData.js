@@ -14,9 +14,10 @@ function formatDateFromISO(isoDate, language) {
 
     // Array of month names. Starts at 0, hence 'x'
     const monthNames = {
-        'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        'ar': ['خ', 'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمب'],
+        'br': ['x', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
         'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-        'ar': ['خ', 'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمب']
+        'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
         // languages to add: arabic, french, dutch?
     };
 
@@ -29,14 +30,17 @@ function formatDateFromISO(isoDate, language) {
     let formattedDate;
 
     switch (language) {
-        case 'en':
-            formattedDate = `${monthName} ${day}, ${year}`;
+        case 'ar':
+            formattedDate = `${convertToArabicNumerals(day)} ${monthName} ${convertToArabicNumerals(year)}`;
+            break;
+        case 'br':
+            formattedDate = `${day} de ${monthName} de ${year}`;
             break;
         case 'de':
             formattedDate = `${day}. ${monthName}, ${year}`;
             break;
-        case 'ar':
-            formattedDate = `${convertToArabicNumerals(day)} ${monthName} ${convertToArabicNumerals(year)}`;
+        case 'en':
+            formattedDate = `${monthName} ${day}, ${year}`;
             break;
     }
 
