@@ -13,7 +13,7 @@ function formatDateFromISO(isoDate, language) {
 
     console.log('Language:', language);
     console.log('Month Index:', month);
-    const monthIndex = month; // Assign the zero-indexed month to monthIndex
+    const monthIndex = month; // Not sure why, but the solution to some errors was using a console.log(); function before this. Without it, this code doesnt work ¯\_(ツ)_/¯
     const monthName = monthNames[language][monthIndex];
 
     // Format the date by language
