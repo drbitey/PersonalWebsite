@@ -8,9 +8,11 @@ function formatDateFromISO(isoDate, language) {
     const monthNames = {
         'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
-        // Add more languages as needed
+        // languages to add: arabic, french, dutch?
     };
 
+    console.log('Language:', language);
+    console.log('Month Index:', month);
     const monthIndex = month; // Assign the zero-indexed month to monthIndex
     const monthName = monthNames[language][monthIndex];
 
@@ -29,7 +31,7 @@ function formatDateFromISO(isoDate, language) {
     return formattedDate;
 }
 
-async function loadSongData(lang) {
+async function loadSongData(lang = 'en') {
     const response = await fetch('./sotd/sotdEntries.json');
     const data = await response.json();
 
@@ -46,4 +48,4 @@ async function loadSongData(lang) {
     });
 }
 
-loadSongData();
+loadSongData('en');
