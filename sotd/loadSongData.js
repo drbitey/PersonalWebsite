@@ -11,10 +11,20 @@ function formatDateFromISO(isoDate, language) {
         // Add more languages as needed
     };
 
-    const monthName = monthNames[language][monthIndex];
+    const monthName = monthNames[language][month];
 
-    // Format the date as "Month Day, Year"
-    const formattedDate = `${monthName} ${day}, ${year}`;
+    // Format the date by language
+    let formattedDate;a
+
+    switch (language) {
+        case 'en':
+            formattedDate = `${monthName} ${day}, ${year}`;
+            break;
+        case 'de':
+            formattedDate = `${day}. ${monthName}, ${year}`;
+            break;
+    }
+
     return formattedDate;
 }
 
