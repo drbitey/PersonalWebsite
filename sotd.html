@@ -18,11 +18,11 @@
 		<script type="text/javascript" src="./sotd/loadSongData.js"></script>
 		<script type="text/javascript" src="./sotd/sotdLanguageSelect.js"></script>
 	</head>
-	<body onload="getLastModified()">
+	<body onload="getLastModified()" onload="loadSongData('en')">
 		<div id="page-container">
 			<div id="content-wrap">
 				<div id="language-selector" onclick="toggleLanguageDropdown()">
-					<h3>◍</h3>
+					<h3 alt="Language">◍</h3>
 				</div>
             			<div id="language-dropdown">
                				<select id="language-select" onchange="changeLanguage()">
