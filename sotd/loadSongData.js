@@ -7,7 +7,7 @@ function formatDateFromISO(isoDate, language) {
     // Array of month names. Starts at 0, hence 'x'
     const monthNames = {
         'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+        'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
         // Add more languages as needed
     };
 
@@ -28,7 +28,7 @@ function formatDateFromISO(isoDate, language) {
     return formattedDate;
 }
 
-async function loadSongData(language) {
+async function loadSongData(lang) {
     const response = await fetch('./sotd/sotdEntries.json');
     const data = await response.json();
 
@@ -37,7 +37,7 @@ async function loadSongData(language) {
     data.forEach((song) => {
         const songEntry = document.createElement('h4');
         const link = document.createElement('a');
-        const formattedDate = formatDateFromISO(song.date, language);
+        const formattedDate = formatDateFromISO(song.date, lang);
         link.href = song.spotifyLink;
         link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
         songEntry.appendChild(link);
