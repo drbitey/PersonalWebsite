@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PG0LKN1HJ"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+
+  			gtag('config', 'G-6PG0LKN1HJ');
+		</script>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+		<title>Mike's Song of the Day</title>
+		<link rel="shortcut icon" type="image/png" href="../img/icon.png">
+		<meta name="keywords" content="Michael voltz, voltz, mike voltz">
+		<meta name="description" content="Song of the Day">
+		<script type="text/javascript" src="../archive/lastmodifieddate.js"></script>
+		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
+		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
+	</head>
+	<body onload="getLastModified()">
+		<div id="page-container">
+			<div id="content-wrap">
+				<div id="language-selector" onclick="toggleLanguageDropdown()">◍</div>
+            	<div id="language-dropdown">
+               		<select id="language-select" onchange="changeLanguage()">
+							<option value="de" selected>Deutsch</option>
+                    		<option value="en">English</option>
+                    		<!--<option value="ar">Arabic</option>-->
+              		</select>
+            	</div>
+				<h1>Mike's Tageslied</h1>
+				<h3>Klicke auf einen Eintrag, um auf Spotify zu hören</h3>
+				<h3 id=""><a href="https://lookerstudio.google.com/reporting/36574db2-41b2-4dab-b581-d2a17776207e" target="_blank">Grafiken und Statistiken ⧉</a> / <a href="https://mvoltz.com/sotd/faq_de">FAQ</a></h3>
+				<hr><br>
+				<!-- <input type="text" id="searchInput" placeholder="Search...">
+				<button id="searchButton">Search</button>-->
+				<div id="song-list-container" onload="loadSongData('de')">
+					<!-- Dynamically loaded song entries will appear here -->	
+				</div>
+				<hr>
+				<h4><a href="../archive">zum Archiv (Englisch)</a></h4>
+				<h4>Seite erstellt am: 2022-02-05</h4>
+				<h4>Letzte Aktualisierung: 2023-11-14</h4>
+			</div>
+		</div>
+	</body>
+</html>
