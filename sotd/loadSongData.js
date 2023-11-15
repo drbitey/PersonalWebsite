@@ -17,8 +17,9 @@ function formatDateFromISO(isoDate, language) {
         'ar': ['خ', 'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمب'],
         'br': ['x', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
         'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-        'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-        // languages to add: arabic, french, dutch?
+        'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        'nl': ['x', 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+        // languages to add
     };
 
     console.log('Language:', language);
@@ -31,17 +32,15 @@ function formatDateFromISO(isoDate, language) {
 
     switch (language) {
         case 'ar':
-            formattedDate = `${convertToArabicNumerals(day)} ${monthName} ${convertToArabicNumerals(year)}`;
-            break;
+            formattedDate = `${convertToArabicNumerals(day)} ${monthName} ${convertToArabicNumerals(year)}`; break;
         case 'br':
-            formattedDate = `${day} de ${monthName} de ${year}`;
-            break;
+            formattedDate = `${day} de ${monthName} de ${year}`; break;
         case 'de':
-            formattedDate = `${day}. ${monthName}, ${year}`;
-            break;
+            formattedDate = `${day}. ${monthName}, ${year}`; break;
         case 'en':
-            formattedDate = `${monthName} ${day}, ${year}`;
-            break;
+            formattedDate = `${monthName} ${day}, ${year}`; break;
+        case 'nl':
+            formattedDate = `${day} ${monthName} ${year}`; break;
     }
 
     return formattedDate;
