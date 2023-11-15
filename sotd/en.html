@@ -17,8 +17,14 @@
 		<script type="text/javascript" src="../archive/lastmodifieddate.js"></script>
 		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
 		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
+		<script>
+    			function onPageLoad() {
+        			getLastModified();
+        			loadSongData('en');
+    			}
+		</script>
 	</head>
-	<body onload="getLastModified()" onload="loadSongData('en')">
+	<body onload="onPageLoad()">
 		<div id="page-container">
 			<div id="content-wrap">
 				<div id="language-selector" onclick="toggleLanguageDropdown()">
