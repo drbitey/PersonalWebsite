@@ -11,7 +11,8 @@ function formatDateFromISO(isoDate, language) {
         // Add more languages as needed
     };
 
-    const monthName = monthNames[language][month];
+    const monthIndex = month; // Assign the zero-indexed month to monthIndex
+    const monthName = monthNames[language][monthIndex];
 
     // Format the date by language
     let formattedDate;
