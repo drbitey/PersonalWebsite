@@ -1,3 +1,11 @@
+function convertToArabicNumerals(number) {
+    const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return String(number)
+        .split('')
+        .map(digit => arabicNumerals[parseInt(digit)])
+        .join('');
+}
+
 function formatDateFromISO(isoDate, language) {
     const parts = isoDate.split('-'); // Split the ISO date into parts
     const year = parts[0];
@@ -8,6 +16,7 @@ function formatDateFromISO(isoDate, language) {
     const monthNames = {
         'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+        'ar': ['خ', 'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمب']
         // languages to add: arabic, french, dutch?
     };
 
@@ -25,6 +34,9 @@ function formatDateFromISO(isoDate, language) {
             break;
         case 'de':
             formattedDate = `${day}. ${monthName}, ${year}`;
+            break;
+        case 'ar':
+            formattedDate = `${convertToArabicNumerals(day)} ${monthName} ${convertToArabicNumerals(year)}`;
             break;
     }
 
