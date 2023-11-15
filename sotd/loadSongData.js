@@ -31,7 +31,7 @@ function formatDateFromISO(isoDate, language) {
     return formattedDate;
 }
 
-async function loadSongData(lang = 'en') {
+async function loadSongData(lang) {
     const response = await fetch('../sotd/sotdEntries.json');
     const data = await response.json();
 
@@ -47,5 +47,3 @@ async function loadSongData(lang = 'en') {
         songListContainer.appendChild(songEntry);
     });
 }
-
-loadSongData('en');
