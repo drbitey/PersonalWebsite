@@ -32,7 +32,7 @@ function formatDateFromISO(isoDate, language) {
 }
 
 async function loadSongData(lang = 'en') {
-    const response = await fetch('./sotd/sotdEntries.json');
+    const response = await fetch('../sotd/sotdEntries.json');
     const data = await response.json();
 
     const songListContainer = document.getElementById('song-list-container');
