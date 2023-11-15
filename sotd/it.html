@@ -1,0 +1,49 @@
+<html>
+	<head>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PG0LKN1HJ"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+
+  			gtag('config', 'G-6PG0LKN1HJ');
+		</script>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+		<title>La Canzone di Oggi Scelta da Mike</title>
+		<link rel="shortcut icon" type="image/png" href="../img/icon.png">
+		<meta name="keywords" content="Michael voltz, voltz, mike voltz">
+		<meta name="description" content="La Canzone di Oggi Scelta da Mike">
+		<script type="text/javascript" src="../archive/lastmodifieddate.js"></script>
+		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
+		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
+	</head>
+	<body onload="loadSongData('it')">
+		<div id="page-container">
+			<div id="content-wrap">
+				<div id="language-selector" onclick="toggleLanguageDropdown()">◍</div>
+            	<div id="language-dropdown">
+               		<select id="language-select" onchange="changeLanguage()">
+							<option value="de">Deutsch</option>
+                    		<option value="en">English</option>
+							<option value="it" selected>Italiano</option>
+                    		<!--<option value="ar">Arabic</option>-->
+              		</select>
+            	</div>
+				<h1>La Canzone di Oggi Scelta da Mike</h1>
+				<h3>Clicca su una voce per ascoltarla su Spotify</h3>
+				<h3 id=""><a href="https://lookerstudio.google.com/reporting/36574db2-41b2-4dab-b581-d2a17776207e" target="_blank">Grafici e Statistiche ⧉</a> / <a href="https://mvoltz.com/sotdfaq">Domande Frequenti (Inglese)</a></h3>
+				<hr><br>
+				<!-- <input type="text" id="searchInput" placeholder="Search...">
+				<button id="searchButton">Search</button>-->
+				<div id="song-list-container"">
+					<!-- Dynamically loaded song entries will appear here -->	
+				</div>
+				<hr>
+				<h4><a href="../archive">Torna all'archivio (Inglese)</a></h4>
+				<h4>Creazione della pagina: 2022-02-05</h4>
+				<h4>Ultimo aggiornamento della pagina: 2023-11-15</h4>
+			</div>
+		</div>
+	</body>
+</html>
