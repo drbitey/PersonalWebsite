@@ -18,6 +18,7 @@ function formatDateFromISO(isoDate, language) {
         'br': ['x', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
         'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
         'en': ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        'it': ['x', 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
         'nl': ['x', 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
         // languages to add
     };
@@ -39,6 +40,8 @@ function formatDateFromISO(isoDate, language) {
             formattedDate = `${day}. ${monthName}, ${year}`; break;
         case 'en':
             formattedDate = `${monthName} ${day}, ${year}`; break;
+        case 'it':
+            formattedDate = `${day} ${monthName} ${year}`; break;
         case 'nl':
             formattedDate = `${day} ${monthName} ${year}`; break;
     }
