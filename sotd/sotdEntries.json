@@ -1,5 +1,23 @@
 [
   {
+    "date": "2023-11-27",
+    "spotifyLink": "https://open.spotify.com/track/2Ze0YvSXz8CnC81hw5rXNo?autoplay=true",
+    "artist": "Maritime",
+    "song_title": "Roaming Empire"
+  },
+  {
+    "date": "2023-11-26",
+    "spotifyLink": "https://open.spotify.com/track/5gKUJzZrySpLchyAHbpvM1?autoplay=true",
+    "artist": "Animal Flag",
+    "song_title": "Solace"
+  },
+  {
+    "date": "2023-11-25",
+    "spotifyLink": "https://open.spotify.com/track/0ReEEk6xty0IlNrZg2m6ZZ?autoplay=true",
+    "artist": "Anderson .Paak, Smokey Robinson",
+    "song_title": "Make It Better"
+  },
+  {
     "date": "2023-11-24",
     "spotifyLink": "https://open.spotify.com/track/1vrmwDEJ6afcrkC5rvNwnF?si=eeb48c48fa0645d0",
     "artist": "Pretty Sick",
