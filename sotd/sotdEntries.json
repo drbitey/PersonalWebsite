@@ -1,5 +1,41 @@
 [
   {
+    "date": "2023-12-03",
+    "spotifyLink": "https://open.spotify.com/track/18CtSXi4YHASMPPcmgHS04?si=f68180321fe44023",
+    "artist": "Margot & The Nuclear So and So's",
+    "song_title": "Somewhere the City Lights Leave Us Blind"
+  },
+  {
+    "date": "2023-12-02",
+    "spotifyLink": "https://open.spotify.com/track/0MJdJaOstnyoXEMMnLReun?si=b81eade7a5eb474b",
+    "artist": "Cursive",
+    "song_title": "From the Hips"
+  },
+  {
+    "date": "2023-12-01",
+    "spotifyLink": "https://open.spotify.com/track/0zb3ofNpgaJgU1mJFhxjI3?si=0f00a57d90a14577",
+    "artist": "The Hundred Acre Woods",
+    "song_title": "All I Love"
+  },
+  {
+    "date": "2023-11-30",
+    "spotifyLink": "https://open.spotify.com/track/2xSuwE5IFg0OVwFLdMlMaQ?si=7c3ad5b94c7f471a",
+    "artist": "Desaparecidos",
+    "song_title": "Man and Wife, The Latter (Damaged Goods)"
+  },
+  {
+    "date": "2023-11-29",
+    "spotifyLink": "https://open.spotify.com/track/0A0t3HX38EaJWokouDoS6g?si=a5e6c8b58df4466c",
+    "artist": "Sarathy Korwar",
+    "song_title": "Lost Parade"
+  },
+  {
+    "date": "2023-11-28",
+    "spotifyLink": "https://open.spotify.com/track/0ikbKcgUbI3hinyrWEfwo5?si=8d282f5930c842fe",
+    "artist": "Ravi Shankar",
+    "song_title": "Vandanaa Trayee"
+  },
+  {
     "date": "2023-11-27",
     "spotifyLink": "https://open.spotify.com/track/2Ze0YvSXz8CnC81hw5rXNo?autoplay=true",
     "artist": "Maritime",
