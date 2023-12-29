@@ -46,7 +46,7 @@ function formatDateFromISO(isoDate, language) {
 
     // Array of month names. Starts at 0, hence 'x'
     const monthNames = {
-        'ang': ['x', '', '', '', '', '', '', '', '', '', '', '', ''], //Ænglisċ/Old English
+        'ang': ['x', 'Æfterra Gēola', 'Solmōnað', 'Hrēðmōnað', 'Ēastremōnað', 'Þrimilcemōnað', 'Ærra Līþa', 'Æfterra Līþa', 'Weodmōnað', 'Hāligmōnað', 'Winterfylleþ', 'Blōtmōnað', 'Ærra Gēola'], //Ænglisċ/Old English
         'ar': ['خ', 'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمب'], //اَلْعَرَبِيَّةُ/Arabic
         'br': ['x', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'], //Portuguese do Brasil/Portuguese (br)
         'de': ['x', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],//Deutsch/German
@@ -66,7 +66,7 @@ function formatDateFromISO(isoDate, language) {
 
     switch (language) {
         case 'ang':
-            formattedDate = `${convertToRomanNumerals(day)} ${monthName} ${convertToRomanNumerals(year)}`; break;
+            formattedDate = `${monthName} ${convertToRomanNumerals(day)} ${convertToRomanNumerals(year)}`; break;
         case 'ar':
             formattedDate = `${convertToArabicNumerals(day)} ${monthName} ${convertToArabicNumerals(year)}`; break;
         case 'br':
@@ -91,12 +91,16 @@ async function loadSongData(lang) {
     const songListContainer = document.getElementById('song-list-container');
 
     data.forEach((song) => {
-        const songEntry = document.createElement('h4');
-        const link = document.createElement('a');
-        const formattedDate = formatDateFromISO(song.date, lang);
-        link.href = song.spotifyLink;
-        link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
-        songEntry.appendChild(link);
-        songListContainer.appendChild(songEntry);
+		var now = new Date().getTime();
+		if (song.date <= now) {
+			const songEntry = document.createElement('h4');
+			const link = document.createElement('a');
+			const formattedDate = formatDateFromISO(song.date, lang);
+			link.href = song.spotifyLink;
+			link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
+			songEntry.appendChild(link);
+			songListContainer.appendChild(songEntry);
+		}
+		else{};
     });
 }
