@@ -31,23 +31,12 @@ function convertToRomanNumerals(num) {
 console.log(convertToRoman(63)); // Output: LXIII
 
 function formatDateFromISO(isoDate, language) {
- // OBSOLETE! Only kept for possible expansion. 
-    //const parts = isoDate.split('-'); // Split the ISO date into parts
-    //const year = parts[0];
-    //const month = parseInt(parts[1], 10);
-    //const day = parseInt(parts[2], 10);
-    //const monthNames = {'ang': ['x', 'Æfterra Gēola', 'Solmōnað', 'Hrēðmōnað', 'Ēastremōnað', 'Þrimilcemōnað', 'Ærra Līþa', 'Æfterra Līþa', 'Weodmōnað', 'Hāligmōnað', 'Winterfylleþ', 'Blōtmōnað', 'Ærra Gēola']};
-    //const monthIndex = month; // Not sure why, but the solution to some errors was using a console.log(); function before this. Without it, this code doesnt work ¯\_(ツ)_/¯
-    //const monthName = monthNames[language][monthIndex];
-    //switch (language) {case 'ang':formattedDate = `${monthName} ${convertToRomanNumerals(day)} ${convertToRomanNumerals(year)}`; break;}
-
 	const options = {
 		year: "numeric",
 		month: "long",
 		day: "numeric",
 		timeZone: "UTC" //fixes an issue with timezone. ALL entries are now exactly the date they are in the JSON
 	};
-
     return new Date(isoDate).toLocaleString(language, options);
 }
 
@@ -58,10 +47,11 @@ async function loadSongData(lang) {
 
     const songListContainer = document.getElementById('song-list-container');
 
+    const localDate = new Date().toLocaleDateString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone } );
+    const ISO = new Date(localDate).toISOString().split("T")[0];
+	
     data.forEach((song) => {
-		const localDate = new Date().toLocaleDateString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone } );
-		const ISO = new Date(localDate).toISOString().split("T")[0];
-		if (song.date <= ISO) {
+		if (song.date <= ISO) { //only push entries from local today or before
 			const songEntry = document.createElement('h4');
 			const link = document.createElement('a');
 			const formattedDate = formatDateFromISO(song.date, lang);
@@ -70,6 +60,6 @@ async function loadSongData(lang) {
 			songEntry.appendChild(link);
 			songListContainer.appendChild(songEntry);
 		}
-		else{};
+		else{}; //if the date is in the future for client, skip
     });
 }
