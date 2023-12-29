@@ -27,9 +27,6 @@ function convertToRomanNumerals(num) {
   return result;
 }
 
-// Example usage:
-console.log(convertToRoman(63)); // Output: LXIII
-
 function formatDateFromISO(isoDate, language) {
 	const options = {
 		year: "numeric",
