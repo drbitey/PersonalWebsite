@@ -91,8 +91,9 @@ async function loadSongData(lang) {
     const songListContainer = document.getElementById('song-list-container');
 
     data.forEach((song) => {
-		var now = new Date().getTime();
-		if (song.date <= now) {
+		const localDate = new Date().toLocaleDateString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone } );
+		const ISO = new Date(localDate).toISOString().split("T")[0];
+		if (song.date <= ISO) {
 			const songEntry = document.createElement('h4');
 			const link = document.createElement('a');
 			const formattedDate = formatDateFromISO(song.date, lang);
