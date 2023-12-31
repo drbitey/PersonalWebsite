@@ -1,5 +1,11 @@
 [
  {
+    "date": "2024-01-01",
+    "spotifyLink": "https://open.spotify.com/track/2gCeeJ6Ab87dQkrEXrrqMX?si=a1175a9e46f64c10",
+    "artist": "Mock Orange",
+    "song_title": "End of the World"
+ },
+ {
     "date": "2023-12-31",
     "spotifyLink": "https://open.spotify.com/track/3xdnOsmwFkCphbKKsrUl6L?si=b19266e1bbf8455b",
     "artist": "Rubik",
