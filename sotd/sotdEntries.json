@@ -1,5 +1,23 @@
 [
  {
+    "date": "2024-04-01",
+    "spotifyLink": "https://open.spotify.com/track/6z5WtchPKCpxeHvIDJ8hmQ?autoplay=true",
+    "artist": "An Horse",
+    "song_title": "Little Lungs"
+ },
+ {
+    "date": "2024-03-31",
+    "spotifyLink": "https://open.spotify.com/track/1ntP5FEZ7Qxi603D8do4ld?autoplay=true",
+    "artist": "Terno Rei",
+    "song_title": "Vento na Cara"
+ },
+ {
+    "date": "2024-03-30",
+    "spotifyLink": "https://open.spotify.com/track/7okR13zCUluT02iCnqY7BZ?autoplay=true",
+    "artist": "Laura Stevenson",
+    "song_title": "L-Dopa"
+ },
+ {
     "date": "2024-03-29",
     "spotifyLink": "https://open.spotify.com/track/62sxyJJb5ipXnLwnhc1cwq?si=b0338280107048f2",
     "artist": "Eason Chan",
