@@ -12,13 +12,15 @@
 		<link rel="stylesheet" type="text/css" href="../style.css">
 		<title>Notebook</title>
 		<link rel="shortcut icon" type="image/png" href="../img/icon.png">
+		<script type="text/javascript" src="./notebook/loadNbData.js"></script>
+		<script>function onPageLoad() {loadNbDataEntry();}</script>
 	</head>
-	<body>
+	<body onload="onPageLoad()">
 		<div id="page-container">
 			<div id="content-wrap">
-				<h1 id="title">5/28/2004 12:00AM</h1>
-				<h3><a href="./index.html">back home</a></h3><hr><br>
-				<h4 id="nb-Content">placeholder</h4>
+				<h1 id="title"></h1>
+				<h3><a href="./index.html"></a></h3><hr><br>
+				<h4 id="nb-Content"></h4>
 			</div>	
 		</div>
 	</body>
