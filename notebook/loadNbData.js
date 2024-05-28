@@ -20,7 +20,7 @@ async function loadNbDataIndex() {
             const link = document.createElement('a');
             const formattedDate = formatDateFromISO(entry.date);
             
-            link.href = `./entry.html#${entry.date}`;
+            link.href = `./notebook/entry#${entry.date}`;
             link.textContent = `${formattedDate} ${entry.time}`;
             
             nbEntry.appendChild(link);
