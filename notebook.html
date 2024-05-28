@@ -14,19 +14,17 @@
 		<link rel="shortcut icon" type="image/png" href="img/icon.png">
 		<meta name="keywords" content="mike voltz, voltz, michael voltz">
 		<meta name="description" content="mike's notebook">
-		<script type="text/javascript" src="./archive/lastmodifieddate.js"></script>
+		<script type="text/javascript" src="./notebook/loadNbData.js"></script>
+		<script>function onPageLoad() {loadNbDataIndex();}</script>
 	</head>
-	<body  onload="getLastModified()">
+	<body  onload="onPageLoad()">
 		<div id="page-container">
 			<div id="content-wrap">
 				<h1>Mike's Notebook</h1>
 				<hr><br>
-				<h4><a href="./notebook/2-22-22">2/22/2022 2:22PM</a></h3>
-				<h4><a href="./notebook/11-16-21">11/16/2021 10:19PM</a></h3>
-				<h4><a href="./notebook/2-10-21">2/10/2021 10:32PM</a></h3>
-				<h4><a href="./notebook/2-5-21">2/5/2021 1:17AM</a></h3>
-				<h4><a href="./notebook/12-25-20">12/25/2020 12:51 AM</a></h3>
-				<h4><a href="./notebook/12-17-20">12/17/2020 10:21 PM</a></h3>
+				<div id="nb-entry-container">
+				
+				</div>
 			</div>
 		</div>
 	</body>
