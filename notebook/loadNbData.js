@@ -1,11 +1,11 @@
 function formatDateFromISO(isoDate) {
-	const options = {
-		year: "numeric",
-		month: "numeric",
-		day: "numeric",
-		timeZone: "UTC" //fixes an issue with timezone. ALL entries are now exactly the date they are in the JSON
-	};
-   return new Date(isoDate).toLocaleDateString(options);
+    const options = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        timeZone: "UTC" // Fixes an issue with timezone. ALL entries are now exactly the date they are in the JSON
+    };
+    return new Date(isoDate).toLocaleDateString(undefined, options);
 }
 
 async function loadNbDataIndex() {
@@ -15,21 +15,20 @@ async function loadNbDataIndex() {
 
         const entryListContainer = document.getElementById('nb-entry-container');
 
-        const titleElement = document.getElementById('title');
-        const contentElement = document.getElementById('nb-Content');
-
         data.forEach((entry) => {
-			const nbEntry = document.createElement('h4');
-			const link = document.createElement('a');
-			const formattedDate = formatDateFromISO(entry.date);
-			
-			link.href = `./entry.html#${entry.date}`;
-			link.textContent = `${formattedDate} ${entry.time}`;
-			
-			nbEntry.appendChild(link);
-			songListContainer.appendChild(nbEntry);
-		}
-    });
+            const nbEntry = document.createElement('h4');
+            const link = document.createElement('a');
+            const formattedDate = formatDateFromISO(entry.date);
+            
+            link.href = `./entry.html#${entry.date}`;
+            link.textContent = `${formattedDate} ${entry.time}`;
+            
+            nbEntry.appendChild(link);
+            entryListContainer.appendChild(nbEntry);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 async function loadNbDataEntry() {
