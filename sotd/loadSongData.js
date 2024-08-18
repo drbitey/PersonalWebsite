@@ -28,15 +28,14 @@ function convertToRomanNumerals(num) {
 }
 
 function formatDateFromISO(isoDate, language) {
-	const options = {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		timeZone: "UTC" //fixes an issue with timezone. ALL entries are now exactly the date they are in the JSON
-	};
+    const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "UTC" //JSON consistency
+    };
     return new Date(isoDate).toLocaleString(language, options);
 }
-
 
 async function loadSongData(lang) {
     const response = await fetch('../sotd/sotdEntries.json');
@@ -44,19 +43,20 @@ async function loadSongData(lang) {
 
     const songListContainer = document.getElementById('song-list-container');
 
-    const localDate = new Date().toLocaleDateString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone } );
-    const ISO = new Date(localDate).toISOString().split("T")[0];
-	
+    const localDate = new Date().toISOString().split("T")[0];
+
     data.forEach((song) => {
-		if (song.date <= ISO) { //only push entries from local today or before
-			const songEntry = document.createElement('h4');
-			const link = document.createElement('a');
-			const formattedDate = formatDateFromISO(song.date, lang);
-			link.href = song.spotifyLink;
-			link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
-			songEntry.appendChild(link);
-			songListContainer.appendChild(songEntry);
-		}
-		else{}; //if the date is in the future for client, skip
+        if (song.date <= localDate) { // Display entries up to the user's local date
+            const songEntry = document.createElement('h4');
+            const link = document.createElement('a');
+            const formattedDate = formatDateFromISO(song.date, lang);
+            link.href = song.spotifyLink;
+            link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
+            songEntry.appendChild(link);
+            songListContainer.appendChild(songEntry);
+        } else {
+            // Skip songs that are "in the future" for the user
+        }
     });
 }
+
