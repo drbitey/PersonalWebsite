@@ -34,10 +34,7 @@ function formatDateFromISO(isoDate, language) {
         day: "numeric",
         timeZone: "UTC" //JSON consistency
     };
-	const tn-BW = [
-		"x", "Janewari", "Februar", "Moranang", "Mopitlwe", "Motsheganang", 
-		"Junie", "Julai", "Oktoba", "Sedimonthole", "Tlhakubele", "Nofemere", "Tlhakole"
-	];
+
     return new Date(isoDate).toLocaleString(language, options);
 }
 
@@ -46,8 +43,10 @@ async function loadSongData(lang) {
     const data = await response.json();
 
     const songListContainer = document.getElementById('song-list-container');
+	
+	songListContainer.innerHTML = ""; //clear out container before printing- allows me to test languages :)
 
-    const localDate = new Date().toISOString().split("T")[0];
+    const localDate = new Date().toISOString().split("T")[0]; //fixes the code !!!
 
     data.forEach((song) => {
         if (song.date <= localDate) { // Display entries up to the user's local date
