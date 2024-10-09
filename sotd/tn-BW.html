@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PG0LKN1HJ"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+
+  			gtag('config', 'G-6PG0LKN1HJ');
+		</script>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+		<title>Sefela sa Gompieno</title>
+		<link rel="shortcut icon" type="image/png" href="../img/icon.png">
+		<meta name="keywords" content="Michael voltz, voltz, mike voltz">
+		<meta name="description" content="Lied des Tages">
+		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
+		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
+	</head>
+	<body onload="loadSongData('de');">
+		<div id="page-container">
+			<div id="content-wrap">
+				<div id="language-selector" onclick="toggleLanguageDropdown()">
+					<h3 alt="Sprache">◍</h3>
+				</div>
+            			<div id="language-dropdown">
+               				<select id="language-select" onchange="changeLanguage()">
+						<option value="de" selected>Deutsch</option>
+						<option value="tn-BW" selected>Setswana</option>
+                    				<option value="en">English</option>
+						<option value="it">Italiano</option>
+                    				<!--<option value="ar">Arabic</option>-->
+              				</select>
+            			</div>
+				<h1>Sefela sa Gompieno</h1>
+				<h3>Tobetsa mo letsatsing go reetsa mo Spotify</h3>
+				<h3 id=""><a href="https://lookerstudio.google.com/reporting/36574db2-41b2-4dab-b581-d2a17776207e" target="_blank">Mekwalo le Dipalopalo ⧉</a> / <a href="https://open.spotify.com/playlist/1nv3giLp6SAKUNuvXlSU51?si=3223c7abf5574e59" target="_blank">Lenaneo la Difela ⧉</a> / <a href="https://mvoltz.com/sotdfaq">LBM (Sekgoa)</a></h3>
+				<hr><br>
+				<!-- <input type="text" id="searchInput" placeholder="Search...">
+				<button id="searchButton">Search</button>-->
+				<div id="song-list-container">
+					<!-- Dynamically loaded song entries will appear here -->	
+				</div>
+				<hr>
+				<h4>Tsebe e tlhamiwe: 2022-02-05</h4>
+				<h4>Ntlafatso ya bofelo: 2023-11-14</h4>
+			</div>
+		</div>
+	</body>
+</html>

@@ -34,6 +34,10 @@ function formatDateFromISO(isoDate, language) {
         day: "numeric",
         timeZone: "UTC" //JSON consistency
     };
+	const tn-BW = [
+		"x", "Janewari", "Februar", "Moranang", "Mopitlwe", "Motsheganang", 
+		"Junie", "Julai", "Oktoba", "Sedimonthole", "Tlhakubele", "Nofemere", "Tlhakole"
+	];
     return new Date(isoDate).toLocaleString(language, options);
 }
 
