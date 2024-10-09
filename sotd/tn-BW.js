@@ -1,7 +1,6 @@
 function formatDateInSetswana(isoDate) {
     const monthsInSetswana = [
-        "0", "Janewari", "Februar", "Moranang", "Mopitlwe", "Motsheganang", 
-        "Junie", "Julai", "Oktoba", "Sedimonthole", "Tlhakubele", "Nofemere", "Tlhakole"
+        "0", "Firikgong", "Tlhakole", "Mopitlo", "Moranang", "Motsheganong", "Seetebosigo", "Phukwi", "Phatwe", "Lwetse", "Phalane", "Ngwanatsele", "Sedimonthole"
     ];
     
     const date = new Date(isoDate);
@@ -26,7 +25,7 @@ async function loadSongDataBW() {
     data.forEach((song) => {
         if (song.date <= localDate) { // Display entries up to the user's local date
             const songEntry = document.createElement('h4');
-            const link = document.createElement('a');
+				const link = document.createElement('a');
 
             const formattedDate = formatDateInSetswana(song.date); // Format date specifically for Setswana
 
