@@ -1,0 +1,278 @@
+[
+  {
+    "langName": "Index",
+    "langISO": "",
+    "status": 3,
+    "stringsMain": {
+      "title": "Title",
+      "click": "Click",
+      "faq": "FAQ",
+      "playlist": "Playlist",
+      "charts": "Charts",
+      "musicArchive": "Music Archive",
+      "creation": "Creation",
+      "update": "Update"
+    },
+    "stringsFAQ": {
+      "title": "Title",
+      "description": "Description",
+      "return": "Return",
+      "questions": [
+        {
+          "title": "Title1",
+          "desc": "Desc1"
+        },
+        {
+          "title": "Title2",
+          "desc": "Desc2"
+        },
+        {
+          "title": "Title3",
+          "desc": "Desc3"
+        },
+        {
+          "title": "Title4",
+          "desc": "Desc4"
+        },
+        {
+          "title": "Title5",
+          "desc": "Desc5"
+        },
+        {
+          "title": "Title6",
+          "desc": "Desc6"
+        },
+        {
+          "title": "Title7",
+          "desc": "Desc7"
+        },
+        {
+          "title": "Title8",
+          "desc": "Desc8"
+        }
+      ]
+    },
+    "__notes": "INDEX !!! Status, 0=test, 1=main page, 2=main and faq, 3=silly :3"
+  },
+  {
+    "langName": "English",
+    "langISO": "en",
+    "status": 2,
+    "stringsMain": {
+      "title": "Mike's Song of the Day",
+      "click": "Click on a day to listen on Spotify",
+      "faq": "FAQ",
+      "playlist": "Playlist ⧉",
+      "charts": "Charts and Statistics ⧉",
+      "musicArchive": "Music",
+      "creation": "Page created",
+      "update": "Last update"
+    },
+    "stringsFAQ": {
+      "title": "SOTD FAQ",
+      "description": "Frequently asked questions and other information",
+      "return": "Back to SOTD",
+      "questions": [
+        {
+          "title": "#1: The SOTD hasn't been updated today. How often are updates?",
+          "desc": "I aim to update the song of the day each day but sometimes I forget or am otherwise unable to update. At most, there will be one day without an update. All days will be uploaded eventually."
+        },
+        {
+          "title": "#2: Can an artist/song be repeated?",
+          "desc": "The only rule I keep for the song of the day is that a song cannot be used for more than one unique day. This is to encourage diversity of the music. However, I do not have a policy against repeating artists. As of the writing of this page, Sufjan Stevens has the most entries, at 6."
+        },
+        {
+          "title": "#3: Is there a playlist/archive of past entries?",
+          "desc": "Yes! Click {link} to be redirected to a Spotify playlist of all entries."
+        },
+        {
+          "title": "#4: How many entries are there?",
+          "desc": "As of today, there is a total of {count} entries since February 5, 2022."
+        },
+        {
+          "title": "#5: Can I suggest a song?",
+          "desc": "Sure! I'm always open to listening to new music. I prefer not to give out my contact information, but most people who view this site are real-life friends of mine. If you have contact with me, feel free to shoot me a song anytime."
+        },
+        {
+          "title": "#6: Are there any restrictions on chosen songs?",
+          "desc": "I do not have any explicit restrictions when choosing songs. However, I prefer using Spotify for the links and will generally list music from genres I actively listen to. Because of that, it's less likely for a song to be chosen if it isn't available on Spotify and/or is from a genre I don't generally listen to."
+        },
+        {
+          "title": "#7: What is the objective of this site?",
+          "desc": "I started it for fun in February 2022 just to document what I was listening to. After I had a few entries, I realized I could use it to create some cool maps and diversify my music taste at the same time. See the charts link on the main page for some info on that!"
+        },
+        {
+          "title": "#8: What are the future goals of the project?",
+          "desc": "I would like to eventually get at least one artist from every country in the world. But since that's pretty optimistic, I'm starting out with the smaller goal of getting one artist from every state of the US and Canada. At the time of writing, the only places missing from this goal are the Northwestern Territories and Nunavut."
+        }
+      ]
+    },
+    "__notes": "Original language. Added with initial localizations, October 10 2024"
+  },
+  {
+    "langName": "Deutsch",
+    "langISO": "de",
+    "status": 2,
+    "stringsMain": {
+      "title": "Mike's Lied des Tages",
+      "click": "Klicke auf einen Eintrag, um auf Spotify zu hören",
+      "faq": "FAQ",
+      "playlist": "Playlist ⧉",
+      "charts": "Charts and Statistics ⧉",
+      "musicArchive": "Musik",
+      "creation": "Seite erstellt am",
+      "update": "Letzte Aktualisierung"
+    },
+    "stringsFAQ": {
+      "title": "Lied des Tages FAQ",
+      "description": "Häufig gestellte Fragen und andere Information",
+      "return": "Zum Lied des Tages",
+      "questions": [
+        {
+          "title": "#1: Das Tageslied wurde heute nicht aktualisiert. Wie oft gibt es Aktualisierungen?",
+          "desc": "Ich versuche, das Lied des Tages täglich zu aktualisieren, aber manchmal vergesse ich es oder bin anderweitig verhindert. Normalerweise beträgt die maximale Verzögerung bei Aktualisierungen einen Tag, aber es kann gelegentlich auch 4-5 Tage dauern. Alle Tage werden schließlich hochgeladen."
+        },
+        {
+          "title": "#2: Darf ein Künstler/ein Lied wiederholt werden?",
+          "desc": "Die einzige Regel, die ich für das Lied des Tages habe, ist, dass ein Lied nicht für mehr als einen eindeutigen Tag verwendet werden kann. Dies soll die Vielfalt der Musik fördern. Es gibt jedoch keine Regel gegen das Wiederholen von Künstlern. Zum Zeitpunkt der Erstellung dieser Seite hat Sufjan Stevens die meisten Einträge mit 6."
+        },
+        {
+          "title": "#3: Gibt es eine Playlist vergangener Einträge?",
+          "desc": "Ja! Klicke {link}, um zur Spotify-Playlist weitergeleitet zu werden."
+        },
+        {
+          "title": "#4: Wie viele Einträge gibt es?",
+          "desc": "Stand heute gibt es insgesamt {count} Einträge seit dem 5. Februar 2022."
+        },
+        {
+          "title": "#5: Darf ich einen Song vorschlagen?",
+          "desc": "Natürlich! Ich bin immer offen für neue Musik. Ich ziehe es vor, meine Kontaktdaten nicht preiszugeben, aber die meisten Personen, die diese Seite besuchen, sind echte Freunde von mir. Wenn du Kontakt zu mir hast, kannst du mir jederzeit einen Song vorschlagen."
+        },
+        {
+          "title": "#6: Gibt es Einschränkungen für ausgewählte Songs?",
+          "desc": "Ich habe keine expliziten Einschränkungen bei der Auswahl von Songs. Allerdings ziehe ich es vor, Spotify-Links zu verwenden und liste in der Regel Musik aus Genres auf, die ich aktiv höre. Daher ist es weniger wahrscheinlich, dass ein Song ausgewählt wird, wenn er nicht auf Spotify verfügbar ist und/oder aus einem Genre stammt, das ich normalerweise nicht höre."
+        },
+        {
+          "title": "#7: Was ist das Ziel dieser Seite?",
+          "desc": "Ich habe sie im Februar 2022 aus Spaß gestartet, einfach um zu dokumentieren, was ich gehört habe. Nachdem ich einige Einträge hatte, wurde mir klar, dass ich sie nutzen könnte, um einige interessante Karten zu erstellen und gleichzeitig meinen Musikgeschmack zu diversifizieren. Schau dir den Charts-Link auf der Hauptseite für weitere Informationen dazu an!"
+        },
+        {
+          "title": "#8: Was sind die zukünftigen Ziele des Projekts?",
+          "desc": "Ich möchte irgendwann mindestens einen Künstler aus jedem Land der Welt haben. Da das ziemlich optimistisch ist, beginne ich mit dem kleineren Ziel, mindestens einen Künstler aus jedem Bundesstaat der USA und Kanadas zu bekommen. Zum Zeitpunkt der Erstellung sind die einzigen Orte, die diesem Ziel noch fehlen, South Dakota, die Northwest Territories und Nunavut."
+        }
+      ]
+    },
+    "__notes": "Translated by myself, October 10 2023. In initital localizations- October 10 2024. One year exactly- crazy !!!"
+	},
+    {
+    "langName": "Italiano",
+    "langISO": "it",
+    "status": 1,
+    "stringsMain": {
+      "title": "La Canzone di Oggi Scelta da Mike",
+      "click": "Clicca su una voce per ascoltarla su Spotify",
+      "faq": "Domande Frequenti (Inglese)",
+      "playlist": "Playlist ⧉",
+      "charts": "Grafici e Statistiche ⧉",
+      "musicArchive": "Canzoni",
+      "creation": "Creazione della pagina",
+      "update": "Ultimo aggiornamento della pagina"
+    },
+    "stringsFAQ": {
+  "title": "Domande Frequenti",
+  "description": "",
+  "return": "",
+  "questions": [
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    },
+    {
+      "title": "",
+      "desc": ""
+    }
+  ]
+}
+    },
+    "__notes": "Translated by Thingy Person! In initial batch, November 15 2023. Added to JSON October 10 2024"
+  },
+    {
+    "langName": "Setswana",
+    "langISO": "tn-BW",
+    "status": 1,
+    "stringsMain": {
+      "title": "Sefela sa Gompieno",
+      "click": "Tobetsa mo letsatsing go reetsa mo Spotify",
+      "faq": "FAQ (Sekgoa)",
+      "playlist": "Lenaanetshameko ⧉",
+      "charts": "Ditšhate le Dipalopalo ⧉",
+      "musicArchive": "Dipina",
+      "creation": "Tsebe e tlhamiwe",
+      "update": "Ntšhwafatso ya bosheng"
+    },
+    "stringsFAQ": {
+      "title": "FAQ",
+      "description": "Description",
+      "return": "Return",
+      "questions": [
+        {
+          "title": "Title1",
+          "desc": "Desc1"
+        },
+        {
+          "title": "Title2",
+          "desc": "Desc2"
+        },
+        {
+          "title": "Title3",
+          "desc": "Desc3"
+        },
+        {
+          "title": "Title4",
+          "desc": "Desc4"
+        },
+        {
+          "title": "Title5",
+          "desc": "Desc5"
+        },
+        {
+          "title": "Title6",
+          "desc": "Desc6"
+        },
+        {
+          "title": "Title7",
+          "desc": "Desc7"
+        },
+        {
+          "title": "Title8",
+          "desc": "Desc8"
+        }
+      ]
+    },
+    "__notes": "Translated by myself. First batch October 9 2024, added to JSON in inital batch October 10 2024"
+  },
+]
