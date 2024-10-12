@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PG0LKN1HJ"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+
+  			gtag('config', 'G-6PG0LKN1HJ');
+		</script>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+		<title>Pina ea Letsatsi</title>
+		<link rel="shortcut icon" type="image/png" href="../img/icon.png">
+		<meta name="keywords" content="Michael voltz, voltz, mike voltz">
+		<meta name="description" content="Pina ea Letsatsi">
+		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
+		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
+	</head>
+	<body onload="loadSongData('st');">
+		<div id="page-container">
+			<div id="content-wrap">
+				<div id="language-selector" onclick="toggleLanguageDropdown()">
+					<h3 alt="Sprache">◍</h3>
+				</div>
+            			<div id="language-dropdown">
+               				<select id="language-select" onchange="changeLanguage()">
+						<option value="de">Deutsch</option>
+						<option value="st" selected>Sesotho</option>
+						<option value="af" >Afrikaans</option>
+                    				<option value="en">English</option>
+						<option value="it">Italiano</option>
+                    				<!--<option value="ar">Arabic</option>-->
+              				</select>
+            			</div>
+				<h1>Pina ea Letsatsi</h1>
+				<h3>Tobetsa ka letsatsi ho mamela ho Spotify</h3>
+				<h3 id=""><a href="https://lookerstudio.google.com/reporting/36574db2-41b2-4dab-b581-d2a17776207e" target="_blank">Chate le Lipalopalo ⧉</a> / <a href="https://open.spotify.com/playlist/1nv3giLp6SAKUNuvXlSU51?si=3223c7abf5574e59" target="_blank">Lenane la Dipina ⧉</a> / <a href="https://mvoltz.com/sotd/faq_de">Lipotso tse Botsoang Khafetsa</a></h3>
+				<hr><br>
+				<!-- <input type="text" id="searchInput" placeholder="Search...">
+				<button id="searchButton">Search</button>-->
+				<div id="song-list-container">
+					<!-- Dynamically loaded song entries will appear here -->	
+				</div>
+				<hr>
+				<h4>Leqephe le entsoeng: 2024-10-12</h4>
+				<h4>Leqephe le qetetsoe ho ntlafatsoa: 2024-10-12</h4>
+			</div>
+		</div>
+	</body>
+</html>

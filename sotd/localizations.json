@@ -55,6 +55,38 @@
     "__notes": "INDEX !!! Status, 0=test, 1=main page, 2=main and faq, 3=silly :3"
   },
   {
+    "langName": "Afrikaans",
+    "langISO": "af",
+    "status": 1,
+    "stringsMain": {
+      "title": "Liedjie van die Dag",
+      "click": "Kliek op a datum om op Spotify te luister",
+      "faq": "Kwelvrae",
+      "playlist": "Snitlys ⧉",
+      "charts": "Grafieke en Statistiek ⧉",
+      "musicArchive": "",
+      "creation": "Bladsy Geskep",
+      "update": "Bladsy Laaste Opgedateer"
+    },
+    "__notes": "Translated by Solomon, October 12 2024."
+	},
+	{
+    "langName": "Sesotho",
+    "langISO": "st",
+    "status": 1,
+    "stringsMain": {
+      "title": "Pina ea Letsatsi",
+      "click": "Tobetsa ka letsatsi ho mamela ho Spotify",
+      "faq": "lipotso tse botsoang khafetsa",
+      "playlist": "lenane la dipina ⧉",
+      "charts": "Chate le Lipalopalo ⧉",
+      "musicArchive": "",
+      "creation": "leqephe le entsoeng",
+      "update": "Leqephe le Qetetsoe ho ntlafatsoa"
+    },
+    "__notes": "Translated by Solomon, October 12 2024."
+	},
+  {
     "langName": "English",
     "langISO": "en",
     "status": 2,
