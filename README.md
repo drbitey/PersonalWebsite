@@ -11,15 +11,19 @@ This site is extremely important to me, it truly is my pride and joy. If you've 
 
 If you ever have suggestions- whether it be for code, song entries, or anything inbetween- please email me at *m.voltz04@gmail.com*, I am happy to listen!
 
+Thanks so much,
+
+*Mike*
+
 # CREDITS
 ## General
-Michael Voltz (me)
-My wonderful friends and all those who have supported the maintenance of this site
-The amazing artists who put their music out for me to listen to and feature
+Michael Voltz (me) <br>
+My wonderful friends and all those who have supported the maintenance of this site <br>
+The amazing artists who put their music out for me to listen to and feature <br>
 The helpful people of Stack Exchange
 
 ## TRANSLATIONS
-**Afrikaans, Sesotho-** Solomon Litlhakanyane
-**Brazilian Portuguese-** Vili
-**German-** Frau Haus
+**Afrikaans, Sesotho-** Solomon Litlhakanyane <br>
+**Brazilian Portuguese-** Vili <br>
+**German-** Frau Haus <br>
 **Italian-** Thingy Person
