@@ -17,6 +17,6 @@ var days = Math.abs(Math.floor(distance / (1000 * 60 * 60 * 24))); //calculates 
 document.getElementById("h4_gray_cd").innerHTML = days; //prints in HTML doc, giving the # of days a purple color
 
 const localDate = new Date().toISOString().split("T")[0];
-const formattedDate = formatDateFromISO(localDate, en);
+const formattedDate = formatDateFromISO(localDate, "en");
 
 document.getElementById("h4_gray_day").innerHTML = formattedDate;
