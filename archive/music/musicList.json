@@ -1,5 +1,11 @@
 [
 {
+    "date": "2024-10-21",
+	"archiveFile": "Jamming.mp3",
+    "title": "Jamming",
+	"tags": ["guitar","botswana","2024"]
+ },
+{
     "date": "2024-07-17",
 	"archiveFile": "7-17-24",
     "title": "Untitled guitar",
@@ -16,5 +22,5 @@
 	"archiveFile": "idea2_5-26-24.mp3",
     "title": "Untitled midi demo",
 	"tags": ["gp","idea2","untitled","midi","demo","2023","2024"]
- },
+ }
 ]
