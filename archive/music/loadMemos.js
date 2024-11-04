@@ -48,7 +48,7 @@ function togglePlayer(entryElement, archiveFile) {
 
         const audio = document.createElement('audio');
         audio.controls = true;
-        audio.src = `./music/${archiveFile}`;
+        audio.src = `./archive/music/${archiveFile}`;
 
         const closeButton = document.createElement('button');
         closeButton.textContent = 'X';
