@@ -31,6 +31,8 @@ async function loadMemoDataIndex() {
             songEntry.appendChild(title);
             entryListContainer.appendChild(songEntry);
         });
+    } catch (error) {
+        console.error('Error loading memo data:', error);
     }
 }
 
