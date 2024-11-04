@@ -10,7 +10,7 @@ function formatDateFromISO(isoDate) {
 
 async function loadMemoDataIndex() {
     try {
-        const response = await fetch('.archive/music/musicList.json');
+        const response = await fetch('./archive/music/musicList.json');
         const data = await response.json();
 
         const entryListContainer = document.getElementById('entry-container');
