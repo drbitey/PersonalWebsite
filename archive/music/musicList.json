@@ -1,26 +1,82 @@
 [
+ {
+    "date": "2024-11-15",
+	"archiveFile": "2024-11-15.mp3",
+	"tags": ["guitar","botswana","2024"]
+ },
 {
     "date": "2024-10-21",
 	"archiveFile": "Jamming.mp3",
-    "title": "Jamming",
+	"tags": ["guitar","botswana","2024"]
+ },
+ {
+    "date": "2024-09-26",
+	"archiveFile": "2024-09-26.mp3",
+	"tags": ["guitar","botswana","2024"]
+ },
+ {
+    "date": "2024-09-02",
+	"archiveFile": "2024-09-02.mp3",
 	"tags": ["guitar","botswana","2024"]
  },
 {
     "date": "2024-07-17",
-	"archiveFile": "7-17-24",
-    "title": "Untitled guitar",
-	"tags": ["untitled","guitar","2024"]
+	"archiveFile": "7-17-24.mp3",
+	"tags": ["guitar","2024"]
+ },
+ {
+    "date": "2024-07-16",
+	"archiveFile": "7-16-24.mp3",
+	"tags": ["guitar","2024"]
  },
  {
     "date": "2024-06-18",
-	"archiveFile": "bonfire",
-    "title": "Bonfire (midi demo)",
-	"tags": ["gp","bonfire","midi","demo","2024"]
+	"archiveFile": "bonfire.mp3",
+	"tags": ["bonfire","midi","demo","2024"]
  },
  {
     "date": "2024-05-26",
 	"archiveFile": "idea2_5-26-24.mp3",
-    "title": "Untitled midi demo",
-	"tags": ["gp","idea2","untitled","midi","demo","2023","2024"]
+	"tags": ["midi","demo","2024"]
+ },
+ {
+    "date": "2024-02-01",
+	"archiveFile": "2024-02-01.mp3",
+	"tags": ["guitar","2024"]
+ },
+ {
+    "date": "2024-01-02",
+	"archiveFile": "2024-01-02.mp3",
+	"tags": ["guitar","2024"]
+ },
+ {
+    "date": "2023-09-28",
+	"archiveFile": "2023-09-28.mp3",
+	"tags": ["guitar","bass","2023"]
+ },
+ {
+    "date": "2023-04-21",
+	"archiveFile": "2023-04-21.mp3",
+	"tags": ["guitar","2023"]
+ },
+ {
+    "date": "2023-03-23",
+	"archiveFile": "2023-03-23.mp3",
+	"tags": ["guitar","rain song","2023"]
+ },
+ {
+    "date": "2022-11-16",
+	"archiveFile": "2022-11-16.mp3",
+	"tags": ["guitar","2022"]
+ },
+ {
+    "date": "2022-11-03",
+	"archiveFile": "2022-11-03.mp3",
+	"tags": ["guitar","2022"]
+ },
+ {
+    "date": "2022-11-02",
+	"archiveFile": "2022-11-02.mp3",
+	"tags": ["guitar","2022"]
  }
 ]
