@@ -39,10 +39,9 @@ body{
   /*padding-bottom: 3rem;/*Footer height*/
 }
 #footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 3rem;/*Footer height. Footer not used at this point*/
+	bottom:20;
+	width:100%;
+	display: inline-block;
 }
 h1{
 	text-align:center;
@@ -82,12 +81,13 @@ h3{
   margin:20px;
 }
 
-h4{text-align:left;
+h4{
+	text-align:left;
   color:#A5A5A5;
   font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size:18px;
   padding-left:20px;
-  margin:5px;
+  margin:0px;
 }
 
 a:hover{
@@ -96,9 +96,10 @@ a:hover{
 }
 
 hr{
-	width:102%; /* Needs work */
+	width:100%; /* Needs work */
+	display: block;
+    position: absolute;
 	margin-left:-10; /*Negates the padding of the page-container div so that hr reaches to ends*/
-	margin-right:-10; /* ^ */
 	height:4px;
 	color:black;
 	background-color:black;
