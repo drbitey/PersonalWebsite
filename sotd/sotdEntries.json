@@ -1,5 +1,23 @@
 [
 {
+    "date": "2024-11-30",
+    "spotifyLink": "https://open.spotify.com/track/3cscgVhdBfgMdxQRC8Uqke?si=8c43af28722c4504",
+    "artist": "Pinegrove"
+    "song_title": "New Friends"
+ },
+ {
+    "date": "2024-11-29",
+    "spotifyLink": "https://open.spotify.com/track/45FmwBKQdyCMLIM1z7lnwc?si=bc3c162a899a4a13",
+    "artist": "American Football",
+    "song_title": "Fade Into You"
+ },
+ {
+    "date": "2024-11-28",
+    "spotifyLink": "https://open.spotify.com/track/1csPfS6y1zVsZx7SbXJDXJ?si=0724738eb9e34373",
+    "artist": "Title Fight",
+    "song_title": "Shed"
+ },
+{
     "date": "2024-11-27",
     "spotifyLink": "https://open.spotify.com/track/3hpda46XG8bRA43KSfRAls?si=07e38848b32a41d4",
     "artist": "Into It. Over It.",
