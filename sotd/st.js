@@ -1,17 +1,17 @@
-function formatDateInSetswana(isoDate) {
-    const monthsInSetswana = [
-        "0", "Firikgong", "Tlhakole", "Mopitlo", "Moranang", "Motsheganong", "Seetebosigo", "Phukwi", "Phatwe", "Lwetse", "Phalane", "Ngwanatsele", "Sedimonthole"
+function formatDateInSesotho(isoDate) {
+    const monthsInSesotho = [
+        "0", "Pherekgong", "Hlakola", "Hlakubele", "Mmesa", "Motsheanong", "Phupjane", "Phupu", "Phato", "Loetse", "Mphalane", "Pudungwana", "Tshitwe"
     ];
     
     const date = new Date(isoDate);
     const day = date.getUTCDate();
-    const month = monthsInSetswana[date.getUTCMonth() + 1]; // array is 0-indexed
+    const month = monthsInSesotho[date.getUTCMonth() + 1]; // array is 0-indexed
     const year = date.getUTCFullYear();
 
     return `${day} ${month} ${year}`;
 }
 
-async function loadSongDataBW() {
+async function loadSongDataST() {
     const response = await fetch('../sotd/sotdEntries.json');
     const data = await response.json();
 
@@ -27,7 +27,7 @@ async function loadSongDataBW() {
             const songEntry = document.createElement('h4');
 				const link = document.createElement('a');
 
-            const formattedDate = formatDateInSetswana(song.date); // Format date specifically for Setswana
+            const formattedDate = formatDateInSesotho(song.date); // Format date specifically for Sesotho
 
             link.href = song.spotifyLink;
             link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
