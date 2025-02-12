@@ -10,7 +10,7 @@ const languages = [
 function getCurrentLanguage() {
 	const path = window.location.pathname;
 	const parts = path.split('/');
-	const languageCode = parts[parts.length - 1];
+	let languageCode = parts[parts.length - 1];
 	if (languageCode === 'sotd') {
 		languageCode = 'en';
 	}
