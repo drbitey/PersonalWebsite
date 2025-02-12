@@ -10,11 +10,13 @@ const languages = [
 function getCurrentLanguage() {
 	const path = window.location.pathname;
 	const parts = path.split('/');
-	let languageCode = parts[parts.length - 1];
+	const languageCode = parts[parts.length - 1];
 	if (languageCode === 'sotd') {
-		languageCode = 'en';
+		return 'en';
 	}
-	return languageCode || 'en';
+	else {
+		return languageCode;
+	}
 }
 
 function prepDropdown() {
