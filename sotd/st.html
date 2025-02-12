@@ -12,25 +12,19 @@
 		<link rel="stylesheet" type="text/css" href="../style.css">
 		<title>Pina ea Letsatsi</title>
 		<link rel="shortcut icon" type="image/png" href="../img/icon.png">
-		<meta name="keywords" content="Michael voltz, voltz, mike voltz">
+		<meta name="keywords" content="">
 		<meta name="description" content="Pina ea Letsatsi">
-		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
+		<script type="text/javascript" src="../sotd/st.js"></script>
 		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
 	</head>
-	<body onload="loadSongData('st');">
+	<body onload="loadSongDataST(); prepDropdown();">
 		<div id="page-container">
 			<div id="content-wrap">
 				<div id="language-selector" onclick="toggleLanguageDropdown()">
-					<h3 alt="Sprache">◍</h3>
+					<h3 alt="Language">◍</h3>
 				</div>
             			<div id="language-dropdown">
                				<select id="language-select" onchange="changeLanguage()">
-						<option value="de">Deutsch</option>
-						<option value="st" selected>Sesotho</option>
-						<option value="af" >Afrikaans</option>
-                    				<option value="en">English</option>
-						<option value="it">Italiano</option>
-                    				<!--<option value="ar">Arabic</option>-->
               				</select>
             			</div>
 				<h1>Pina ea Letsatsi</h1>
