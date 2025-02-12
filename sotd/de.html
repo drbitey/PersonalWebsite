@@ -17,7 +17,7 @@
 		<script type="text/javascript" src="../sotd/loadSongData.js"></script>
 		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
 	</head>
-	<body onload="loadSongData('de');">
+	<body onload="loadSongData('de'); prepDropdown();">
 		<div id="page-container">
 			<div id="content-wrap">
 				<div id="language-selector" onclick="toggleLanguageDropdown()">
@@ -25,11 +25,6 @@
 				</div>
             			<div id="language-dropdown">
                				<select id="language-select" onchange="changeLanguage()">
-								<option value="af">Afrikaans</option>
-								<option value="de" selected>Deutsch</option>
-								<option value="en">English</option>
-								<option value="it">Italiano</option>
-                    		<!--<option value="ar">Arabic</option>-->
               				</select>
             			</div>
 				<h1>Mike's Lied des Tages</h1>
