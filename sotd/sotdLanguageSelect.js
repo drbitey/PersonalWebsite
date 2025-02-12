@@ -6,8 +6,6 @@ const languages = [
 	{ iso: 'st', name: 'Sesotho' },
 	{ iso: 'tn-BW', name: 'Setswana' }
 ] // Currently a little redundant. localizations.json does exist and I do use it but it seems a little inefficient. This stores languages for use in the dropdown.
-const dropdown = document.getElementById('language-dropdown');
-const select = document.getElementById('language-select');
 
 function getCurrentLanguage() {
 	const path = window.location.pathname;
@@ -17,6 +15,7 @@ function getCurrentLanguage() {
 }
 
 function prepDropdown() {
+	const select = document.getElementById('language-select');
 	currentLanguage = getCurrentLanguage();
 	for (let i = 0; i < languages.length; i++) {
 		const option = document.createElement('option');
@@ -30,6 +29,7 @@ function prepDropdown() {
 }
 
 function toggleLanguageDropdown() {
+	const dropdown = document.getElementById('language-dropdown');
 	dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
 }
 
