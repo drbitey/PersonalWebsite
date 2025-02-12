@@ -17,7 +17,7 @@
 		<script type="text/javascript" src="../sotd/tn-BW.js"></script>
 		<script type="text/javascript" src="../sotd/sotdLanguageSelect.js"></script>
 	</head>
-	<body onload="loadSongDataBW();">
+	<body onload="loadSongDataBW(); prepDropdown();">
 		<div id="page-container">
 			<div id="content-wrap">
 				<div id="language-selector" onclick="toggleLanguageDropdown()">
@@ -25,11 +25,6 @@
 				</div>
             			<div id="language-dropdown">
                				<select id="language-select" onchange="changeLanguage()">
-						<option value="de" selected>Deutsch</option>
-						<option value="tn-BW" selected>Setswana</option>
-                    				<option value="en">English</option>
-						<option value="it">Italiano</option>
-                    				<!--<option value="ar">Arabic</option>-->
               				</select>
             			</div>
 				<h1>Sefela sa Gompieno</h1>
