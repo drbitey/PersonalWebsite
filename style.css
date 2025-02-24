@@ -46,8 +46,8 @@ body{
 h1{
 	text-align:center;
 	color:#6300C6;
-	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
-	-webkit-text-stroke: 1px #320064;
+	font-family: Arial, Helvetica, sans-serif;
+	-webkit-text-stroke: 2.5px #320064;
 	font-size:48px;
 	margin:20px;
 	text-align:left;
