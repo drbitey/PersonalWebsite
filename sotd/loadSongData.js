@@ -19,6 +19,8 @@ async function loadSongData(lang) {
 
     const localDate = new Date().toISOString().split("T")[0]; //fixes the code !!!
 
+    const frag = document.createDocumentFragment(); // efficiency update 4/28/25. Fragment stored in local memory
+	
     data.forEach((song) => {
         if (song.date <= localDate) { // Display entries up to the user's local date
             const songEntry = document.createElement('h4');
@@ -27,10 +29,11 @@ async function loadSongData(lang) {
             link.href = song.spotifyLink;
             link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
             songEntry.appendChild(link);
-            songListContainer.appendChild(songEntry);
+            frag.appendChild(songEntry);
         } else {
             // Skip songs that are "in the future" for the user
         }
     });
+    songListContainer.appendChild(frag);
 }
 
