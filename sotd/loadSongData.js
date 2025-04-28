@@ -26,6 +26,7 @@ async function loadSongData(lang) {
             const songEntry = document.createElement('h4');
             const link = document.createElement('a');
             const formattedDate = formatDateFromISO(song.date, lang);
+	    songEntry.classList.add("entry");
             link.href = song.spotifyLink;
             link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
             songEntry.appendChild(link);
