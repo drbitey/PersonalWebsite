@@ -83,16 +83,32 @@ h3{
 
 h4{
 	text-align:left;
-  color:#A5A5A5;
-  font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  font-size:18px;
-  padding-left:20px;
-  margin:5px;
+	color:#A5A5A5;
+  	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+ 	font-size:18px;
+  	padding-left:20px;
+  	margin:5px;
 }
 
 a:hover{
 	color:#6300C6;
-	-webkit-text-stroke: 0.5px #6300C6; /* Creates purple glow on <a> entries when hovered */
+	transition: text-shadow 0.2s;
+	text-shadow: 0 0 2px #000000, 0 0 10px #6300C6, 0 0 15px #320064;
+}
+
+.entry{
+	text-align:left;
+	color:#A5A5A5;
+  	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+ 	font-size:18px;
+  	padding-left:20px;
+  	margin:5px;
+ 	border-bottom: 1px solid #424242;
+  	padding: 8px;
+}
+
+.entry:hover{
+	background: linear-gradient(#282828, #333333);
 }
 
 hr{
