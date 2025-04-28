@@ -1,42 +1,47 @@
 [
-{
-    "date": "2024-11-04",
-	"time": "6:17 PM",
-    "content": "Life is good. just like, get a guitar really and then figure stuff out idk"
- },
- {
-    "date": "2024-05-28",
-	"time": "10:17 AM",
-    "content": "20... woo-hoo! :)"
- },
- {
-    "date": "2022-02-22",
-	"time": "2:22 PM",
-    "content": "lol, lmao"
- },
- {
-    "date": "2021-11-16",
-	"time": "10:19 PM",
-    "content": "i have lived to create manmade horrors beyond my own comprehension;\nto become that which i have sought to destroy"
- },
- {
-    "date": "2021-02-10",
-	"time": "10:32 PM",
-    "content": "blizzard wendy's"
- },
- {
-    "date": "2021-02-05",
-	"time": "1:17 AM",
-    "content": "toes still cold, got the tapping"
- },
- {
-    "date": "2020-12-25",
-	"time": "12:51 AM",
-    "content": "almost an hour past midnight, no sign of the bearded bastard...\nwill update,, i will catch him"
- },
- {
-    "date": "2020-12-17",
-	"time": "10:21 PM",
-    "content": "my toes are freezing"
- }
+	{
+    		"date": "2025-04-28",
+		"time": "1:20 PM",
+    		"content": "we're so back <3"
+ 	},
+	{
+    		"date": "2024-11-04",
+		"time": "6:17 PM",
+    		"content": "Life is good. just like, get a guitar really and then figure stuff out idk"
+ 	},
+ 	{
+    		"date": "2024-05-28",
+		"time": "10:17 AM",
+    		"content": "20... woo-hoo! :)"
+ 	},
+	{
+    		"date": "2022-02-22",
+		"time": "2:22 PM",
+    		"content": "lol, lmao"
+ 	},
+ 	{
+    		"date": "2021-11-16",
+		"time": "10:19 PM",
+    		"content": "i have lived to create manmade horrors beyond my own comprehension;\nto become that which i have sought to destroy"
+ 	},
+ 	{
+    		"date": "2021-02-10",
+		"time": "10:32 PM",
+    		"content": "blizzard wendy's"
+	 },
+	 {
+    		"date": "2021-02-05",
+		"time": "1:17 AM",
+    		"content": "toes still cold, got the tapping"
+ 	},
+ 	{
+    		"date": "2020-12-25",
+		"time": "12:51 AM",
+    		"content": "almost an hour past midnight, no sign of the bearded bastard...\nwill update,, i will catch him"
+	},
+ 	{
+    		"date": "2020-12-17",
+		"time": "10:21 PM",
+    		"content": "my toes are freezing"
+ 	}
 ]
