@@ -43,6 +43,19 @@ body{
 	width:100%;
 	display: inline-block;
 }
+#today {
+  background-color: #320064;
+  color: #FFFFFF;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 8px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #6300C6; }
+  50% { box-shadow: 0 0 15px #6300C6; }
+  100% { box-shadow: 0 0 5px #6300C6; }
+}
 h1{
 	text-align:center;
 	color:#6300C6;
