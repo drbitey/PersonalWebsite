@@ -15,7 +15,7 @@ async function loadSongData(lang) {
 
     const songListContainer = document.getElementById('song-list-container');
 	
-	songListContainer.innerHTML = ""; //clear out container before printing- allows me to test languages :)
+    songListContainer.innerHTML = ""; //clear out container before printing- allows me to test languages :)
 
     const localDate = new Date().toISOString().split("T")[0]; //fixes the code !!!
 
@@ -27,6 +27,7 @@ async function loadSongData(lang) {
             const link = document.createElement('a');
             const formattedDate = formatDateFromISO(song.date, lang);
 	    songEntry.classList.add("entry");
+	    if (song.date == localDate) { songEntry.id = 'today' }
             link.href = song.spotifyLink;
             link.textContent = `${formattedDate}: ${song.artist} - ${song.song_title}`;
             songEntry.appendChild(link);
