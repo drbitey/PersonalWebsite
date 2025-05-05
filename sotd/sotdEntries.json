@@ -1,5 +1,47 @@
 [
     {
+        "date": "2025-05-12",
+        "spotifyLink": "https://open.spotify.com/track/24iRuBmhORa25nuSOwFwJy?si=ab9eed947d2a409f",
+        "artist": "Ahmed Malek",
+        "song_title": "La La La"
+    },
+    {
+        "date": "2025-05-11",
+        "spotifyLink": "https://open.spotify.com/track/2AX2PI2XMmD6TlvhJRS4rm?si=5821ff0a1cab42ca",
+        "artist": "The Fleetwoods",
+        "song_title": "Tragedy"
+    },
+    {
+        "date": "2025-05-10",
+        "spotifyLink": "https://open.spotify.com/track/2AX2PI2XMmD6TlvhJRS4rm?si=5821ff0a1cab42ca",
+        "artist": "Shabaka and the Ancestors",
+        "song_title": "They Who Must Die"
+    },
+    {
+        "date": "2025-05-09",
+        "spotifyLink": "https://open.spotify.com/track/1QlTNF43OyKK9BorIRsJ8o?si=3bea3283a19444dc",
+        "artist": "Chet Baker",
+        "song_title": "Autumn Leaves"
+    },
+    {
+        "date": "2025-05-08",
+        "spotifyLink": "https://open.spotify.com/track/53b4ay3zz0DpRd3QVgzaqW?si=5a53c47a69624c2f",
+        "artist": "Bruno Pernadas",
+        "song_title": "Problem Number 6"
+    },
+    {
+        "date": "2025-05-07",
+        "spotifyLink": "https://open.spotify.com/track/0nwFWpyo5U1piWicDTDw4L?si=ed3a9038318248e1",
+        "artist": "Batsumi",
+        "song_title": "Mamshanyana"
+    },
+    {
+        "date": "2025-05-06",
+        "spotifyLink": "https://open.spotify.com/track/6HZnsjnFKqd4mR3roOeaiR?si=e28b17f234524871",
+        "artist": "Ebo Taylor",
+        "song_title": "Atwer Abroba"
+    },
+    {
         "date": "2025-05-05",
         "spotifyLink": "https://open.spotify.com/track/3pEgU9RpU5OFcABkdOjXF9?si=291ef6e5e4f34625",
         "artist": "TOLEDO",
