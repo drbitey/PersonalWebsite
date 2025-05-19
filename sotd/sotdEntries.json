@@ -1,5 +1,35 @@
 [
     {
+        "date": "2025-05-26",
+        "spotifyLink": "https://open.spotify.com/track/6p5HLJcrqSBcMBseTcPd97?si=ab08d81f13e44303",
+        "artist": "Opa",
+        "song_title": "Golden Wings"
+    },
+    {
+        "date": "2025-05-25",
+        "spotifyLink": "https://open.spotify.com/track/3S8V7DoIfZwslGuCYp9ku9?si=f8a2bd63cd634f75",
+        "artist": "The Blackbyrds",
+        "song_title": "Reggins"
+    },
+    {
+        "date": "2025-05-24",
+        "spotifyLink": "https://open.spotify.com/track/2T0sr3TdZw2kH7idOKLzZD?si=417ed66a448d4515",
+        "artist": "Warpaint",
+        "song_title": "Stevie"
+    },
+    {
+        "date": "2025-05-23",
+        "spotifyLink": "https://open.spotify.com/track/2jGWmm8AkM9bEmMZObSXvu?si=14fd70a52f8f4955",
+        "artist": "Kurt Vile",
+        "song_title": "Blackberry Song"
+    },
+    {
+        "date": "2025-05-22",
+        "spotifyLink": "https://open.spotify.com/track/0t2wRTG7X1BqVUVptNuGwu?si=3ecf189382144bee",
+        "artist": "Attack in Black",
+        "song_title": "I'm Going to Forget"
+    },
+    {
         "date": "2025-05-21",
         "spotifyLink": "https://open.spotify.com/track/4RZkYndhR0USUmhACeokJ5?si=342871b41e464073",
         "artist": "Ale Hop, Laura Robles",
