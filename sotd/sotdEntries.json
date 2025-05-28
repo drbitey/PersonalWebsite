@@ -1,5 +1,47 @@
 [
     {
+        "date": "2025-06-09",
+        "spotifyLink": "https://open.spotify.com/track/3ArnNhm8z0ScjDKfGHSBRk?si=87c2e85c5bfd4157",
+        "artist": "Cassandra Jenkins",
+        "song_title": "Hard Drive"
+    },
+    {
+        "date": "2025-06-08",
+        "spotifyLink": "https://open.spotify.com/track/04EzZcjDL2JsV9TxB1dNFf?si=eaf31daa54d3495a",
+        "artist": "Wells Fargo",
+        "song_title": "Love of My Life"
+    },
+    {
+        "date": "2025-06-07",
+        "spotifyLink": "https://open.spotify.com/track/40UlFC0dIxv7lAEJaPZLnm?si=4639f7e65c8c4060",
+        "artist": "Air",
+        "song_title": "Alone in Kyoto"
+    },
+    {
+        "date": "2025-06-06",
+        "spotifyLink": "https://open.spotify.com/track/7L2P9fqdfqG1j4bqAkC6tY?si=d0daf59bb9ee4f8c",
+        "artist": "ARITASAKI",
+        "song_title": "kimiwotsuredashiteteisyokuwotabetai"
+    },
+    {
+        "date": "2025-06-05",
+        "spotifyLink": "https://open.spotify.com/track/4UeSleTsjljEIdEGRdVggm?si=83d113aae31f481c",
+        "artist": "Nohelani Cypriano",
+        "song_title": "Lihue"
+    },
+    {
+        "date": "2025-06-04",
+        "spotifyLink": "https://open.spotify.com/track/4GNBjMLPjb0YaHlRv7dBR2?si=2ff4df3ef8234a5a",
+        "artist": "Orchestra Baobab",
+        "song_title": "Kelen ati leen"
+    },
+    {
+        "date": "2025-06-03",
+        "spotifyLink": "https://open.spotify.com/track/3lrVGaRqkoe7C2oSYaBcEV?si=f934e5ac8a624b2d",
+        "artist": "Bembeya Jazz National",
+        "song_title": "Petit Sékou"
+    },
+    {
         "date": "2025-06-02",
         "spotifyLink": "https://open.spotify.com/track/2PH3lQgQmRahPxFWF2Q8HC?si=ca9b6424fe7e4f60",
         "artist": "The Paradise Bangkok Molam International Band",
