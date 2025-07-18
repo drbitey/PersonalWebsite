@@ -1,4 +1,160 @@
-[
+﻿[
+{
+        "date": "2025-07-21",
+        "spotifyLink": "https://open.spotify.com/track/14Zdkq8duIwDKJKqJkR3ZU?si=2a6cbef9cbd6477f",
+        "artist": "Keaton Henson",
+        "song_title": "Charon"
+    },
+	{
+        "date": "2025-07-20",
+        "spotifyLink": "https://open.spotify.com/track/4j2DQgFAyVuKOBFpq4vEPR?si=364716eac1ca4adc",
+        "artist": "MJ Lenderman",
+        "song_title": "Wristwatch"
+    },
+	{
+        "date": "2025-07-19",
+        "spotifyLink": "https://open.spotify.com/track/5PRVw5DQSpJ47JTYxB5eLq?si=15591705a4604ad1",
+        "artist": "Siavash Amini, Saåad",
+        "song_title": "Dragging The Harrow"
+    },
+	{
+        "date": "2025-07-18",
+        "spotifyLink": "https://open.spotify.com/track/2HRKmeGMWowwo0L1WILmmM?si=62e564a7f1f4498e",
+        "artist": "Bear In Heaven",
+        "song_title": "Lovesick Teenagers"
+    },
+	{
+        "date": "2025-07-17",
+        "spotifyLink": "https://open.spotify.com/track/1NXiPP4aOE4fbyneVwpjQI?si=c89ba30972ec4893",
+        "artist": "Kokoroko, Azekel",
+        "song_title": "Three Piece Suit"
+    },
+	{
+        "date": "2025-07-16",
+        "spotifyLink": "https://open.spotify.com/track/0k6LRpP1C0XH7kOBEoiKtH?si=5151318d7f75469b",
+        "artist": "Amindi",
+        "song_title": "telly"
+    },
+	{
+        "date": "2025-07-15",
+        "spotifyLink": "https://open.spotify.com/track/5H1hP8yjfrg9Kg6I79pLeS?si=2a4b4571338a4351",
+        "artist": "Land of Talk",
+        "song_title": "World Made"
+    },
+	{
+        "date": "2025-07-14",
+        "spotifyLink": "https://open.spotify.com/track/2Wc6WJFIh86EDnlMxIKhv8?si=0236e6f421154410",
+        "artist": "Death Cab for Cutie",
+        "song_title": "Someday You Will Be Loved"
+    },
+	{
+        "date": "2025-07-13",
+        "spotifyLink": "https://open.spotify.com/track/3ou9rSNUQnE7XYmJkUUIOc?si=94b17495e5df4f2a",
+        "artist": "Coldplay",
+        "song_title": "Green Eyes"
+    },
+	{
+        "date": "2025-07-12",
+        "spotifyLink": "https://open.spotify.com/track/7rm25ayO1rdE9pPQyuDc8W?si=a3350b24061044ed",
+        "artist": "Built To Spill",
+        "song_title": "Stab"
+    },
+	{
+        "date": "2025-07-11",
+        "spotifyLink": "https://open.spotify.com/track/5bmASQaQFMSeFnV7660qm9?si=747e1443e77044f7",
+        "artist": "The Antlers",
+        "song_title": "Shiva"
+    },
+	{
+        "date": "2025-07-10",
+        "spotifyLink": "https://open.spotify.com/track/1erXDiGCnmUQvG6DZRqpuM?si=950ccf235bba4ac0",
+        "artist": "The Paper Kites",
+        "song_title": "Electric Indigo"
+    },
+	{
+        "date": "2025-07-09",
+        "spotifyLink": "https://open.spotify.com/track/63VioLs0OroYJwLPpwUtgp?si=e9a92b51fffe4b7a",
+        "artist": "The Middle East",
+        "song_title": "Land of the Bloody Unknown"
+    },
+	{
+        "date": "2025-07-08",
+        "spotifyLink": "https://open.spotify.com/track/3GaamyFHQYbQi1ykc4nV4o?si=508ce9afea274b13",
+        "artist": "Slow Pulp",
+        "song_title": "High"
+    },
+	{
+        "date": "2025-07-07",
+        "spotifyLink": "https://open.spotify.com/track/1KaqkPcXRryyLcxhed4zj2?si=0cac17e0b3e9499b",
+        "artist": "she's green",
+        "song_title": "bleed"
+    },
+	{
+        "date": "2025-07-06",
+        "spotifyLink": "https://open.spotify.com/track/6o1ywd45rTIgLR514Skdtl?si=ef3439b2f4964142",
+        "artist": "Phantom Handshakes",
+        "song_title": "Cricket Songs"
+    },
+	{
+        "date": "2025-07-05",
+        "spotifyLink": "https://open.spotify.com/track/4coOLKzvTTj7zQ9mzP3gxp?si=19a8009050d948e6",
+        "artist": "sweet93",
+        "song_title": "Stars Above"
+    },
+	{
+        "date": "2025-07-04",
+        "spotifyLink": "https://open.spotify.com/track/4jkRnUuBruxsBxwGvljLTe?si=4701d1bf0db04073",
+        "artist": "Hook-Ups",
+        "song_title": "Glaze"
+    },
+	{
+        "date": "2025-07-03",
+        "spotifyLink": "https://open.spotify.com/track/6VLjdregMReJhKp2r32IWo?si=e1b3830b787143e6",
+        "artist": "Shelly",
+        "song_title": "Natural"
+    },
+	{
+        "date": "2025-07-02",
+        "spotifyLink": "https://open.spotify.com/track/2KFa0LSqxL20wZVeeNpVEr?si=53b057e48f1149fb",
+        "artist": "Mina Tindle, Sufjan Stevens",
+        "song_title": "Heaven Thunder"
+    },
+{
+        "date": "2025-07-01",
+        "spotifyLink": "https://open.spotify.com/track/7isVqPzG3R5ni6IM4YG0sv?si=310e498c003e494e",
+        "artist": "Maribou State",
+        "song_title": "Glasshouses"
+    },
+	{
+        "date": "2025-06-30",
+        "spotifyLink": "https://open.spotify.com/track/4ltqfN12ohaVZdM6C45gMg?si=c88cb494542c425d",
+        "artist": "Ethel Cain",
+        "song_title": "American Teenager"
+    },
+	{
+        "date": "2025-06-29",
+        "spotifyLink": "https://open.spotify.com/track/6juEcdHgjoFrfW6l3haulr?si=9a151ff969854644",
+        "artist": "Perfume Genius",
+        "song_title": "AWOL Marine"
+    },
+	{
+        "date": "2025-06-28",
+        "spotifyLink": "https://open.spotify.com/track/6liSKA1Va8rggh6HxKHaYr?si=60e12aa1df494396",
+        "artist": "This Is Lorelei",
+        "song_title": "Perfect Hand"
+    },
+	{
+        "date": "2025-06-27",
+        "spotifyLink": "https://open.spotify.com/track/3XqJHXfXFwThWGl42Iw7hD?si=b5cc1c2f12eb4845",
+        "artist": "Youth Lagoon",
+        "song_title": "Football"
+    },
+	{
+        "date": "2025-06-26",
+        "spotifyLink": "https://open.spotify.com/track/5C8NywhHjhdvsUtOuLq1s8?si=64614deadacc4134",
+        "artist": "Nicholas Krgovich",
+        "song_title": "Front Stoop #2"
+    },
     {
         "date": "2025-06-25",
         "spotifyLink": "https://open.spotify.com/track/6vXCIHD0CQamCGWY7T2w5I?si=22a3ef3685494974",
