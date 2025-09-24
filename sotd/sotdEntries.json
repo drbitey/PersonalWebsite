@@ -1,5 +1,47 @@
 ﻿[
 	 {
+        "date": "2025-10-01",
+        "spotifyLink": "https://open.spotify.com/track/59S8JfBTZo1jZhwCgwzEYz?si=2c55c8c2205e449c",
+        "artist": "Billie Marten",
+        "song_title": "Feeling"
+    },
+	 {
+        "date": "2025-09-30",
+        "spotifyLink": "https://open.spotify.com/track/0MZmVxSYtBphmi5mrgTLXp?si=4643b2eae164452f",
+        "artist": "Tram",
+        "song_title": "Nothing Left to Say"
+    },
+	 {
+        "date": "2025-09-29",
+        "spotifyLink": "https://open.spotify.com/track/3BUnbcHD2hoS7hnOTisrnq?si=6e5185501e6d479d",
+        "artist": "Helvetia",
+        "song_title": "Marea"
+    },
+	 {
+        "date": "2025-09-28",
+        "spotifyLink": "https://open.spotify.com/track/5u6Hqw5RCKegHiB4swTuCE?si=01a54eff431f496a",
+        "artist": "Summer 2000",
+        "song_title": "Lucifer Loves Me"
+    },
+	 {
+        "date": "2025-09-27",
+        "spotifyLink": "https://open.spotify.com/track/0ocujCfGx85yhv4VDtjFSW?si=ee9ef3176bec4d7e",
+        "artist": "Wyatt Smith",
+        "song_title": "Maple"
+    },
+	 {
+        "date": "2025-09-26",
+        "spotifyLink": "https://open.spotify.com/track/4OOz9GwhntB2WrEUO74A8I?si=da426061f6eb4713",
+        "artist": "Knifeplay",
+        "song_title": "Tears"
+    },
+	 {
+        "date": "2025-09-25",
+        "spotifyLink": "https://open.spotify.com/track/0fUV4Y51wN8lnG75rkDDwg?si=117501913383478a",
+        "artist": "Horse Jumper of Love",
+        "song_title": "Ugly Brunette"
+    },
+	 {
         "date": "2025-09-24",
         "spotifyLink": "https://open.spotify.com/track/7qscY7sKAaGZynXbDyeMH3?si=043056398bd94e4a",
         "artist": "saturdays at your place",
@@ -20,7 +62,7 @@
 	 {
         "date": "2025-09-21",
         "spotifyLink": "https://open.spotify.com/track/2L8eTF6iQtez7xsduIK3DN?si=682fc4fe54824f0a",
-        "artist": "Carly Gosgrove",
+        "artist": "Carly Cosgrove",
         "song_title": "What Are You, A Cop?"
     },
 	 {
