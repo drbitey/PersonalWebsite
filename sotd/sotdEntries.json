@@ -1,5 +1,29 @@
 ﻿[
 	 {
+        "date": "2026-01-09",
+        "spotifyLink": "https://open.spotify.com/track/5h8EGfF4j1az4GNCAgQBkF?si=6135d17387c44e5e",
+        "artist": "Footballhead",
+        "song_title": "Crushing Me"
+    },
+	 {
+        "date": "2026-01-08",
+        "spotifyLink": "https://open.spotify.com/track/1HVZRpGwLyDY4VmNCGTaqY?si=9b5ec1ccdcb24423",
+        "artist": "seat",
+        "song_title": "Hamster Wheel"
+    },
+	 {
+        "date": "2026-01-07",
+        "spotifyLink": "https://open.spotify.com/track/4uteLy8IgDVs19ze51gOQ4?si=899990414cb6443c",
+        "artist": "Maurice Louca",
+        "song_title": "Ghab"
+    },
+	 {
+        "date": "2026-01-06",
+        "spotifyLink": "https://open.spotify.com/track/0GbxLZ2RQA9otlb4UUudR9?si=f7bedba632124eba",
+        "artist": "Like Roses",
+        "song_title": "Easy"
+    },
+	 {
         "date": "2026-01-05",
         "spotifyLink": "https://open.spotify.com/track/5CDBiHXnKAkcaxoiTmttnX?si=c6d81234e61743f3",
         "artist": "Daughter",
