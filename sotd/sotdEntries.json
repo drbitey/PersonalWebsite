@@ -1,5 +1,59 @@
 ﻿[
 	 {
+        "date": "2026-02-06",
+        "spotifyLink": "https://open.spotify.com/track/2rZZGEzS9rbXJBwVfb0NNP?si=649ffd71c6d84c22",
+        "artist": "The Wonder Years",
+        "song_title": "Cardinals"
+    },
+	 {
+        "date": "2026-02-05",
+        "spotifyLink": "https://open.spotify.com/track/5VBNQBQKP4e9QnmCzfyeYX?si=f3fbf40ebfe44361",
+        "artist": "Good Hangs",
+        "song_title": "I Only Do Pushups When I'm Drunk (Drinking Lonely)"
+    },
+	 {
+        "date": "2026-02-04",
+        "spotifyLink": "https://open.spotify.com/track/57LiVka68sGq3a7yzS8xEc?si=1b6daa973b4b4aa8",
+        "artist": "rationale.",
+        "song_title": "Are You Still Listening?"
+    },
+	 {
+        "date": "2026-02-03",
+        "spotifyLink": "https://open.spotify.com/track/0mS9ob2WDtb57ZOuA9V0e2?si=10def63bd20446d1",
+        "artist": "Microwave",
+        "song_title": "Drown"
+    },
+	 {
+        "date": "2026-02-02",
+        "spotifyLink": "https://open.spotify.com/track/03jwjS5Jc9rzuRWzoQ4HVq?si=e03dcb4f56844f66",
+        "artist": "Carly Cosgrove",
+        "song_title": "Not My Job"
+    },
+	 {
+        "date": "2026-02-01",
+        "spotifyLink": "https://open.spotify.com/track/4qhudJ2bO4rZs4ANNPmJAI?si=82e93e06b7dc4a90",
+        "artist": "Origami Angel",
+        "song_title": "Dirty Mirror Selfie"
+    },
+	 {
+        "date": "2026-01-31",
+        "spotifyLink": "https://open.spotify.com/track/5CZ67ATydVmeAgld1W28KM?si=3243e04e79264f44",
+        "artist": "Footballhead",
+        "song_title": "Used To Be"
+    },
+	 {
+        "date": "2026-01-30",
+        "spotifyLink": "https://open.spotify.com/track/4J2xMy0kakU9sAin1uppxb?si=0742dc614f414066",
+        "artist": "Los Gatos",
+        "song_title": "La Balsa"
+    },
+	 {
+        "date": "2026-01-29",
+        "spotifyLink": "https://open.spotify.com/track/0IZPP1f9bN3FRz65DSAm1S?si=75d8df08930d43e2",
+        "artist": "The Saddest Landscape",
+        "song_title": "The Sixth Golden Ticket"
+    },
+	 {
         "date": "2026-01-28",
         "spotifyLink": "https://open.spotify.com/track/4RC674bEax4C5v4pko9WUK?si=dbc5bc69d62e4821",
         "artist": "Gillian Carter",
