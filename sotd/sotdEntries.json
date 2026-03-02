@@ -1,5 +1,203 @@
 ﻿[
 	 {
+        "date": "2026-03-11",
+        "spotifyLink": "https://open.spotify.com/track/4L1u3TLodakFu1H2d8g0BQ?si=92091949066a40ca",
+        "artist": "Singapore Sling",
+        "song_title": "Overdriver"
+    },
+	 {
+        "date": "2026-03-10",
+        "spotifyLink": "https://open.spotify.com/track/6ikobz37HSj8vspHvQRt23?si=8b49c6d264b043c0",
+        "artist": "Tania Maria",
+        "song_title": "Come With Me"
+    },
+	 {
+        "date": "2026-03-09",
+        "spotifyLink": "https://open.spotify.com/track/62tY72vWKlfU8WZVBJ3jsT?si=653196087cc64cc6",
+        "artist": "Medicine Boy",
+        "song_title": "The Strange in Me"
+    },
+	 {
+        "date": "2026-03-08",
+        "spotifyLink": "https://open.spotify.com/track/6YrjtkQBZnMXAdByJZR7ao?si=0c5fa703fd14483d",
+        "artist": "Rseplandor",
+        "song_title": "Solar"
+    },
+	 {
+        "date": "2026-03-07",
+        "spotifyLink": "https://open.spotify.com/track/1hWCtDgh8SP0hLZIMvQfTH?si=2b2803055f8a4a84",
+        "artist": "The Ganjas",
+        "song_title": "Frío Ni Calor"
+    },
+	 {
+        "date": "2026-03-06",
+        "spotifyLink": "https://open.spotify.com/track/213XNePBS3v9QW0lnPUXmZ?si=917e3c7552614b0a",
+        "artist": "Sarah Kinsley",
+        "song_title": "Truth Of Pursuit"
+    },
+	 {
+        "date": "2026-03-05",
+        "spotifyLink": "https://open.spotify.com/track/2oDHL563ftf5nTjEdVwX1Z?si=aa4a5a3ddc344af9",
+        "artist": "Darksoft",
+        "song_title": "Somewhere Nowhere"
+    },
+	 {
+        "date": "2026-03-04",
+        "spotifyLink": "https://open.spotify.com/track/2JuasWPUodaUxf5nwNpciQ?si=28ef91e424484924",
+        "artist": "Alice In Chains",
+        "song_title": "Nutshell"
+    },
+	 {
+        "date": "2026-03-03",
+        "spotifyLink": "https://open.spotify.com/track/5TNK5VZK2blbka9h5KuJ5S?si=806a5d97541c4cff",
+        "artist": "Stateside",
+        "song_title": "All On Red"
+    },
+	 {
+        "date": "2026-03-02",
+        "spotifyLink": "https://open.spotify.com/track/0GvaNolz2vhHikR26yRLmv?si=1c6ec5fe130343ad",
+        "artist": "blink-182",
+        "song_title": "Wendy Clear"
+    },
+	 {
+        "date": "2026-03-01",
+        "spotifyLink": "https://open.spotify.com/track/0Na9JQAUJSdrMPLSISPJA1?si=d771933db2bc4b7b",
+        "artist": "Lagwagon",
+        "song_title": "Violins"
+    },
+	 {
+        "date": "2026-02-28",
+        "spotifyLink": "https://open.spotify.com/track/5a8qNDusdQ9l0VCOwIm0Dc?si=9d1bf213b4af483a",
+        "artist": "Jimmy Eat World",
+        "song_title": "A Sunday"
+    },
+	 {
+        "date": "2026-02-27",
+        "spotifyLink": "https://open.spotify.com/track/5TltGtLMjveIan5HvLAh1z?si=88893c30e53f4c57",
+        "artist": "The Get Up Kids",
+        "song_title": "I'm a Loner Dottie, a Rebel"
+    },
+	 {
+        "date": "2026-02-26",
+        "spotifyLink": "https://open.spotify.com/track/6UOgyWbhnGvDpgTtfU2XAk?si=c56b4b990dc44e5a",
+        "artist": "Wild Pink",
+        "song_title": "Dulling The Horns"
+    },
+	 {
+        "date": "2026-02-25",
+        "spotifyLink": "https://open.spotify.com/track/7hVbKG6DoD8ef4xLQUES3X?si=372c5032297a4400",
+        "artist": "Braid",
+        "song_title": "Universe or Worse"
+    },
+	 {
+        "date": "2026-02-24",
+        "spotifyLink": "https://open.spotify.com/track/32cShRFoAaiBBbaKWaOqB6?si=ebaeb116b1f64ecf",
+        "artist": "Joyce Manor",
+        "song_title": "Grey Guitar"
+    },
+	 {
+        "date": "2026-02-23",
+        "spotifyLink": "https://open.spotify.com/track/3o56JQBkDL2i3Ndv3v8MgU?si=d9ade8a603be4702",
+        "artist": "Kerosene Heights",
+        "song_title": "Perfect Timing"
+    },
+	 {
+        "date": "2026-02-22",
+        "spotifyLink": "https://open.spotify.com/track/1GgAQK7vuuydUdSn7uJFFT?si=d2c6e60a61fc4119",
+        "artist": "Daughter",
+        "song_title": "Not Enough"
+    },
+	 {
+        "date": "2026-02-21",
+        "spotifyLink": "https://open.spotify.com/track/7rpKFFRgEFbFD0H5SkiLfg?si=63627712209b48bd",
+        "artist": "Wishy",
+        "song_title": "Fly"
+    },
+	 {
+        "date": "2026-02-20",
+        "spotifyLink": "https://open.spotify.com/track/5NmBkXFDDRCWdopPXZPr0L?si=970421dda4a64ecc",
+        "artist": "Way Dynamic",
+        "song_title": "People Settle Down"
+    },
+	 {
+        "date": "2026-02-19",
+        "spotifyLink": "https://open.spotify.com/track/5ytpgIwkAjYNrAcFm4kVUb?si=be4fefcf2e404d27",
+        "artist": "Darryl Rahn",
+        "song_title": "Nothing Ever Happens"
+    },
+	 {
+        "date": "2026-02-18",
+        "spotifyLink": "https://open.spotify.com/track/7EJvwHjf9NKCmYBBGOuwQS?si=1e0d921789ff4d07",
+        "artist": "The Cranberries",
+        "song_title": "I Still Do"
+    },
+	 {
+        "date": "2026-02-17",
+        "spotifyLink": "https://open.spotify.com/track/4oSyqbzyC7g8x0dAMFANLn?si=a0b4980949e64479",
+        "artist": "At the Drive-In",
+        "song_title": "Hourglass"
+    },
+	 {
+        "date": "2026-02-16",
+        "spotifyLink": "https://open.spotify.com/track/48jUZUfYjA6f8EOZcQb35f?si=5f9fede4c4b84940",
+        "artist": "Penfold",
+        "song_title": "I'll Take You Everywhere"
+    },
+	 {
+        "date": "2026-02-15",
+        "spotifyLink": "https://open.spotify.com/track/0j3m9AfsZfanscT1uLrVk1?si=7fc13a4ca5964b03",
+        "artist": "The Promise Ring",
+        "song_title": "Red & Blue Jeans"
+    },
+	 {
+        "date": "2026-02-14",
+        "spotifyLink": "https://open.spotify.com/track/2uTvkHhMvrwZZmEDWfxCmn?si=5cdf65ef8e2446e7",
+        "artist": "hkmori",
+        "song_title": "anybody can find love (except you.)"
+    },
+	 {
+        "date": "2026-02-13",
+        "spotifyLink": "https://open.spotify.com/track/3U5TzKrZP6sqiR43LQArV7?si=00a26a7557bb4a3a",
+        "artist": "Thursday",
+        "song_title": "Understanding In A Car Crash"
+    },
+	 {
+        "date": "2026-02-12",
+        "spotifyLink": "https://open.spotify.com/track/4ifv7XOAICbc0libh0XiD0?si=cf6fd09a71b546d9",
+        "artist": "Footballhead",
+        "song_title": "Hesitate"
+    },
+	 {
+        "date": "2026-02-11",
+        "spotifyLink": "https://open.spotify.com/track/0qwoBdMnysN7dDT6tK3fcE?si=1577faa50686428b",
+        "artist": "Movements",
+        "song_title": "Panic"
+    },
+	 {
+        "date": "2026-02-10",
+        "spotifyLink": "https://open.spotify.com/track/5o4jv19QjSBtlE1iVF0FQa?si=904e6a78684d47ac",
+        "artist": "Modulogeek",
+        "song_title": "Around"
+    },
+	 {
+        "date": "2026-02-09",
+        "spotifyLink": "https://open.spotify.com/track/2XC3bJblZsSlL1JHvaLL70?si=0a7b693b882745da",
+        "artist": "Trophy Eyes",
+        "song_title": "Epilogue"
+    },
+	 {
+        "date": "2026-02-08",
+        "spotifyLink": "https://open.spotify.com/track/6sNT5PF1SjTYgMiAIQGYMd?si=850d99fbe6db4e3a",
+        "artist": "Sun Kil Moon",
+        "song_title": "Carry Me Ohio"
+    },
+	 {
+        "date": "2026-02-07",
+        "spotifyLink": "https://open.spotify.com/track/5i7SYIPDs8Az7XaXTOlfFp?si=09567f22db994a1b",
+        "artist": "po mia",
+        "song_title": "cyberchondria"
+    },
+	 {
         "date": "2026-02-06",
         "spotifyLink": "https://open.spotify.com/track/2rZZGEzS9rbXJBwVfb0NNP?si=649ffd71c6d84c22",
         "artist": "The Wonder Years",
