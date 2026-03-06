@@ -47,7 +47,7 @@ async function loadNbDataEntry() {
 
         if (entry) {
             titleElement.textContent = `${formatDateFromISO(entry.date)}`;
-            contentElement.innerHTML = entry.content.replace(/\n/g, '<br>'); //add in line breaks, please
+            contentElement.innerHTML = entry.content;
         } else {
             titleElement.textContent = 'Date not found';
             contentElement.textContent = 'BLANK';
