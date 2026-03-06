@@ -20,6 +20,10 @@
 
 /* STANDARD STYLING BELOW */
 
+#nb-Content {
+    white-space: pre-wrap;
+}
+
 body{
 	background-color:black;
 	background-image: url("./backgroundstripes.png");
