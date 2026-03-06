@@ -1,5 +1,47 @@
 ﻿[
 	 {
+        "date": "2026-03-18",
+        "spotifyLink": "https://open.spotify.com/track/3YQVYTkonczhXyj31HH4AK?si=83019eb9a5974d82",
+        "artist": "Radiohead",
+        "song_title": "Tinker Tailor Soldier Sailor Rich Man Poor Man Beggar Man Thief"
+    },
+	 {
+        "date": "2026-03-17",
+        "spotifyLink": "https://open.spotify.com/track/7pbUkS6crk7G6TRBhyqYGy?si=abfb6cf6d19342a6",
+        "artist": "Downward",
+        "song_title": "The Waltz"
+    },
+	 {
+        "date": "2026-03-16",
+        "spotifyLink": "https://open.spotify.com/track/21dPiKXCSZckG8UQ4J8d38?si=eb919d4e221944b4",
+        "artist": "Ultra Q",
+        "song_title": "You and Me in Dreams"
+    },
+	 {
+        "date": "2026-03-15",
+        "spotifyLink": "https://open.spotify.com/track/7DSlmj3j9CHYbhd1STcMcG?si=c956dc46b03a4f93",
+        "artist": "Title Fight",
+        "song_title": "Frown"
+    },
+	 {
+        "date": "2026-03-14",
+        "spotifyLink": "https://open.spotify.com/track/5jllw4MV1ojKuXoeQYuw1W?si=9dfe917f5a684c5f",
+        "artist": "No Pressure",
+        "song_title": "Both Sides"
+    },
+	 {
+        "date": "2026-03-13",
+        "spotifyLink": "https://open.spotify.com/track/0arNrzPygksLY2pEbRgBjw?si=95d0b244a9e94f3e",
+        "artist": "Thrice",
+        "song_title": "The Artist In The Ambulance"
+    },
+	 {
+        "date": "2026-03-12",
+        "spotifyLink": "https://open.spotify.com/track/1vFLg6nWigxe7H8pw2GT6z?si=7612f80015ce451c",
+        "artist": "American Football",
+        "song_title": "Bad Moons"
+    },
+	 {
         "date": "2026-03-11",
         "spotifyLink": "https://open.spotify.com/track/4L1u3TLodakFu1H2d8g0BQ?si=92091949066a40ca",
         "artist": "Singapore Sling",
@@ -20,7 +62,7 @@
 	 {
         "date": "2026-03-08",
         "spotifyLink": "https://open.spotify.com/track/6YrjtkQBZnMXAdByJZR7ao?si=0c5fa703fd14483d",
-        "artist": "Rseplandor",
+        "artist": "Resplandor",
         "song_title": "Solar"
     },
 	 {
