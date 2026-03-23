@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Genre Diffusion Explorer</title>
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #0f0f12; }
+        
+        .map-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(20, 20, 25, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        input[type=range] { width: 100%; }
+        .credit { font-size: 10px; margin-top: 10px; color: #aaa; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="map-overlay">
+    <h2 id="genre-title">Genre Diffusion</h2>
+    <label>Year: <span id="year-label">1980</span></label>
+    <input id="slider" type="range" min="1980" max="2026" step="1" value="1980">
+    <div class="credit">Data provided by MusicBrainz (CC BY-NC-SA 3.0)</div>
+</div>
+
+<script>
+    // Initialize the Map
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', // Dark background
+        center: [-98.5, 39.8], // Center of US
+        zoom: 3
+    });
+
+    map.on('load', () => {
+        // 1. ADD DATA SOURCE
+        // For local testing, use a GeoJSON file. For production, use your Vector Tile URL.
+        map.addSource('music-data', {
+            'type': 'geojson',
+            'data': 'data/genre_temporal_weights.geojson' 
+            // Replace with: 'type': 'vector', 'url': 'pmtiles://your_url.pmtiles'
+        });
+
+        // 2. ADD HEATMAP LAYER
+        map.addLayer({
+            'id': 'music-heat',
+            'type': 'heatmap',
+            'source': 'music-data',
+            'layout': { 'visibility': 'visible' },
+            'paint': {
+                // Increase weight as the 'weight' property increases (from your script)
+                'heatmap-weight': ['get', 'weight'],
+                
+                // Intensity multiplies the weight—increase this as you zoom in
+                'heatmap-intensity': [
+                    'interpolate', ['linear'], ['zoom'],
+                    0, 1,
+                    9, 3
+                ],
+                
+                // The Color Ramp (Purple/Pink to represent MusicBrainz vibes)
+                'heatmap-color': [
+                    'interpolate', ['linear'], ['heatmap-density'],
+                    0, 'rgba(0,0,0,0)',
+                    0.2, '#4d004b',
+                    0.4, '#810f7c',
+                    0.6, '#ba478f', // Official MusicBrainz Purple
+                    0.8, '#df65b0',
+                    1, '#f7fcfd'
+                ],
+                
+                // Adjust radius by zoom level
+                'heatmap-radius': [
+                    'interpolate', ['linear'], ['zoom'],
+                    0, 2,
+                    9, 20
+                ],
+                
+                // Fade out heatmap as you zoom in to reveal points (optional)
+                'heatmap-opacity': 0.8
+            }
+        });
+
+        // 3. TIME SLIDER LOGIC
+        const slider = document.getElementById('slider');
+        const yearLabel = document.getElementById('year-label');
+
+        slider.addEventListener('input', (e) => {
+            const year = parseInt(e.target.value);
+            yearLabel.textContent = year;
+
+            // Filter the data based on the 'map_year' column in your CSV/GeoJSON
+            map.setFilter('music-heat', ['==', ['get', 'map_year'], year]);
+        });
+    });
+</script>
+
+</body>
+</html>
