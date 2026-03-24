@@ -1,5 +1,47 @@
 ﻿[
 	 {
+        "date": "2026-03-26",
+        "spotifyLink": "https://open.spotify.com/track/6l1gv1nqijsv4LAQajD9wh?si=319b4f0301b74e73",
+        "artist": "The Story So Far",
+        "song_title": "Mock"
+    },
+	 {
+        "date": "2026-03-24",
+        "spotifyLink": "https://open.spotify.com/track/6Uam0TpYR4Xx0d1WrM9cWf?si=8c1c3a77928b4776",
+        "artist": "Sweet Pill",
+        "song_title": "Smoke Screen"
+    },
+	 {
+        "date": "2026-03-23",
+        "spotifyLink": "https://open.spotify.com/track/2t6Z0vjOUQsy3FkBstdvUw?si=bf6cb3ae89af4b85",
+        "artist": "Her Words Kill",
+        "song_title": "Love On The Catwalk"
+    },
+	 {
+        "date": "2026-03-22",
+        "spotifyLink": "https://open.spotify.com/track/21aVkXDch0A1nXo9he3j8L?si=ef528d71e9524d87",
+        "artist": "Paramore",
+        "song_title": "Conspiracy"
+    },
+	 {
+        "date": "2026-03-21",
+        "spotifyLink": "https://open.spotify.com/track/0C71NJD4BhvPopTwI7a8KV?si=7f35d9b4848e46cc",
+        "artist": "Saosin",
+        "song_title": "Seven Years"
+    },
+	 {
+        "date": "2026-03-20",
+        "spotifyLink": "https://open.spotify.com/track/3nkdVXnH4xC6f3YZS0C8pC?si=881047d21b5447d9",
+        "artist": "Elliott Smith",
+        "song_title": "Everything Reminds Me Of Her"
+    },
+	 {
+        "date": "2026-03-19",
+        "spotifyLink": "https://open.spotify.com/track/4dwkRSahcpLc1idfrxeuvk?si=5b2023fe603243a4",
+        "artist": "Terror",
+        "song_title": "Return to Strength"
+    },
+	 {
         "date": "2026-03-18",
         "spotifyLink": "https://open.spotify.com/track/3YQVYTkonczhXyj31HH4AK?si=83019eb9a5974d82",
         "artist": "Radiohead",
