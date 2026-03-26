@@ -23,20 +23,38 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             z-index: 1;
         }
-        input[type=range] { width: 100%; cursor: pointer; }
+
+        h2 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; }
+        input[type=range] { width: 100%; cursor: pointer; margin-top: 10px; }
         input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; }
         
-        /* New Stats Styling */
+        /* Stats Box Styling */
         #genre-info { 
-            font-size: 12px; 
-            background: rgba(255,255,255,0.1); 
-            padding: 8px; 
-            border-radius: 4px; 
-            margin-bottom: 10px; 
-            display: none; /* Hidden by default */
+            font-size: 13px; 
+            background: rgba(255,255,255,0.08); 
+            padding: 12px; 
+            border-radius: 6px; 
+            margin-bottom: 15px; 
+            display: none; 
+            line-height: 1.6;
         }
+        .stat-label { color: #aaa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-val { color: #df65b0; font-weight: bold; }
         
+        .geo-link {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 3px 6px;
+            margin-top: 4px;
+            margin-right: 4px;
+            transition: background 0.2s;
+        }
+        .geo-link:hover { background: #df65b0; border-color: #df65b0; }
+
         .credit { font-size: 10px; margin-top: 10px; color: #aaa; }
     </style>
 </head>
@@ -45,14 +63,18 @@
 <div id="map"></div>
 
 <div class="map-overlay">
-    <h2 style="margin-top:0;">Music Diffusion</h2>
+    <h2>Music Diffusion</h2>
     
     <label>Search Genre:</label>
-    <input id="genre-search" type="text" placeholder="e.g. jazz, metal, electronic...">
+    <input id="genre-search" type="text" placeholder="e.g. bossa nova, grunge, trap...">
 
     <div id="genre-info">
-        First recorded: <span id="stat-year" class="stat-val">-</span><br>
-        Total database records: <span id="stat-count" class="stat-val">-</span>
+        <div><span class="stat-label">First Recorded:</span> <span id="stat-year" class="stat-val">-</span></div>
+        <div><span class="stat-label">Total Records:</span> <span id="stat-count" class="stat-val">-</span></div>
+        <div style="margin-top:8px;">
+            <button id="btn-origin" class="geo-link">📍 Jump to Origin</button>
+            <button id="btn-hub" class="geo-link">🔥 Jump to Hub</button>
+        </div>
     </div>
 
     <label>Year: <span id="year-label">1980</span></label>
@@ -72,12 +94,16 @@
     let currentDecade = null;
     let activeGenre = "";
     let searchTimeout;
-    let genreStats = {}; // To store our global stats
+    let genreStats = {}; 
 
-    // Fetch the stats once when page loads
+    // Load the pre-calculated stats file
     fetch('genre_stats.json')
         .then(response => response.json())
-        .then(data => { genreStats = data; });
+        .then(data => { 
+            genreStats = data; 
+            console.log("Genre stats loaded.");
+        })
+        .catch(err => console.error("Could not load genre_stats.json. Did you run the Python script?", err));
 
     function updateMapFilters() {
         if (!map.getLayer('music-heat')) return;
@@ -95,23 +121,31 @@
         map.setFilter('music-heat', filters);
     }
 
-    // New function to update the info box
     function updateGenreUI(query) {
         const infoBox = document.getElementById('genre-info');
-        const yearSpan = document.getElementById('stat-year');
-        const countSpan = document.getElementById('stat-count');
-        
         const stats = genreStats[query.toLowerCase()];
 
         if (stats) {
             infoBox.style.display = 'block';
-            yearSpan.textContent = stats.first_year;
-            countSpan.textContent = stats.total_count.toLocaleString();
+            document.getElementById('stat-year').textContent = stats.first_year;
+            document.getElementById('stat-count').textContent = stats.total_count.toLocaleString();
+
+            // Coordinate Jump Logic
+            document.getElementById('btn-origin').onclick = () => {
+                map.flyTo({ center: stats.origin, zoom: 6, speed: 1.2, curve: 1.5 });
+            };
+            document.getElementById('btn-hub').onclick = () => {
+                map.flyTo({ center: stats.hotspot, zoom: 5, speed: 1.2, curve: 1.5 });
+            };
         } else {
-            // If niche genre not found, show "0"
-            infoBox.style.display = 'block';
-            yearSpan.textContent = "N/A";
-            countSpan.textContent = "0";
+            // If user typed something but it's not in our stats
+            if (query.length > 2) {
+                infoBox.style.display = 'block';
+                document.getElementById('stat-year').textContent = "N/A";
+                document.getElementById('stat-count').textContent = "0";
+            } else {
+                infoBox.style.display = 'none';
+            }
         }
     }
 
@@ -122,11 +156,13 @@
         Papa.parse(filePath, {
             download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
             complete: function(results) {
-                const features = results.data.filter(row => row.lat && row.lon).map(row => ({
-                    'type': 'Feature',
-                    'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
-                    'properties': { ...row }
-                }));
+                const features = results.data
+                    .filter(row => row.lat && row.lon)
+                    .map(row => ({
+                        'type': 'Feature',
+                        'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
+                        'properties': { ...row }
+                    }));
 
                 const geojson = { 'type': 'FeatureCollection', 'features': features };
 
@@ -155,7 +191,7 @@
             'source': 'music-data',
             'paint': {
                 'heatmap-weight': 0.1,
-                'heatmap-intensity': 4, // Keeping your setting
+                'heatmap-intensity': 4, 
                 'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
                 'heatmap-color': [
                     'interpolate', ['linear'], ['heatmap-density'],
