@@ -9,9 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body { margin: 0; padding: 0; font-family: sans-serif; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #0f0f12; }
-
-        
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #0f0f12; transition: opacity 0.2s; }
         
         .map-overlay {
             position: absolute;
@@ -26,6 +24,7 @@
             z-index: 1;
         }
         input[type=range] { width: 100%; cursor: pointer; }
+        input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; }
         .credit { font-size: 10px; margin-top: 10px; color: #aaa; }
     </style>
 </head>
@@ -34,17 +33,15 @@
 <div id="map"></div>
 
 <div class="map-overlay">
-    <h2 id="genre-title">Global Music Diffusion</h2>
+    <h2 style="margin-top:0;">Music Diffusion</h2>
     
-    <div style="margin-bottom: 15px;">
-        <label>Search Genre:</label>
-        <input id="genre-search" type="text" placeholder="e.g. jazz, metal, soukous..." 
-               style="width: 100%; padding: 5px; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px;">
-    </div>
+    <label>Search Genre:</label>
+    <input id="genre-search" type="text" placeholder="e.g. jazz, metal, electronic...">
 
     <label>Year: <span id="year-label">1980</span></label>
     <input id="slider" type="range" min="1980" max="2026" step="1" value="1980">
-    <div class="credit">Data provided by MusicBrainz (CC BY-NC-SA 3.0)</div>
+    
+    <div class="credit">Data: MusicBrainz (CC BY-NC-SA 3.0)</div>
 </div>
 
 <script>
@@ -56,14 +53,29 @@
     });
 
     let currentDecade = null;
-    let activeGenre = ""; // Global state for the search box
-    let searchTimeout;    // Variable to hold the debounce timer
+    let activeGenre = "";
+    let searchTimeout;
 
+    // --- 1. FILTER LOGIC ---
+    function updateMapFilters() {
+        if (!map.getLayer('music-heat')) return;
+
+        const year = parseInt(document.getElementById('slider').value);
+        let filters = ['all', ['<=', ['get', 'release_year'], year]];
+
+        if (activeGenre) {
+            filters.push(['in', activeGenre.toLowerCase(), ['get', 'release_genres']]);
+        }
+
+        map.setFilter('music-heat', filters);
+    }
+
+    // --- 2. DATA LOADING (FLICKER-FREE) ---
     function loadDecadeData(decade) {
         const filePath = `data_chunks/music_${decade}s.csv`;
         
-        // Add a 'loading' class to your map or a spinner if you want to be fancy
-        document.getElementById('map').style.opacity = '0.8'; 
+        // Visual cue that new data is fetching
+        document.getElementById('map').style.opacity = '0.7';
 
         Papa.parse(filePath, {
             download: true,
@@ -82,16 +94,13 @@
                 const geojson = { 'type': 'FeatureCollection', 'features': features };
 
                 if (map.getSource('music-data')) {
-                    // SILENT DATA UPDATE
-                    // We wrap this in a 'data' event listener to ensure 
-                    // the filter stays stuck to the new data immediately.
-                    map.once('data', (e) => {
-                        if (e.sourceId === 'music-data') {
+                    // This 'once' listener ensures the filter applies the moment the new decade lands
+                    map.once('sourcedata', (e) => {
+                        if (e.sourceId === 'music-data' && e.isSourceLoaded) {
                             updateMapFilters();
                             document.getElementById('map').style.opacity = '1';
                         }
                     });
-                    
                     map.getSource('music-data').setData(geojson);
                 } else {
                     map.addSource('music-data', { 'type': 'geojson', 'data': geojson });
@@ -102,24 +111,7 @@
         });
     }
 
-    // --- THE COMBINED FILTER LOGIC ---
-    function updateMapFilters() {
-        if (!map.getLayer('music-heat')) return;
-
-        const year = parseInt(document.getElementById('slider').value);
-        
-        // 1. Always filter by year
-        let filters = ['all', ['<=', ['get', 'release_year'], year]];
-
-        // 2. Add genre filter if text exists
-        if (activeGenre) {
-            // This checks if the search string exists inside the 'release_genres' column
-            filters.push(['in', activeGenre.toLowerCase(), ['get', 'release_genres']]);
-        }
-
-        map.setFilter('music-heat', filters);
-    }
-
+    // --- 3. LAYER DEFINITION ---
     function addHeatmapLayer() {
         if (map.getLayer('music-heat')) return;
 
@@ -129,11 +121,7 @@
             'source': 'music-data',
             'paint': {
                 'heatmap-weight': 0.1,
-                'heatmap-intensity': [
-                    'interpolate', ['linear'], ['zoom'],
-                    0, 1,
-                    9, 3
-                ]
+                'heatmap-intensity': 1,
                 'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
                 'heatmap-color': [
                     'interpolate', ['linear'], ['heatmap-density'],
@@ -148,6 +136,7 @@
         });
     }
 
+    // --- 4. EVENT LISTENERS ---
     map.on('load', () => {
         currentDecade = 1980;
         loadDecadeData(currentDecade);
@@ -156,7 +145,7 @@
         const yearLabel = document.getElementById('year-label');
         const searchInput = document.getElementById('genre-search');
 
-        // --- SLIDER LISTENER ---
+        // Year Slider with Decade-Check
         slider.addEventListener('input', (e) => {
             const year = parseInt(e.target.value);
             const decade = Math.floor(year / 10) * 10;
@@ -165,22 +154,19 @@
             if (decade !== currentDecade) {
                 currentDecade = decade;
                 loadDecadeData(decade);
-                console.log(`Swapping to ${decade}s data...`);
+            } else {
+                updateMapFilters();
             }
-            updateMapFilters();
         });
 
-        // --- THE DEBOUNCED SEARCH LISTENER ---
+        // Debounced Genre Search
         searchInput.addEventListener('input', (e) => {
-            // Clear the timer every time a key is pressed
             clearTimeout(searchTimeout);
-
-            // Start a new 300ms timer
             searchTimeout = setTimeout(() => {
                 activeGenre = e.target.value.trim().toLowerCase();
                 updateMapFilters();
-                console.log(`Searching for: ${activeGenre}`);
-            }, 300); // 300 milliseconds delay
+                console.log(`Filtering for: ${activeGenre}`);
+            }, 300);
         });
     });
 </script>
