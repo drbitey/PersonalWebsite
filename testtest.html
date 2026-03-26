@@ -6,6 +6,7 @@
     <title>Music Genre Diffusion Explorer</title>
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body { margin: 0; padding: 0; font-family: sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #0f0f12; }
@@ -36,77 +37,92 @@
     <div class="credit">Data provided by MusicBrainz (CC BY-NC-SA 3.0)</div>
 </div>
 
-<script>
-    // Initialize the Map
-    const map = new maplibregl.Map({
+const map = new maplibregl.Map({
         container: 'map',
-        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', // Dark background
-        center: [-98.5, 39.8], // Center of US
-        zoom: 3
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        center: [0, 20], // Center on Atlantic to see both sides
+        zoom: 2
     });
 
-    map.on('load', () => {
-        // 1. ADD DATA SOURCE
-        // For local testing, use a GeoJSON file. For production, use your Vector Tile URL.
-        map.addSource('music-data', {
-            'type': 'geojson',
-            'data': 'data/genre_temporal_weights.geojson' 
-            // Replace with: 'type': 'vector', 'url': 'pmtiles://your_url.pmtiles'
-        });
+    let currentDecade = null;
 
-        // 2. ADD HEATMAP LAYER
+    // Helper function to load a CSV and turn it into GeoJSON
+    function loadDecadeData(decade) {
+        const filePath = `data_chunks/music_${decade}s.csv`;
+        
+        Papa.parse(filePath, {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                // Convert CSV rows to GeoJSON Features
+                const features = results.data
+                    .filter(row => row.lat && row.lon) // Clean any empty rows
+                    .map(row => ({
+                        'type': 'Feature',
+                        'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
+                        'properties': { ...row }
+                    }));
+
+                const geojson = { 'type': 'FeatureCollection', 'features': features };
+
+                // Update the map source
+                if (map.getSource('music-data')) {
+                    map.getSource('music-data').setData(geojson);
+                } else {
+                    map.addSource('music-data', { 'type': 'geojson', 'data': geojson });
+                    addHeatmapLayer();
+                }
+            }
+        });
+    }
+
+    function addHeatmapLayer() {
         map.addLayer({
             'id': 'music-heat',
             'type': 'heatmap',
             'source': 'music-data',
-            'layout': { 'visibility': 'visible' },
             'paint': {
-                // Increase weight as the 'weight' property increases (from your script)
-                'heatmap-weight': ['get', 'weight'],
-                
-                // Intensity multiplies the weight—increase this as you zoom in
-                'heatmap-intensity': [
-                    'interpolate', ['linear'], ['zoom'],
-                    0, 1,
-                    9, 3
-                ],
-                
-                // The Color Ramp (Purple/Pink to represent MusicBrainz vibes)
+                'heatmap-weight': 0.1,
+                'heatmap-intensity': 1,
+                'heatmap-radius': [['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15]],
                 'heatmap-color': [
                     'interpolate', ['linear'], ['heatmap-density'],
                     0, 'rgba(0,0,0,0)',
                     0.2, '#4d004b',
                     0.4, '#810f7c',
-                    0.6, '#ba478f', // Official MusicBrainz Purple
+                    0.6, '#ba478f', 
                     0.8, '#df65b0',
                     1, '#f7fcfd'
-                ],
-                
-                // Adjust radius by zoom level
-                'heatmap-radius': [
-                    'interpolate', ['linear'], ['zoom'],
-                    0, 2,
-                    9, 20
-                ],
-                
-                // Fade out heatmap as you zoom in to reveal points (optional)
-                'heatmap-opacity': 0.8
+                ]
             }
         });
+    }
 
-        // 3. TIME SLIDER LOGIC
+    map.on('load', () => {
+        // Load initial decade (1980s)
+        currentDecade = 1980;
+        loadDecadeData(currentDecade);
+
         const slider = document.getElementById('slider');
         const yearLabel = document.getElementById('year-label');
 
         slider.addEventListener('input', (e) => {
             const year = parseInt(e.target.value);
+            const decade = Math.floor(year / 10) * 10;
             yearLabel.textContent = year;
 
-            // Filter the data based on the 'map_year' column in your CSV/GeoJSON
-            map.setFilter('music-heat', ['==', ['get', 'map_year'], year]);
+            // IF THE DECADE CHANGED, FETCH NEW DATA
+            if (decade !== currentDecade) {
+                currentDecade = decade;
+                loadDecadeData(decade);
+                console.log(`Swapping to ${decade}s data...`);
+            }
+
+            // Filter points to only show releases for the exact year
+            // Note: We use '<=' to show the 'build up' of music over time
+            map.setFilter('music-heat', ['<=', ['get', 'release_year'], year]);
         });
     });
-</script>
-
 </body>
 </html>
