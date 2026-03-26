@@ -28,7 +28,6 @@
         input[type=range] { width: 100%; cursor: pointer; margin-top: 10px; }
         input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; }
         
-        /* Stats Box Styling */
         #genre-info { 
             font-size: 13px; 
             background: rgba(255,255,255,0.08); 
@@ -38,9 +37,24 @@
             display: none; 
             line-height: 1.6;
         }
-        .stat-label { color: #aaa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-label { color: #aaa; font-size: 11px; text-transform: uppercase; }
         .stat-val { color: #df65b0; font-weight: bold; }
         
+        .control-group { margin-bottom: 10px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        
+        .btn-main {
+            width: 100%;
+            background: #df65b0;
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .btn-main:hover { background: #f7fcfd; color: #df65b0; }
+
         .geo-link {
             background: #333;
             border: 1px solid #444;
@@ -51,9 +65,7 @@
             padding: 3px 6px;
             margin-top: 4px;
             margin-right: 4px;
-            transition: background 0.2s;
         }
-        .geo-link:hover { background: #df65b0; border-color: #df65b0; }
 
         .credit { font-size: 10px; margin-top: 10px; color: #aaa; }
     </style>
@@ -65,16 +77,22 @@
 <div class="map-overlay">
     <h2>Music Diffusion</h2>
     
-    <label>Search Genre:</label>
-    <input id="genre-search" type="text" placeholder="e.g. bossa nova, grunge, trap...">
+    <input id="genre-search" type="text" placeholder="Search genre (e.g. salsa, techno)...">
 
     <div id="genre-info">
         <div><span class="stat-label">First Recorded:</span> <span id="stat-year" class="stat-val">-</span></div>
         <div><span class="stat-label">Total Records:</span> <span id="stat-count" class="stat-val">-</span></div>
         <div style="margin-top:8px;">
-            <button id="btn-origin" class="geo-link">📍 Jump to Origin</button>
-            <button id="btn-hub" class="geo-link">🔥 Jump to Hub</button>
+            <button id="btn-origin" class="geo-link">📍 Origin</button>
+            <button id="btn-hub" class="geo-link">🔥 Hub</button>
         </div>
+    </div>
+
+    <button id="play-btn" class="btn-main">▶ Play Diffusion Animation</button>
+
+    <div class="control-group">
+        <input type="checkbox" id="cumulative-check" checked>
+        <label for="cumulative-check">Cumulative Display (Show history)</label>
     </div>
 
     <label>Year: <span id="year-label">1980</span></label>
@@ -95,21 +113,23 @@
     let activeGenre = "";
     let searchTimeout;
     let genreStats = {}; 
+    let animationInterval = null;
+    let isAnimating = false;
 
-    // Load the pre-calculated stats file
     fetch('genre_stats.json')
         .then(response => response.json())
-        .then(data => { 
-            genreStats = data; 
-            console.log("Genre stats loaded.");
-        })
-        .catch(err => console.error("Could not load genre_stats.json. Did you run the Python script?", err));
+        .then(data => { genreStats = data; });
 
     function updateMapFilters() {
         if (!map.getLayer('music-heat')) return;
 
         const year = parseInt(document.getElementById('slider').value);
-        let filters = ['all', ['<=', ['get', 'release_year'], year]];
+        const isCumulative = document.getElementById('cumulative-check').checked;
+        
+        // Define operator: <= for cumulative, == for snapshot
+        const operator = isCumulative ? '<=' : '==';
+        
+        let filters = ['all', [operator, ['get', 'release_year'], year]];
 
         if (activeGenre) {
             filters.push(['in', activeGenre.toLowerCase(), ['coalesce', ['get', 'release_genres'], '']]);
@@ -121,51 +141,78 @@
         map.setFilter('music-heat', filters);
     }
 
+    function toggleAnimation() {
+        const playBtn = document.getElementById('play-btn');
+        const slider = document.getElementById('slider');
+
+        if (isAnimating) {
+            clearInterval(animationInterval);
+            playBtn.textContent = "▶ Play Diffusion Animation";
+            isAnimating = false;
+        } else {
+            // Start from origin year if a genre is searched
+            if (activeGenre && genreStats[activeGenre]) {
+                slider.value = genreStats[activeGenre].first_year;
+                updateFromSlider(); 
+            }
+
+            isAnimating = true;
+            playBtn.textContent = "⏸ Pause Animation";
+
+            animationInterval = setInterval(() => {
+                let currentYear = parseInt(slider.value);
+                if (currentYear < 2025) {
+                    slider.value = currentYear + 1;
+                    updateFromSlider();
+                } else {
+                    clearInterval(animationInterval);
+                    playBtn.textContent = "▶ Play Diffusion Animation";
+                    isAnimating = false;
+                }
+            }, 400); // Speed of animation (400ms per year)
+        }
+    }
+
+    // Extracted logic to handle slider changes manually (used by animation)
+    function updateFromSlider() {
+        const slider = document.getElementById('slider');
+        const year = parseInt(slider.value);
+        const decade = Math.floor(year / 10) * 10;
+        document.getElementById('year-label').textContent = year;
+
+        if (decade !== currentDecade) {
+            currentDecade = decade;
+            loadDecadeData(decade);
+        } else {
+            updateMapFilters();
+        }
+    }
+
     function updateGenreUI(query) {
         const infoBox = document.getElementById('genre-info');
         const stats = genreStats[query.toLowerCase()];
-
         if (stats) {
             infoBox.style.display = 'block';
             document.getElementById('stat-year').textContent = stats.first_year;
             document.getElementById('stat-count').textContent = stats.total_count.toLocaleString();
-
-            // Coordinate Jump Logic
-            document.getElementById('btn-origin').onclick = () => {
-                map.flyTo({ center: stats.origin, zoom: 6, speed: 1.2, curve: 1.5 });
-            };
-            document.getElementById('btn-hub').onclick = () => {
-                map.flyTo({ center: stats.hotspot, zoom: 5, speed: 1.2, curve: 1.5 });
-            };
+            document.getElementById('btn-origin').onclick = () => map.flyTo({ center: stats.origin, zoom: 6 });
+            document.getElementById('btn-hub').onclick = () => map.flyTo({ center: stats.hotspot, zoom: 5 });
         } else {
-            // If user typed something but it's not in our stats
-            if (query.length > 2) {
-                infoBox.style.display = 'block';
-                document.getElementById('stat-year').textContent = "N/A";
-                document.getElementById('stat-count').textContent = "0";
-            } else {
-                infoBox.style.display = 'none';
-            }
+            infoBox.style.display = query.length > 2 ? 'block' : 'none';
         }
     }
 
     function loadDecadeData(decade) {
         const filePath = `data_chunks/music_${decade}s.csv`;
         document.getElementById('map').style.opacity = '0.7';
-
         Papa.parse(filePath, {
             download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
             complete: function(results) {
-                const features = results.data
-                    .filter(row => row.lat && row.lon)
-                    .map(row => ({
-                        'type': 'Feature',
-                        'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
-                        'properties': { ...row }
-                    }));
-
-                const geojson = { 'type': 'FeatureCollection', 'features': features };
-
+                const features = results.data.filter(row => row.lat && row.lon).map(row => ({
+                    'type': 'Feature',
+                    'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
+                    'properties': { ...row }
+                }));
                 if (map.getSource('music-data')) {
                     map.once('sourcedata', (e) => {
                         if (e.sourceId === 'music-data' && e.isSourceLoaded) {
@@ -173,9 +220,9 @@
                             document.getElementById('map').style.opacity = '1';
                         }
                     });
-                    map.getSource('music-data').setData(geojson);
+                    map.getSource('music-data').setData({ 'type': 'FeatureCollection', 'features': features });
                 } else {
-                    map.addSource('music-data', { 'type': 'geojson', 'data': geojson });
+                    map.addSource('music-data', { 'type': 'geojson', 'data': { 'type': 'FeatureCollection', 'features': features } });
                     addHeatmapLayer();
                     document.getElementById('map').style.opacity = '1';
                 }
@@ -184,24 +231,12 @@
     }
 
     function addHeatmapLayer() {
-        if (map.getLayer('music-heat')) return;
         map.addLayer({
-            'id': 'music-heat',
-            'type': 'heatmap',
-            'source': 'music-data',
+            'id': 'music-heat', 'type': 'heatmap', 'source': 'music-data',
             'paint': {
-                'heatmap-weight': 0.1,
-                'heatmap-intensity': 4, 
+                'heatmap-weight': 0.1, 'heatmap-intensity': 4,
                 'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
-                'heatmap-color': [
-                    'interpolate', ['linear'], ['heatmap-density'],
-                    0, 'rgba(0,0,0,0)',
-                    0.2, '#4d004b',
-                    0.4, '#810f7c',
-                    0.6, '#ba478f', 
-                    0.8, '#df65b0',
-                    1, '#f7fcfd'
-                ]
+                'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.2, '#4d004b', 0.4, '#810f7c', 0.6, '#ba478f', 0.8, '#df65b0', 1, '#f7fcfd']
             }
         });
     }
@@ -209,24 +244,12 @@
     map.on('load', () => {
         currentDecade = 1980;
         loadDecadeData(currentDecade);
+        
+        document.getElementById('slider').addEventListener('input', updateFromSlider);
+        document.getElementById('play-btn').addEventListener('click', toggleAnimation);
+        document.getElementById('cumulative-check').addEventListener('change', updateMapFilters);
 
-        const slider = document.getElementById('slider');
-        const yearLabel = document.getElementById('year-label');
-        const searchInput = document.getElementById('genre-search');
-
-        slider.addEventListener('input', (e) => {
-            const year = parseInt(e.target.value);
-            const decade = Math.floor(year / 10) * 10;
-            yearLabel.textContent = year;
-            if (decade !== currentDecade) {
-                currentDecade = decade;
-                loadDecadeData(decade);
-            } else {
-                updateMapFilters();
-            }
-        });
-
-        searchInput.addEventListener('input', (e) => {
+        document.getElementById('genre-search').addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 activeGenre = e.target.value.trim().toLowerCase();
