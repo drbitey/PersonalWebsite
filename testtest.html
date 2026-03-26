@@ -15,7 +15,7 @@
             position: absolute;
             bottom: 20px;
             left: 20px;
-            background: rgba(20, 20, 25, 0.9);
+            background: rgba(20, 20, 25, 0.95);
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -25,6 +25,18 @@
         }
         input[type=range] { width: 100%; cursor: pointer; }
         input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; }
+        
+        /* New Stats Styling */
+        #genre-info { 
+            font-size: 12px; 
+            background: rgba(255,255,255,0.1); 
+            padding: 8px; 
+            border-radius: 4px; 
+            margin-bottom: 10px; 
+            display: none; /* Hidden by default */
+        }
+        .stat-val { color: #df65b0; font-weight: bold; }
+        
         .credit { font-size: 10px; margin-top: 10px; color: #aaa; }
     </style>
 </head>
@@ -37,6 +49,11 @@
     
     <label>Search Genre:</label>
     <input id="genre-search" type="text" placeholder="e.g. jazz, metal, electronic...">
+
+    <div id="genre-info">
+        First recorded: <span id="stat-year" class="stat-val">-</span><br>
+        Total database records: <span id="stat-count" class="stat-val">-</span>
+    </div>
 
     <label>Year: <span id="year-label">1980</span></label>
     <input id="slider" type="range" min="1890" max="2025" step="1" value="1980">
@@ -55,53 +72,65 @@
     let currentDecade = null;
     let activeGenre = "";
     let searchTimeout;
+    let genreStats = {}; // To store our global stats
 
-    // --- 1. FILTER LOGIC ---
+    // Fetch the stats once when page loads
+    fetch('genre_stats.json')
+        .then(response => response.json())
+        .then(data => { genreStats = data; });
+
     function updateMapFilters() {
         if (!map.getLayer('music-heat')) return;
 
         const year = parseInt(document.getElementById('slider').value);
-        
-        // 1. Base filter: Year check
         let filters = ['all', ['<=', ['get', 'release_year'], year]];
 
-        // 2. Genre search with a safety "coalesce" to prevent the "number instead of string" crash
         if (activeGenre) {
-            filters.push([
-                'in', 
-                activeGenre.toLowerCase(), 
-                ['coalesce', ['get', 'release_genres'], ''] // If genre is null/number, use ''
-            ]);
+            filters.push(['in', activeGenre.toLowerCase(), ['coalesce', ['get', 'release_genres'], '']]);
+            updateGenreUI(activeGenre);
+        } else {
+            document.getElementById('genre-info').style.display = 'none';
         }
 
         map.setFilter('music-heat', filters);
     }
 
-    // --- 2. DATA LOADING (FLICKER-FREE) ---
+    // New function to update the info box
+    function updateGenreUI(query) {
+        const infoBox = document.getElementById('genre-info');
+        const yearSpan = document.getElementById('stat-year');
+        const countSpan = document.getElementById('stat-count');
+        
+        const stats = genreStats[query.toLowerCase()];
+
+        if (stats) {
+            infoBox.style.display = 'block';
+            yearSpan.textContent = stats.first_year;
+            countSpan.textContent = stats.total_count.toLocaleString();
+        } else {
+            // If niche genre not found, show "0"
+            infoBox.style.display = 'block';
+            yearSpan.textContent = "N/A";
+            countSpan.textContent = "0";
+        }
+    }
+
     function loadDecadeData(decade) {
         const filePath = `data_chunks/music_${decade}s.csv`;
-        
-        // Visual cue that new data is fetching
         document.getElementById('map').style.opacity = '0.7';
 
         Papa.parse(filePath, {
-            download: true,
-            header: true,
-            dynamicTyping: true,
-            skipEmptyLines: true,
+            download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
             complete: function(results) {
-                const features = results.data
-                    .filter(row => row.lat && row.lon)
-                    .map(row => ({
-                        'type': 'Feature',
-                        'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
-                        'properties': { ...row }
-                    }));
+                const features = results.data.filter(row => row.lat && row.lon).map(row => ({
+                    'type': 'Feature',
+                    'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
+                    'properties': { ...row }
+                }));
 
                 const geojson = { 'type': 'FeatureCollection', 'features': features };
 
                 if (map.getSource('music-data')) {
-                    // This 'once' listener ensures the filter applies the moment the new decade lands
                     map.once('sourcedata', (e) => {
                         if (e.sourceId === 'music-data' && e.isSourceLoaded) {
                             updateMapFilters();
@@ -118,17 +147,15 @@
         });
     }
 
-    // --- 3. LAYER DEFINITION ---
     function addHeatmapLayer() {
         if (map.getLayer('music-heat')) return;
-
         map.addLayer({
             'id': 'music-heat',
             'type': 'heatmap',
             'source': 'music-data',
             'paint': {
                 'heatmap-weight': 0.1,
-                'heatmap-intensity': 4,
+                'heatmap-intensity': 4, // Keeping your setting
                 'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
                 'heatmap-color': [
                     'interpolate', ['linear'], ['heatmap-density'],
@@ -143,7 +170,6 @@
         });
     }
 
-    // --- 4. EVENT LISTENERS ---
     map.on('load', () => {
         currentDecade = 1980;
         loadDecadeData(currentDecade);
@@ -152,12 +178,10 @@
         const yearLabel = document.getElementById('year-label');
         const searchInput = document.getElementById('genre-search');
 
-        // Year Slider with Decade-Check
         slider.addEventListener('input', (e) => {
             const year = parseInt(e.target.value);
             const decade = Math.floor(year / 10) * 10;
             yearLabel.textContent = year;
-
             if (decade !== currentDecade) {
                 currentDecade = decade;
                 loadDecadeData(decade);
@@ -166,13 +190,11 @@
             }
         });
 
-        // Debounced Genre Search
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 activeGenre = e.target.value.trim().toLowerCase();
                 updateMapFilters();
-                console.log(`Filtering for: ${activeGenre}`);
             }, 300);
         });
     });
