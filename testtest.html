@@ -14,13 +14,17 @@
         .map-overlay {
             position: absolute; bottom: 20px; left: 20px;
             background: rgba(20, 20, 25, 0.95); color: white;
-            padding: 15px; border-radius: 8px; width: 300px;
+            padding: 15px; border-radius: 8px; width: 320px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5); z-index: 1;
         }
 
         h2 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; }
         input[type=range] { width: 100%; cursor: pointer; margin-top: 10px; }
-        input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; }
+        input[type=text], select { 
+            width: 100%; padding: 8px; box-sizing: border-box; 
+            background: #222; color: #fff; border: 1px solid #444; 
+            border-radius: 4px; margin-bottom: 10px; 
+        }
         
         #genre-info { 
             font-size: 13px; background: rgba(255,255,255,0.08); 
@@ -38,7 +42,6 @@
             font-weight: bold; margin-bottom: 10px; transition: opacity 0.3s;
         }
         .btn-main:hover:not(:disabled) { background: #f7fcfd; color: #df65b0; }
-        .btn-main:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
 
         .geo-link {
             background: #333; border: 1px solid #444; color: #fff;
@@ -65,20 +68,31 @@
     <div id="genre-info">
         <div><span class="stat-label">First Recorded:</span> <span id="stat-year" class="stat-val">-</span></div>
         <div><span class="stat-label">Total Records:</span> <span id="stat-count" class="stat-val">-</span></div>
+        <div><span class="stat-label">Origin Location:</span> <span id="stat-first-loc" class="stat-val">-</span></div>
+        <div><span class="stat-label">Mode Location:</span> <span id="stat-mode-loc" class="stat-val">-</span></div>
         <div style="margin-top:8px;">
-            <button id="btn-origin" class="geo-link">📍 Origin</button>
-            <button id="btn-hub" class="geo-link">🔥 Hub</button>
+            <button id="btn-origin" class="geo-link">📍 Fly to Origin</button>
+            <button id="btn-hub" class="geo-link">🔥 Fly to Hub</button>
         </div>
+    </div>
+
+    <div class="control-group" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+        <label class="stat-label">Display Layer</label>
+        <select id="display-mode">
+            <option value="both">Both (Heatmap + Dots)</option>
+            <option value="dots">Dot Map Only</option>
+            <option value="heat">Heatmap Only</option>
+        </select>
     </div>
 
     <button id="play-btn" class="btn-main">▶ Play Diffusion Animation</button>
 
     <div class="control-group">
-        <input type="checkbox" id="cumulative-check" checked>
-        <label for="cumulative-check">Cumulative Display (Static History)</label>
+        <input type="checkbox" id="cumulative-check">
+        <label for="cumulative-check">Cumulative Display (Show All History)</label>
     </div>
 
-    <label>Year: <span id="year-label">1980</span></label>
+    <label>Year: <span id="year-label" style="color: #df65b0; font-weight: bold;">1980</span></label>
     <input id="slider" type="range" min="1890" max="2025" step="1" value="1980">
     
     <div class="credit">Data: MusicBrainz (CC BY-NC-SA 3.0)</div>
@@ -97,7 +111,7 @@
     let decadeBucket = {}; 
     let metaCache = {};   
     
-    let searchTimeout; // FIXED: Added missing declaration
+    let searchTimeout;
     let activeGenreId = null;
     let activeGenreName = "";
     let isAnimating = false;
@@ -129,10 +143,7 @@
 
         if (decadesToFetch.length > 0) {
             document.getElementById('map').style.opacity = '0.6';
-            console.log("📥 Loading missing data chunks:", decadesToFetch);
             
-            // Fetch chunks. Using Promise.all is fast, but if it's too many, 
-            // the browser might "timeout" on concurrent requests.
             const fetches = decadesToFetch.map(d => new Promise(resolve => {
                 Papa.parse(`data_chunks/music_${d}s.csv`, {
                     download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
@@ -189,11 +200,9 @@
         let filters = ['all', [operator, ['get', 'release_year'], year]];
 
         if (activeGenreId) {
-            // This assumes your CSV has |12|34| format in genre_ids column
             filters.push(['in', `|${activeGenreId}|`, ['get', 'genre_ids']]);
             updateGenreUI(activeGenreName);
         } else {
-            // Clear the info box if no genre is searched
             document.getElementById('genre-info').style.display = 'none';
         }
 
@@ -204,6 +213,7 @@
     function addLayers() {
         map.addLayer({
             'id': 'music-heat', 'type': 'heatmap', 'source': 'music-data',
+            'layout': { 'visibility': 'visible' },
             'paint': {
                 'heatmap-weight': 0.15, 'heatmap-intensity': 3,
                 'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 20],
@@ -213,6 +223,7 @@
 
         map.addLayer({
             'id': 'music-dots', 'type': 'circle', 'source': 'music-data',
+            'layout': { 'visibility': 'visible' },
             'paint': {
                 'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 2, 12, 6],
                 'circle-color': '#df65b0',
@@ -221,6 +232,9 @@
                 'circle-stroke-opacity': ['interpolate', ['linear'], ['zoom'], 6, 0, 8, 0.8]
             }
         });
+        
+        // Ensure the initial dropdown state matches the layers
+        document.getElementById('display-mode').dispatchEvent(new Event('change'));
     }
 
     // Popup Logic
@@ -281,7 +295,7 @@
                     slider.value = currentYear + 1;
                     handleSliderInput();
                 } else {
-                    toggleAnimation();
+                    toggleAnimation(); // Auto-stop at the end
                 }
             }, 300);
         }
@@ -292,16 +306,23 @@
         
         document.getElementById('slider').addEventListener('input', handleSliderInput);
         document.getElementById('play-btn').addEventListener('click', toggleAnimation);
-        
-        document.getElementById('cumulative-check').addEventListener('change', (e) => {
-            const playBtn = document.getElementById('play-btn');
-            if (e.target.checked) {
-                if (isAnimating) toggleAnimation();
-                playBtn.disabled = true;
-            } else {
-                playBtn.disabled = false;
+        document.getElementById('cumulative-check').addEventListener('change', ensureDecadesLoaded);
+
+        // Map Mode Toggle Logic
+        document.getElementById('display-mode').addEventListener('change', (e) => {
+            const mode = e.target.value;
+            if (!map.getLayer('music-heat') || !map.getLayer('music-dots')) return;
+
+            if (mode === 'both') {
+                map.setLayoutProperty('music-heat', 'visibility', 'visible');
+                map.setLayoutProperty('music-dots', 'visibility', 'visible');
+            } else if (mode === 'dots') {
+                map.setLayoutProperty('music-heat', 'visibility', 'none');
+                map.setLayoutProperty('music-dots', 'visibility', 'visible');
+            } else if (mode === 'heat') {
+                map.setLayoutProperty('music-heat', 'visibility', 'visible');
+                map.setLayoutProperty('music-dots', 'visibility', 'none');
             }
-            ensureDecadesLoaded();
         });
 
         document.getElementById('genre-search').addEventListener('input', (e) => {
@@ -310,7 +331,6 @@
                 const val = e.target.value.trim().toLowerCase();
                 activeGenreName = val;
                 activeGenreId = genreDict[val] || null;
-                console.log(`Searching for: ${val} (ID: ${activeGenreId})`);
                 updateMapFilters();
             }, 300);
         });
@@ -319,13 +339,20 @@
         map.on('mouseleave', 'music-dots', () => map.getCanvas().style.cursor = '');
     });
 
+    // Graphic Output Logic
     function updateGenreUI(name) {
         const infoBox = document.getElementById('genre-info');
         const stats = genreStats[name];
+        
         if (stats) {
             infoBox.style.display = 'block';
             document.getElementById('stat-year').textContent = stats.first_year;
             document.getElementById('stat-count').textContent = stats.total_count.toLocaleString();
+            
+            // Assuming your JSON has keys for the text names of these locations
+            document.getElementById('stat-first-loc').textContent = stats.origin_name || "Unknown";
+            document.getElementById('stat-mode-loc').textContent = stats.hotspot_name || "Unknown";
+            
             document.getElementById('btn-origin').onclick = () => map.flyTo({ center: stats.origin, zoom: 6 });
             document.getElementById('btn-hub').onclick = () => map.flyTo({ center: stats.hotspot, zoom: 5 });
         } else {
