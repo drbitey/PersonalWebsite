@@ -94,15 +94,16 @@
     // --- DATA STATE ---
     let genreDict = {}; 
     let genreStats = {};
-    let decadeBucket = {}; // Stores all features by decade
-    let metaCache = {};   // Stores metadata chunks
+    let decadeBucket = {}; 
+    let metaCache = {};   
     
+    let searchTimeout; // FIXED: Added missing declaration
     let activeGenreId = null;
     let activeGenreName = "";
     let isAnimating = false;
     let animationInterval = null;
 
-    // Start-up: Load essential JSONs
+    // Load dictionary & stats
     Promise.all([
         fetch('genre_dictionary.json').then(r => r.json()),
         fetch('genre_stats.json').then(r => r.json())
@@ -110,9 +111,8 @@
         genreDict = dict;
         genreStats = stats;
         console.log("🧠 Knowledge base ready.");
-    });
+    }).catch(err => console.error("Error loading JSON metadata:", err));
 
-    // --- CORE LOGIC: THE COLLECTOR ---
     async function ensureDecadesLoaded() {
         const year = parseInt(document.getElementById('slider').value);
         const isCumulative = document.getElementById('cumulative-check').checked;
@@ -120,30 +120,32 @@
         
         const decadesToFetch = [];
         if (isCumulative) {
-            // Check all decades from 1890 to current
             for (let d = 1890; d <= targetDecade; d += 10) {
                 if (!decadeBucket[d]) decadesToFetch.push(d);
             }
         } else {
-            // Just check the current decade
             if (!decadeBucket[targetDecade]) decadesToFetch.push(targetDecade);
         }
 
         if (decadesToFetch.length > 0) {
             document.getElementById('map').style.opacity = '0.6';
+            console.log("📥 Loading missing data chunks:", decadesToFetch);
             
+            // Fetch chunks. Using Promise.all is fast, but if it's too many, 
+            // the browser might "timeout" on concurrent requests.
             const fetches = decadesToFetch.map(d => new Promise(resolve => {
                 Papa.parse(`data_chunks/music_${d}s.csv`, {
                     download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
                     complete: (results) => {
                         decadeBucket[d] = results.data.filter(r => r.lat && r.lon).map((r, i) => ({
                             'type': 'Feature',
-                            'id': i, // Local index within this decade file
+                            'id': i,
                             'geometry': { 'type': 'Point', 'coordinates': [r.lon, r.lat] },
-                            'properties': { ...r, 'parent_decade': d } // Keep track of decade for meta lookup
+                            'properties': { ...r, 'parent_decade': d }
                         }));
                         resolve();
-                    }
+                    },
+                    error: (err) => { console.error(`Failed to load decade ${d}:`, err); resolve(); }
                 });
             }));
 
@@ -169,11 +171,12 @@
         const source = map.getSource('music-data');
         if (source) {
             source.setData({ 'type': 'FeatureCollection', 'features': featuresToShow });
+            updateMapFilters();
         } else {
             map.addSource('music-data', { 'type': 'geojson', 'data': { 'type': 'FeatureCollection', 'features': featuresToShow } });
             addLayers();
+            updateMapFilters();
         }
-        updateMapFilters();
     }
 
     function updateMapFilters() {
@@ -186,8 +189,12 @@
         let filters = ['all', [operator, ['get', 'release_year'], year]];
 
         if (activeGenreId) {
+            // This assumes your CSV has |12|34| format in genre_ids column
             filters.push(['in', `|${activeGenreId}|`, ['get', 'genre_ids']]);
             updateGenreUI(activeGenreName);
+        } else {
+            // Clear the info box if no genre is searched
+            document.getElementById('genre-info').style.display = 'none';
         }
 
         map.setFilter('music-heat', filters);
@@ -195,7 +202,6 @@
     }
 
     function addLayers() {
-        // Heatmap for general trends
         map.addLayer({
             'id': 'music-heat', 'type': 'heatmap', 'source': 'music-data',
             'paint': {
@@ -205,7 +211,6 @@
             }
         });
 
-        // Dots for individual clicks
         map.addLayer({
             'id': 'music-dots', 'type': 'circle', 'source': 'music-data',
             'paint': {
@@ -218,7 +223,7 @@
         });
     }
 
-    // --- INTERACTION: META SIDECAR ---
+    // Popup Logic
     map.on('click', 'music-dots', async (e) => {
         const feature = e.features[0];
         const rowIdx = feature.id;
@@ -226,6 +231,7 @@
         const metaPath = `data_chunks/meta_${decade}s.csv`;
 
         const render = (data) => {
+            if(!data) return;
             new maplibregl.Popup()
                 .setLngLat(e.lngLat)
                 .setHTML(`
@@ -233,7 +239,7 @@
                         <h3>${data.release_name}</h3>
                         <p><strong>Artist:</strong> ${data.artist_name}</p>
                         <p><strong>Year:</strong> ${data.release_year}</p>
-                        <p><em>${data.release_genres.split(';').join(' • ')}</em></p>
+                        <p><em>${data.release_genres ? data.release_genres.split(';').join(' • ') : ''}</em></p>
                         <a href="https://musicbrainz.org/release/${data.release_mbid}" target="_blank" style="font-size:10px; color:#df65b0;">MusicBrainz Link</a>
                     </div>
                 `).addTo(map);
@@ -252,7 +258,7 @@
         }
     });
 
-    // --- UI EVENTS ---
+    // UI Controls
     function handleSliderInput() {
         const year = parseInt(document.getElementById('slider').value);
         document.getElementById('year-label').textContent = year;
@@ -282,7 +288,7 @@
     }
 
     map.on('load', () => {
-        ensureDecadesLoaded(); // Initial load
+        ensureDecadesLoaded(); 
         
         document.getElementById('slider').addEventListener('input', handleSliderInput);
         document.getElementById('play-btn').addEventListener('click', toggleAnimation);
@@ -292,7 +298,6 @@
             if (e.target.checked) {
                 if (isAnimating) toggleAnimation();
                 playBtn.disabled = true;
-                playBtn.title = "Animation is disabled in Cumulative mode.";
             } else {
                 playBtn.disabled = false;
             }
@@ -305,6 +310,7 @@
                 const val = e.target.value.trim().toLowerCase();
                 activeGenreName = val;
                 activeGenreId = genreDict[val] || null;
+                console.log(`Searching for: ${val} (ID: ${activeGenreId})`);
                 updateMapFilters();
             }, 300);
         });
