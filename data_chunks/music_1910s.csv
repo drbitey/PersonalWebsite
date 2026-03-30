@@ -1,40 +1,40 @@
-release_year,artist_name,release_name,release_genres,lat,lon
-1916,Bert Williams,Purpostus / Never Mo’,pop,25.0782,-77.3383
-1910,United States Marine Band,Kaiser Friedrich Marsch,pop,39.7837,-100.4459
-1911,United States Marine Band,Old Berlin Marsch,pop,39.7837,-100.4459
-1916,Marion Harris,Way Out Yonder in the Golden West / I Ain't Got Nobody Much,pop,40.327,-86.1747
-1918,Marion Harris,After You’ve Gone / I’m Glad I Can Make You Cry,pop; ballad,40.327,-86.1747
-1919,Al Bernard,Everybody Wants a Key to My Cellar / Turkestan,pop,29.9561,-90.0734
-1919,Rudy Wiedoeft,My Cairo Love / Saxophobia,pop,42.3316,-83.0466
-1919,Alma Gluck,Bring Back My Bonnie to Me,classical,47.1616,27.5838
-1914,Charles d’Almaine,When I Lost You,pop,53.7624,-0.3301
-1910,Billy Williams,I Must Go Home Tonight,pop,-37.8142,144.9632
-1919,Al Bernard,I Want to Hold You in My Arms / Oh! Lawdy (Something's Done Got Between Ebecaneezer and Me),pop; comedy,29.9561,-90.0734
-1917,Billy Murray,I’ll Make You Want Me / Put On Your Slippers and Fill Up Your Pipe (You’re Not Going Bye-Bye To-night),pop,39.9527,-75.1635
-1918,Irving Kaufman,"Cheer Up Father, Cheer Up Mother / Hello Central Give Me No Man's Land",pop,43.0481,-76.1474
-1912,Arthur Collins,Buddy Boy / Ragtime Soldier Man,pop; ragtime,39.9527,-75.1635
-1919,Cal Stewart,Evening Time at Pumpkin Center / Christmas Time at Pumpkin Center,pop,37.1232,-78.4928
-1912,Walter Van Brunt,Moonlight Bay / The Harbor of Love,pop,40.6526,-73.9497
-1918,Ludwig van Beethoven,Chorus of Dervishes,chamber music; classical,50.7353,7.1025
-1917,Hans Kindler,Träumerei / A Dream,classical,51.9244,4.4778
-1911,Wilkie Bard,I Want to Sing in Opera,pop,53.4795,-2.2451
-1917,Benno Moiseiwitsch,Bird Song / The Sea,classical,50.1481,35.181
-1913,Marie Lloyd,The Twiddly-Wink / The Piccadilly Trot,music hall; pop,51.5324,-0.0861
-1913,G. H. Elliott,In Dixie Land With Dixie Lou / The Ragtime Golliwog Man,pop; ragtime,53.6154,-2.1558
-1915,Marie Lloyd,A Little Bit of What You Fancy Does You Good / Woman's Opinion of Man,pop,51.5324,-0.0861
-1912,Marie Lloyd,The Coster Girl in Paris / Every Little Movement Has a Meaning of Its Own,music hall; pop,51.5324,-0.0861
-1912,Guido Deiro,Light Cavalry Overture / Poet and Peasant Overture,instrumental; pop; classical,45.3897,7.6498
-1914,Arthur Fields,Along Came Ruth / I'll Do It All Over Again,pop,39.9527,-75.1635
-1919,Royal Dadmun,Onward Christian Soldiers / The Holy City,pop,42.7135,-73.2095
-1910,Ada Jones,Medley of Bayes-Norworth Hits / Call Me Up Some Rainy Afternoon,instrumental; pop; classical,53.8612,-2.5651
-1915,John McCormack,"It's a Long, Long Way to Tipperary",pop,53.4228,-7.9426
-1919,Marion Harris,A Good Man Is Hard to Find / For Johnny and Me,jazz,40.327,-86.1747
-1919,Charles Harrison,I Hear You Calling Me / Serenade,pop; classical,40.7216,-74.0475
-1912,William MacEwan,Some Day / My Ain Countree,gospel,55.8612,-4.2502
-1916,Giuseppe Verdi,La traviata,opera; classical,44.4614,9.8159
-1910,Daisy Tapley,Tarry With Me / I Surrender All,pop; classical,43.6981,-85.4837
-1919,Willy Derby,Moeder / Het bankje bij de haven,pop; levenslied,52.08,4.3113
-1919,Willy Derby,De schooier / Gebroken leven,pop,52.08,4.3113
-1919,Willy Derby,Het fiere schooiershart / Herderinnedroom,pop,52.08,4.3113
-1915,John McCormack,Somewhere a Voice Is Calling,pop,53.4228,-7.9426
-1917,Nora Bayes,(Good Bye and Luck Be with You) Laddie Boy / Over There,pop,41.8756,-87.6244
+﻿lat,lon,release_year,genre_ids
+25.0782,-77.3383,1916,|13334|
+39.7837,-100.4459,1910,|13334|
+39.7837,-100.4459,1911,|13334|
+40.3270,-86.1747,1916,|13334|
+40.3270,-86.1747,1918,|13334|2097|
+29.9561,-90.0734,1919,|13334|
+42.3316,-83.0466,1919,|13334|
+47.1616,27.5838,1919,|3933|
+53.7624,-0.3301,1914,|13334|
+-37.8142,144.9632,1910,|13334|
+29.9561,-90.0734,1919,|13334|4087|
+39.9527,-75.1635,1917,|13334|
+43.0481,-76.1474,1918,|13334|
+39.9527,-75.1635,1912,|13334|14248|
+37.1232,-78.4928,1919,|13334|
+40.6526,-73.9497,1912,|13334|
+50.7353,7.1025,1918,|3462|3933|
+51.9244,4.4778,1917,|3933|
+53.4795,-2.2451,1911,|13334|
+50.1481,35.1810,1917,|3933|
+51.5324,-0.0861,1913,|11738|13334|
+53.6154,-2.1558,1913,|13334|14248|
+51.5324,-0.0861,1915,|13334|
+51.5324,-0.0861,1912,|11738|13334|
+45.3897,7.6498,1912,|8991|13334|3933|
+39.9527,-75.1635,1914,|13334|
+42.7135,-73.2095,1919,|13334|
+53.8612,-2.5651,1910,|8991|13334|3933|
+53.4228,-7.9426,1915,|13334|
+40.3270,-86.1747,1919,|9356|
+40.7216,-74.0475,1919,|13334|3933|
+55.8612,-4.2502,1912,|7722|
+44.4614,9.8159,1916,|12661|3933|
+43.6981,-85.4837,1910,|13334|3933|
+52.0800,4.3113,1919,|13334|10287|
+52.0800,4.3113,1919,|13334|
+52.0800,4.3113,1919,|13334|
+53.4228,-7.9426,1915,|13334|
+41.8756,-87.6244,1917,|13334|

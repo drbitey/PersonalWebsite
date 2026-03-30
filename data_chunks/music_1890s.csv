@@ -1,9 +1,9 @@
-release_year,artist_name,release_name,release_genres,lat,lon
-1899,Arthur Collins,Three Minutes With the Minstrels,comedy; non-music; jazz; ragtime,39.9527,-75.1635
-1899,Vess L. Ossman,Whistling Rufus,jazz; ragtime,42.2529,-73.791
-1899,Arthur Collins,All Coons Look Alike to Me,jazz; ragtime,39.9527,-75.1635
-1897,Vess L. Ossman,Darkies Patrol,jazz; ragtime,42.2529,-73.791
-1891,Billy Golden,Turkey in the Straw,pop,39.1015,-84.5125
-1898,Vess L. Ossman,Hotfoot Sue,jazz; ragtime,42.2529,-73.791
-1897,Vess L. Ossman,Happy Days In Dixie,jazz; ragtime,42.2529,-73.791
-1897,Vess L. Ossman,Rag Time Medley,jazz; ragtime,42.2529,-73.791
+﻿lat,lon,release_year,genre_ids
+39.9527,-75.1635,1899,|4087|12341|9356|14248|
+42.2529,-73.7910,1899,|9356|14248|
+39.9527,-75.1635,1899,|9356|14248|
+42.2529,-73.7910,1897,|9356|14248|
+39.1015,-84.5125,1891,|13334|
+42.2529,-73.7910,1898,|9356|14248|
+42.2529,-73.7910,1897,|9356|14248|
+42.2529,-73.7910,1897,|9356|14248|

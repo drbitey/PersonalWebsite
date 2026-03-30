@@ -67,6 +67,10 @@
             margin-right: 4px;
         }
 
+        .music-popup { color: #222; min-width: 150px; }
+        .music-popup h3 { margin: 0 0 5px 0; font-size: 14px; color: #df65b0; }
+        .music-popup p { margin: 2px 0; font-size: 12px; }
+
         .credit { font-size: 10px; margin-top: 10px; color: #aaa; }
     </style>
 </head>
@@ -92,7 +96,7 @@
 
     <div class="control-group">
         <input type="checkbox" id="cumulative-check" checked>
-        <label for="cumulative-check">Cumulative Display (Show history)</label>
+        <label for="cumulative-check">Cumulative Display</label>
     </div>
 
     <label>Year: <span id="year-label">1980</span></label>
@@ -109,74 +113,135 @@
         zoom: 2
     });
 
+    let genreDict = {}; // Loaded from JSON
     let currentDecade = null;
-    let activeGenre = "";
+    let activeGenreId = null;
+    let activeGenreName = "";
     let searchTimeout;
     let genreStats = {}; 
-    let animationInterval = null;
     let isAnimating = false;
+    let animationInterval = null;
 
-    fetch('genre_stats.json')
-        .then(response => response.json())
-        .then(data => { genreStats = data; });
+    // 1. Load the Dictionary and Stats on startup
+    Promise.all([
+        fetch('genre_dictionary.json').then(r => r.json()),
+        fetch('genre_stats.json').then(r => r.json())
+    ]).then(([dict, stats]) => {
+        genreDict = dict;
+        genreStats = stats;
+        console.log("🧠 Knowledge base ready.");
+    });
 
     function updateMapFilters() {
         if (!map.getLayer('music-heat')) return;
 
         const year = parseInt(document.getElementById('slider').value);
         const isCumulative = document.getElementById('cumulative-check').checked;
-        
-        // Define operator: <= for cumulative, == for snapshot
         const operator = isCumulative ? '<=' : '==';
         
         let filters = ['all', [operator, ['get', 'release_year'], year]];
 
-        if (activeGenre) {
-            filters.push(['in', activeGenre.toLowerCase(), ['coalesce', ['get', 'release_genres'], '']]);
-            updateGenreUI(activeGenre);
+        if (activeGenreId) {
+            // Search for the pipe-wrapped ID, e.g., "|12|"
+            const searchString = `|${activeGenreId}|`;
+            filters.push(['in', searchString, ['get', 'genre_ids']]);
+            updateGenreUI(activeGenreName);
         } else {
             document.getElementById('genre-info').style.display = 'none';
         }
 
         map.setFilter('music-heat', filters);
+        map.setFilter('music-dots', filters); // Filter the interactive dots too
     }
 
-    function toggleAnimation() {
-        const playBtn = document.getElementById('play-btn');
-        const slider = document.getElementById('slider');
+    function loadDecadeData(decade) {
+        const filePath = `data_chunks/music_${decade}s.csv`;
+        document.getElementById('map').style.opacity = '0.7';
 
-        if (isAnimating) {
-            clearInterval(animationInterval);
-            playBtn.textContent = "▶ Play Diffusion Animation";
-            isAnimating = false;
-        } else {
-            // Start from origin year if a genre is searched
-            if (activeGenre && genreStats[activeGenre]) {
-                slider.value = genreStats[activeGenre].first_year;
-                updateFromSlider(); 
-            }
+        Papa.parse(filePath, {
+            download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+            complete: function(results) {
+                // Map features and include the row INDEX as the feature ID
+                const features = results.data.filter(row => row.lat && row.lon).map((row, index) => ({
+                    'type': 'Feature',
+                    'id': index, // VITAL: used to look up metadata in the sidecar
+                    'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
+                    'properties': { ...row }
+                }));
 
-            isAnimating = true;
-            playBtn.textContent = "⏸ Pause Animation";
+                const geojsonData = { 'type': 'FeatureCollection', 'features': features };
 
-            animationInterval = setInterval(() => {
-                let currentYear = parseInt(slider.value);
-                if (currentYear < 2025) {
-                    slider.value = currentYear + 1;
-                    updateFromSlider();
+                if (map.getSource('music-data')) {
+                    map.getSource('music-data').setData(geojsonData);
                 } else {
-                    clearInterval(animationInterval);
-                    playBtn.textContent = "▶ Play Diffusion Animation";
-                    isAnimating = false;
+                    map.addSource('music-data', { 'type': 'geojson', 'data': geojsonData });
+                    addHeatmapLayer();
+                    addClickLayer(); // Transparent layer for clicking
                 }
-            }, 400); // Speed of animation (400ms per year)
-        }
+                
+                updateMapFilters();
+                document.getElementById('map').style.opacity = '1';
+            }
+        });
     }
 
-    // Extracted logic to handle slider changes manually (used by animation)
+    function addHeatmapLayer() {
+        map.addLayer({
+            'id': 'music-heat', 'type': 'heatmap', 'source': 'music-data',
+            'paint': {
+                'heatmap-weight': 0.15, 'heatmap-intensity': 3,
+                'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
+                'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.2, '#4d004b', 0.4, '#810f7c', 0.6, '#ba478f', 0.8, '#df65b0', 1, '#f7fcfd']
+            }
+        });
+    }
+
+    function addClickLayer() {
+        // Invisible circles that act as click targets for popups
+        map.addLayer({
+            'id': 'music-dots', 'type': 'circle', 'source': 'music-data',
+            'paint': {
+                'circle-radius': 5,
+                'circle-color': '#df65b0',
+                'circle-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 6, 0.4] // Fades in as you zoom
+            }
+        });
+
+        // Click Handler for Metadata Sidecar
+        map.on('click', 'music-dots', (e) => {
+            const featureId = e.features[0].id;
+            const decade = Math.floor(parseInt(document.getElementById('slider').value) / 10) * 10;
+            const metaPath = `data_chunks/meta_${decade}s.csv`;
+
+            // Efficiently fetch just the metadata for this decade
+            Papa.parse(metaPath, {
+                download: true, header: true,
+                complete: function(results) {
+                    const data = results.data[featureId];
+                    if (data) {
+                        new maplibregl.Popup()
+                            .setLngLat(e.lngLat)
+                            .setHTML(`
+                                <div class="music-popup">
+                                    <h3>${data.release_name}</h3>
+                                    <p><strong>Artist:</strong> ${data.artist_name}</p>
+                                    <p><strong>Year:</strong> ${data.release_year}</p>
+                                    <p><strong>Genres:</strong> ${data.release_genres.split(';').join(', ')}</p>
+                                    <a href="https://musicbrainz.org/release/${data.release_mbid}" target="_blank" style="font-size:10px; color:#df65b0;">MusicBrainz Link</a>
+                                </div>
+                            `)
+                            .addTo(map);
+                    }
+                }
+            });
+        });
+
+        map.on('mouseenter', 'music-dots', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'music-dots', () => map.getCanvas().style.cursor = '');
+    }
+
     function updateFromSlider() {
-        const slider = document.getElementById('slider');
-        const year = parseInt(slider.value);
+        const year = parseInt(document.getElementById('slider').value);
         const decade = Math.floor(year / 10) * 10;
         document.getElementById('year-label').textContent = year;
 
@@ -188,57 +253,38 @@
         }
     }
 
-    function updateGenreUI(query) {
+    function updateGenreUI(name) {
         const infoBox = document.getElementById('genre-info');
-        const stats = genreStats[query.toLowerCase()];
+        const stats = genreStats[name];
         if (stats) {
             infoBox.style.display = 'block';
             document.getElementById('stat-year').textContent = stats.first_year;
             document.getElementById('stat-count').textContent = stats.total_count.toLocaleString();
             document.getElementById('btn-origin').onclick = () => map.flyTo({ center: stats.origin, zoom: 6 });
             document.getElementById('btn-hub').onclick = () => map.flyTo({ center: stats.hotspot, zoom: 5 });
-        } else {
-            infoBox.style.display = query.length > 2 ? 'block' : 'none';
         }
     }
 
-    function loadDecadeData(decade) {
-        const filePath = `data_chunks/music_${decade}s.csv`;
-        document.getElementById('map').style.opacity = '0.7';
-        Papa.parse(filePath, {
-            download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
-            complete: function(results) {
-                const features = results.data.filter(row => row.lat && row.lon).map(row => ({
-                    'type': 'Feature',
-                    'geometry': { 'type': 'Point', 'coordinates': [row.lon, row.lat] },
-                    'properties': { ...row }
-                }));
-                if (map.getSource('music-data')) {
-                    map.once('sourcedata', (e) => {
-                        if (e.sourceId === 'music-data' && e.isSourceLoaded) {
-                            updateMapFilters();
-                            document.getElementById('map').style.opacity = '1';
-                        }
-                    });
-                    map.getSource('music-data').setData({ 'type': 'FeatureCollection', 'features': features });
+    function toggleAnimation() {
+        const playBtn = document.getElementById('play-btn');
+        if (isAnimating) {
+            clearInterval(animationInterval);
+            playBtn.textContent = "▶ Play Diffusion Animation";
+            isAnimating = false;
+        } else {
+            isAnimating = true;
+            playBtn.textContent = "⏸ Pause Animation";
+            animationInterval = setInterval(() => {
+                let slider = document.getElementById('slider');
+                let currentYear = parseInt(slider.value);
+                if (currentYear < 2025) {
+                    slider.value = currentYear + 1;
+                    updateFromSlider();
                 } else {
-                    map.addSource('music-data', { 'type': 'geojson', 'data': { 'type': 'FeatureCollection', 'features': features } });
-                    addHeatmapLayer();
-                    document.getElementById('map').style.opacity = '1';
+                    toggleAnimation();
                 }
-            }
-        });
-    }
-
-    function addHeatmapLayer() {
-        map.addLayer({
-            'id': 'music-heat', 'type': 'heatmap', 'source': 'music-data',
-            'paint': {
-                'heatmap-weight': 0.1, 'heatmap-intensity': 4,
-                'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
-                'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.2, '#4d004b', 0.4, '#810f7c', 0.6, '#ba478f', 0.8, '#df65b0', 1, '#f7fcfd']
-            }
-        });
+            }, 400);
+        }
     }
 
     map.on('load', () => {
@@ -252,7 +298,9 @@
         document.getElementById('genre-search').addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                activeGenre = e.target.value.trim().toLowerCase();
+                const val = e.target.value.trim().toLowerCase();
+                activeGenreName = val;
+                activeGenreId = genreDict[val] || null; // Look up ID from dictionary
                 updateMapFilters();
             }, 300);
         });
