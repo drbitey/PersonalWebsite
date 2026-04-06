@@ -41,62 +41,65 @@
 </div>
 
 <script>
-// --- DIAGNOSTICS ---
-function logStatus(msg) {
-    console.log(`[MAP_DEBUG] ${msg}`);
-    const logEl = document.getElementById('debug-log');
-    if (logEl) logEl.innerText = `Status: ${msg}`;
+// --- SUPER DIAGNOSTICS ---
+async function runPowerDiagnostics(url) {
+    console.log("--- Starting Power Diagnostics ---");
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Range': 'bytes=0-1024' }
+        });
+
+        console.log("Response Status:", response.status);
+        console.log("Accept-Ranges:", response.headers.get("Accept-Ranges"));
+        console.log("Content-Type:", response.headers.get("Content-Type"));
+        console.log("Access-Control-Allow-Origin:", response.headers.get("Access-Control-Allow-Origin"));
+
+        if (response.status !== 206) {
+            logStatus("CRITICAL: Server returned 200 instead of 206. PMTiles requires Range support.");
+        } else {
+            logStatus("Server supports Range Requests. Checking file internal structure...");
+        }
+
+        const p = new pmtiles.PMTiles(url);
+        const metadata = await p.getMetadata();
+        logStatus(`Success! Found layers: ${metadata.vector_layers.map(l => l.id).join(', ')}`);
+        
+    } catch (err) {
+        logStatus(`Network Error: ${err.message}`);
+        console.error("Full Error Object:", err);
+    }
 }
 
-async function runDetailedDiagnostics(url) {
-    try {
-        // 1. Test basic fetch
-        const res = await fetch(url, { headers: { 'Range': 'bytes=0-10' } });
-        if (res.status !== 206) {
-            logStatus(`Server Error: ${res.status} (Does not support Range Requests)`);
-            return;
-        }
-
-        // 2. Use the PMTiles class to check internal metadata
-        const p = new pmtiles.PMTiles(url);
-        const header = await p.getHeader();
-        logStatus(`File Found! Zoom: ${header.minZoom}-${header.maxZoom}`);
-        
-        // Check if our specific layer exists
-        // This is where we verify if the layer is actually named 'music_vector_master'
-        const metadata = await p.getMetadata();
-        if (metadata.vector_layers) {
-            const layers = metadata.vector_layers.map(l => l.id);
-            logStatus(`Available Layers: ${layers.join(', ')}`);
-        }
-    } catch (e) {
-        logStatus(`Diagnostic Failed: ${e.message}`);
-        console.error(e);
-    }
+function logStatus(msg) {
+    console.log(`[MAP_DEBUG] ${msg}`);
+    const debugEl = document.getElementById('debug-log');
+    if (debugEl) debugEl.innerText = `Status: ${msg}`;
 }
 
 // --- CORE MAP LOGIC ---
 const protocol = new pmtiles.Protocol();
-maplibregl.addProtocol("pmtiles", protocol.tile);
+maplibregl.addProtocol("pmtiles", (request) => {
+    // This logs every single tile request MapLibre makes
+    console.log(`Requesting Tile: ${request.url}`);
+    return protocol.tile(request);
+});
 
-let currentYear = 1890;
-let isPlaying = false;
-
-// We'll use an absolute-style path relative to the domain root
-const PMTILES_URL = window.location.origin + "/music-map/data/music_data.pmtiles";
+// Using a cache-busting parameter to see if it's a caching/CDN issue
+const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles?v=" + Math.random();
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [15, 30],
+    center: [0, 20],
     zoom: 2
 });
 
 map.on('load', async () => {
-    logStatus("Map style loaded. Path: " + PMTILES_URL);
+    logStatus("Map Style Loaded. Initializing PMTiles...");
     
-    // Run diagnostics and map setup in parallel
-    runDetailedDiagnostics(PMTILES_URL);
+    // Run the power diagnostics
+    runPowerDiagnostics(PMTILES_URL);
 
     map.addSource('music-points', {
         type: 'vector',
@@ -107,20 +110,21 @@ map.on('load', async () => {
         'id': 'music-layer',
         'type': 'circle',
         'source': 'music-points',
-        'source-layer': 'music_vector_master', 
+        'source-layer': 'music_vector_master', // MUST match the 'Found layers' diagnostic output
         'paint': {
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 3, 10, 12],
+            'circle-radius': 4,
             'circle-color': '#00ffcc',
-            'circle-opacity': 0.8,
             'circle-stroke-width': 1,
-            'circle-stroke-color': '#ffffff'
-        },
-        'filter': ['==', ['to-number', ['get', 'year']], currentYear] 
+            'circle-stroke-color': '#fff'
+        }
     });
 
+    // Update filter immediately for initial view
+    updateFilters();
     initControls();
 });
 
+// ... (keep your updateFilters, initControls, and animate functions from before)
 function updateFilters() {
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
