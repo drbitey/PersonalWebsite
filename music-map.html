@@ -52,7 +52,7 @@
         <label><input type="checkbox" id="cumulative-toggle"> Cumulative View</label>
         <button id="play-btn">▶ Play Timeline</button>
     </div>
-</div>
+</div>s
 
 <div id="notebook-container">
     </div>
@@ -61,7 +61,7 @@
     // 1. Setup PMTiles
     const protocol = new pmtiles.Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
-    const PMTILES_URL = "http://mvoltz.com/music-map/data/music_data.pmtiles";
+    const PMTILES_URL = "https://mvoltz.com/music-map/data/music_data.pmtiles";
 
     // 2. Initialize Map
     const map = new maplibregl.Map({
