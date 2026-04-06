@@ -52,16 +52,17 @@
         <label><input type="checkbox" id="cumulative-toggle"> Cumulative View</label>
         <button id="play-btn">▶ Play Timeline</button>
     </div>
-</div>s
+</div>
 
-<div id="notebook-container">
-    </div>
+<div id="notebook-container"></div>
 
 <script>
     // 1. Setup PMTiles
     const protocol = new pmtiles.Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
-    const PMTILES_URL = "https://mvoltz.com/music-map/data/music_data.pmtiles";
+    
+    // Updated to relative path based on your folder structure
+    const PMTILES_URL = "music-map/data/music_data.pmtiles";
 
     // 2. Initialize Map
     const map = new maplibregl.Map({
@@ -86,7 +87,7 @@
             'id': 'music-layer',
             'type': 'circle',
             'source': 'music-points',
-            'source-layer': 'music_vector_master', // Change this if metadata.json says otherwise
+            'source-layer': 'music_vector_master', 
             'paint': {
                 'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 8],
                 'circle-color': '#00ffcc',
@@ -94,7 +95,7 @@
                 'circle-stroke-width': 0.5,
                 'circle-stroke-color': '#fff'
             },
-            'filter': ['==', ['get', 'year'], 1890] // Initial Filter
+            'filter': ['==', ['get', 'year'], 1890] 
         });
 
         // Initialize UI Logic
@@ -106,7 +107,6 @@
         const isCumulative = document.getElementById('cumulative-toggle').checked;
         const searchTerm = document.getElementById('genre-search').value.toLowerCase();
         
-        // Build Filter Logic
         let yearFilter = isCumulative 
             ? ['<=', ['get', 'year'], currentYear] 
             : ['==', ['get', 'year'], currentYear];
@@ -150,10 +150,16 @@
         setTimeout(animate, 150);
     }
 
-    // Load dynamic notebook entries from JSON
+    // Load dynamic notebook entries using relative path
     async function loadNotebookEntries() {
         try {
-            const response = await fetch('data/notebook_entries.json');
+            // Path adjusted to match your structure root -> music-map -> data
+            const response = await fetch('music-map/data/notebook_entries.json');
+            
+            if (!response.ok) {
+                throw new Error(`Failed to load file: ${response.status}`);
+            }
+
             const entries = await response.json();
             const container = document.getElementById('notebook-container');
             
@@ -165,7 +171,7 @@
                 </div>
             `).join('');
         } catch (err) {
-            console.error("Failed to load notebook entries:", err);
+            console.error("Could not find notebook entries. Check path: music-map/data/notebook_entries.json", err);
         }
     }
 
