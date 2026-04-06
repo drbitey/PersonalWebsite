@@ -42,11 +42,17 @@
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. The Dynamic Same-Origin Fix
-// This ensures the fetch exactly matches your current URL, preventing all GitHub redirects
-const PMTILES_URL = `https://${window.location.host}/music-map/data/music_data.pmtiles`;
+// 2. Use the automatic origin to match the browser exactly
+const PMTILES_URL = `${window.location.origin}${window.location.pathname.replace(/\/$/, "")}/data/music_data.pmtiles`;
 
-console.log("Fetching tiles from exact same origin:", PMTILES_URL);
+// DIAGNOSTIC PING: Run this to see what the server is actually doing
+fetch(PMTILES_URL, { method: 'HEAD' })
+    .then(res => {
+        console.log("Diagnostic Link:", PMTILES_URL);
+        console.log("Server Status:", res.status);
+        console.log("Redirected:", res.redirected);
+    })
+    .catch(err => console.error("Diagnostic Fetch Failed:", err));
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -55,17 +61,14 @@ const map = new maplibregl.Map({
     zoom: 2
 });
 
-let currentYear = 1890;
-let isPlaying = false;
-
 map.on('load', () => {
-    if (!map.getSource('music-points')) {
-        map.addSource('music-points', {
-            type: 'vector',
-            url: `pmtiles://${PMTILES_URL}`
-        });
-    }
-// ... rest of your code stays exactly the same
+    map.addSource('music-points', {
+        type: 'vector',
+        url: `pmtiles://${PMTILES_URL}`
+    });
+    
+    // ... rest of your layers
+});
 
     map.addLayer({
         'id': 'music-layer',
