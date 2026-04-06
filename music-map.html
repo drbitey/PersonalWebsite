@@ -61,7 +61,7 @@
     // 1. Setup PMTiles
     const protocol = new pmtiles.Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
-    const PMTILES_URL = "data/music_data.pmtiles";
+    const PMTILES_URL = "http://mvoltz.com/music-map/data/music_data.pmtiles";
 
     // 2. Initialize Map
     const map = new maplibregl.Map({
