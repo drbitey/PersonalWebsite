@@ -38,48 +38,67 @@
 </div>
 
 <script>
-    // 1. Initialize PMTiles
-    const protocol = new pmtiles.Protocol();
-    maplibregl.addProtocol("pmtiles", protocol.tile);
-    
-    // Using a relative path is often safer for CORS on the same domain
-    const PMTILES_URL = "music-map/data/music_data.pmtiles";
+    // 1. Setup PMTiles
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
 
-    const map = new maplibregl.Map({
-        container: 'map',
-        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-        center: [15, 30],
-        zoom: 2
-    });
+// 2. Foolproof Path Logic
+// This ensures we get the right path whether you're on localhost or a server
+const pathParts = window.location.pathname.split('/');
+pathParts.pop(); // Remove 'index.html' or trailing slash
+const baseDir = pathParts.join('/');
+const PMTILES_URL = `${window.location.origin}${baseDir}/data/music_data.pmtiles`;
 
-    let currentYear = 1890;
-    let isPlaying = false;
+console.log("Attempting to fetch tiles from:", PMTILES_URL);
 
-    map.on('load', () => {
+const map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    center: [15, 30],
+    zoom: 2,
+    // THE SECRET SAUCE: transformRequest handles the headers for every single fetch
+    transformRequest: (url, resourceType) => {
+        if (resourceType === 'Tile' && url.startsWith('pmtiles://')) {
+            return {
+                url: url,
+                headers: { 'Access-Control-Allow-Origin': '*' }
+            };
+        }
+    }
+});
+
+let currentYear = 1890;
+let isPlaying = false;
+
+map.on('load', () => {
+    // Check if the source already exists to avoid double-loading errors
+    if (!map.getSource('music-points')) {
         map.addSource('music-points', {
             type: 'vector',
             url: `pmtiles://${PMTILES_URL}`,
-            // This is the critical addition for "Failed to fetch" errors
-            crossOrigin: 'anonymous' 
+            crossOrigin: 'anonymous'
         });
+    }
 
-        map.addLayer({
-            'id': 'music-layer',
-            'type': 'circle',
-            'source': 'music-points',
-            'source-layer': 'music_vector_master', 
-            'paint': {
-                'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2, 10, 8],
-                'circle-color': '#00ffcc',
-                'circle-opacity': 0.8,
-                'circle-stroke-width': 0.5,
-                'circle-stroke-color': '#fff'
-            },
-            'filter': ['==', ['get', 'year'], 1890] 
-        });
-
-        initControls();
+    map.addLayer({
+        'id': 'music-layer',
+        'type': 'circle',
+        'source': 'music-points',
+        'source-layer': 'music_vector_master', 
+        'paint': {
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 3, 10, 12],
+            'circle-color': '#00ffcc',
+            'circle-opacity': 0.8,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#ffffff'
+        },
+        'filter': ['==', ['get', 'year'], 1890] 
     });
+
+    initControls();
+});
+
+// ... keep the rest of your updateFilters, animate, and initControls functions ...
 
     function updateFilters() {
         const isCumulative = document.getElementById('cumulative-toggle').checked;
