@@ -41,33 +41,44 @@
 </div>
 
 <script>
-// --- SUPER DIAGNOSTICS ---
-async function runPowerDiagnostics(url) {
-    console.log("--- Starting Power Diagnostics ---");
+// --- DEEP DIVE DIAGNOSTICS ---
+async function runDeepDiagnostics(url) {
+    logStatus("Deep Scan Starting...");
     try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: { 'Range': 'bytes=0-1024' }
-        });
+        const p = new pmtiles.PMTiles(url);
+        
+        // Diagnostic 1: Header Check
+        const header = await p.getHeader();
+        console.log("PMTiles Header:", header);
+        logStatus(`Header Read: Zoom ${header.minZoom}-${header.maxZoom}, Type: ${header.tileType === 1 ? 'Vector' : 'Raster'}`);
 
-        console.log("Response Status:", response.status);
-        console.log("Accept-Ranges:", response.headers.get("Accept-Ranges"));
-        console.log("Content-Type:", response.headers.get("Content-Type"));
-        console.log("Access-Control-Allow-Origin:", response.headers.get("Access-Control-Allow-Origin"));
-
-        if (response.status !== 206) {
-            logStatus("CRITICAL: Server returned 200 instead of 206. PMTiles requires Range support.");
+        // Diagnostic 2: Metadata Raw Check
+        const metadata = await p.getMetadata();
+        console.log("Raw Metadata Object:", metadata);
+        
+        if (!metadata.vector_layers) {
+            logStatus("CRITICAL: No vector_layers found in metadata!");
         } else {
-            logStatus("Server supports Range Requests. Checking file internal structure...");
+            const names = metadata.vector_layers.map(l => l.id);
+            logStatus(`Internal Layers: ${names.join(', ')}`);
         }
 
-        const p = new pmtiles.PMTiles(url);
-        const metadata = await p.getMetadata();
-        logStatus(`Success! Found layers: ${metadata.vector_layers.map(l => l.id).join(', ')}`);
-        
+        // Diagnostic 3: Test Tile Fetch
+        // Attempting to fetch a tile at zoom 0, x0, y0
+        try {
+            const tile = await p.getZxy(0, 0, 0);
+            if (tile) {
+                logStatus("Data Check: Successfully decompressed a tile.");
+            } else {
+                logStatus("Data Check: Tile (0,0,0) is empty.");
+            }
+        } catch (tileErr) {
+            logStatus(`Decompression Error: ${tileErr.message}`);
+        }
+
     } catch (err) {
-        logStatus(`Network Error: ${err.message}`);
-        console.error("Full Error Object:", err);
+        logStatus(`Deep Scan Error: ${err.message}`);
+        console.error("Full Error Trace:", err);
     }
 }
 
@@ -78,28 +89,27 @@ function logStatus(msg) {
 }
 
 // --- CORE MAP LOGIC ---
-const protocol = new pmtiles.Protocol();
-maplibregl.addProtocol("pmtiles", (request) => {
-    // This logs every single tile request MapLibre makes
-    console.log(`Requesting Tile: ${request.url}`);
-    return protocol.tile(request);
-});
+// Define these globally so updateFilters can see them!
+let currentYear = 1890; 
+let isPlaying = false;
 
-// Using a cache-busting parameter to see if it's a caching/CDN issue
-const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles?v=" + Math.random();
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
+
+const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles";
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     center: [0, 20],
-    zoom: 2
+    zoom: 1
 });
 
 map.on('load', async () => {
-    logStatus("Map Style Loaded. Initializing PMTiles...");
+    logStatus("Map Style Loaded.");
     
-    // Run the power diagnostics
-    runPowerDiagnostics(PMTILES_URL);
+    // Run deep diagnostics
+    runDeepDiagnostics(PMTILES_URL);
 
     map.addSource('music-points', {
         type: 'vector',
@@ -110,22 +120,23 @@ map.on('load', async () => {
         'id': 'music-layer',
         'type': 'circle',
         'source': 'music-points',
-        'source-layer': 'music_vector_master', // MUST match the 'Found layers' diagnostic output
+        'source-layer': 'music_vector_master', 
         'paint': {
             'circle-radius': 4,
             'circle-color': '#00ffcc',
             'circle-stroke-width': 1,
-            'circle-stroke-color': '#fff'
+            'circle-stroke-color': '#fff',
+            'circle-opacity': 0.7
         }
     });
 
-    // Update filter immediately for initial view
-    updateFilters();
     initControls();
+    updateFilters(); // Now currentYear is defined globally
 });
 
-// ... (keep your updateFilters, initControls, and animate functions from before)
 function updateFilters() {
+    if (!map.getLayer('music-layer')) return;
+
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
@@ -144,16 +155,12 @@ function updateFilters() {
         ];
     }
 
-    if (map.getLayer('music-layer')) {
-        map.setFilter('music-layer', finalFilter);
-    }
+    map.setFilter('music-layer', finalFilter);
     document.getElementById('year-display').innerText = currentYear;
 }
 
 function initControls() {
     const slider = document.getElementById('year-slider');
-    const playBtn = document.getElementById('play-btn');
-
     slider.addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
@@ -162,9 +169,9 @@ function initControls() {
     document.getElementById('genre-search').addEventListener('input', updateFilters);
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
 
-    playBtn.addEventListener('click', () => {
+    document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
-        playBtn.innerText = isPlaying ? "Pause" : "Play Timeline";
+        this.innerText = isPlaying ? "Pause" : "Play Timeline";
         if (isPlaying) animate();
     });
 }
@@ -175,7 +182,7 @@ function animate() {
     if (currentYear > 2025) currentYear = 1890;
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    setTimeout(animate, 200);
+    setTimeout(animate, 250);
 }
 </script>
 </body>
