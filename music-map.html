@@ -44,19 +44,34 @@
 // --- DIAGNOSTICS ---
 function logStatus(msg) {
     console.log(`[MAP_DEBUG] ${msg}`);
-    document.getElementById('debug-log').innerText = `Status: ${msg}`;
+    const logEl = document.getElementById('debug-log');
+    if (logEl) logEl.innerText = `Status: ${msg}`;
 }
 
-async function runDiagnostics(url) {
+async function runDetailedDiagnostics(url) {
     try {
+        // 1. Test basic fetch
         const res = await fetch(url, { headers: { 'Range': 'bytes=0-10' } });
-        if (res.status === 206) {
-            logStatus("Connection Success (206 OK)");
-        } else {
-            logStatus(`Connection Error: ${res.status}`);
+        if (res.status !== 206) {
+            logStatus(`Server Error: ${res.status} (Does not support Range Requests)`);
+            return;
+        }
+
+        // 2. Use the PMTiles class to check internal metadata
+        const p = new pmtiles.PMTiles(url);
+        const header = await p.getHeader();
+        logStatus(`File Found! Zoom: ${header.minZoom}-${header.maxZoom}`);
+        
+        // Check if our specific layer exists
+        // This is where we verify if the layer is actually named 'music_vector_master'
+        const metadata = await p.getMetadata();
+        if (metadata.vector_layers) {
+            const layers = metadata.vector_layers.map(l => l.id);
+            logStatus(`Available Layers: ${layers.join(', ')}`);
         }
     } catch (e) {
-        logStatus(`Fetch Failed: ${e.message}`);
+        logStatus(`Diagnostic Failed: ${e.message}`);
+        console.error(e);
     }
 }
 
@@ -67,9 +82,8 @@ maplibregl.addProtocol("pmtiles", protocol.tile);
 let currentYear = 1890;
 let isPlaying = false;
 
-// Since HTML is at root and data is in music-map/data/
-const PMTILES_URL = "./music-map/data/music_data.pmtiles";
-const absoluteUrl = new URL(PMTILES_URL, window.location.href).href;
+// We'll use an absolute-style path relative to the domain root
+const PMTILES_URL = window.location.origin + "/music-map/data/music_data.pmtiles";
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -79,12 +93,14 @@ const map = new maplibregl.Map({
 });
 
 map.on('load', async () => {
-    logStatus("Map style loaded. Testing PMTiles...");
-    await runDiagnostics(absoluteUrl);
+    logStatus("Map style loaded. Path: " + PMTILES_URL);
+    
+    // Run diagnostics and map setup in parallel
+    runDetailedDiagnostics(PMTILES_URL);
 
     map.addSource('music-points', {
         type: 'vector',
-        url: `pmtiles://${absoluteUrl}`
+        url: `pmtiles://${PMTILES_URL}`
     });
 
     map.addLayer({
@@ -99,16 +115,7 @@ map.on('load', async () => {
             'circle-stroke-width': 1,
             'circle-stroke-color': '#ffffff'
         },
-        'filter': ['==', ['to-number', ['get', 'year']], 1890] 
-    });
-
-    // Final Diagnostic: Verify layer metadata
-    protocol.tile({url: absoluteUrl, type: 'json'}).then(res => {
-        const layers = res.vector_layers.map(l => l.id);
-        logStatus(`Active Layers: ${layers.join(', ')}`);
-        if (!layers.includes('music_vector_master')) {
-            console.error("CRITICAL: Layer 'music_vector_master' not found in PMTiles file!");
-        }
+        'filter': ['==', ['to-number', ['get', 'year']], currentYear] 
     });
 
     initControls();
@@ -118,9 +125,7 @@ function updateFilters() {
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    // Convert 'year' to number to avoid ArcGIS string-type mismatch
     const yearValue = ['to-number', ['get', 'year']];
-    
     let yearFilter = isCumulative 
         ? ['<=', yearValue, currentYear] 
         : ['==', yearValue, currentYear];
@@ -166,7 +171,7 @@ function animate() {
     if (currentYear > 2025) currentYear = 1890;
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    setTimeout(animate, 200); // Slightly slower to ensure smooth rendering
+    setTimeout(animate, 200);
 }
 </script>
 </body>
