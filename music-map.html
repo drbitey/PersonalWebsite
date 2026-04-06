@@ -42,17 +42,12 @@
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. Use the automatic origin to match the browser exactly
-const PMTILES_URL = `${window.location.origin}${window.location.pathname.replace(/\/$/, "")}/data/music_data.pmtiles`;
+// 2. Variables (Define these at the top so all functions can access them)
+let currentYear = 1890;
+let isPlaying = false;
 
-// DIAGNOSTIC PING: Run this to see what the server is actually doing
-fetch(PMTILES_URL, { method: 'HEAD' })
-    .then(res => {
-        console.log("Diagnostic Link:", PMTILES_URL);
-        console.log("Server Status:", res.status);
-        console.log("Redirected:", res.redirected);
-    })
-    .catch(err => console.error("Diagnostic Fetch Failed:", err));
+// 3. Use the automatic origin
+const PMTILES_URL = `${window.location.origin}${window.location.pathname.replace(/\/$/, "")}/data/music_data.pmtiles`;
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -66,9 +61,6 @@ map.on('load', () => {
         type: 'vector',
         url: `pmtiles://${PMTILES_URL}`
     });
-    
-    // ... rest of your layers
-});
 
     map.addLayer({
         'id': 'music-layer',
@@ -85,8 +77,9 @@ map.on('load', () => {
         'filter': ['==', ['get', 'year'], 1890] 
     });
 
+    // Start the UI logic only after the map is ready
     initControls();
-});
+}); // THIS is where the 'load' bracket should actually close
 
 function updateFilters() {
     const isCumulative = document.getElementById('cumulative-toggle').checked;
@@ -98,12 +91,12 @@ function updateFilters() {
 
     let finalFilter = yearFilter;
 
-    // Fixed the search logic to handle potential nulls in 'genre'
     if (searchTerm) {
+        // MapLibre filter for searching substrings
         finalFilter = [
             'all', 
             yearFilter, 
-            ['>=', ['indexOf', searchTerm, ['downcase', ['coalesce', ['get', 'genre'], '']]], 0]
+            ['in', searchTerm, ['downcase', ['coalesce', ['get', 'genre'], '']]]
         ];
     }
 
@@ -141,6 +134,5 @@ function animate() {
     setTimeout(animate, 150);
 }
 </script>
-
 </body>
 </html>
