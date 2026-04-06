@@ -38,33 +38,21 @@
 </div>
 
 <script>
-    // 1. Setup PMTiles
+// 1. Setup PMTiles
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. Foolproof Path Logic
-// This ensures we get the right path whether you're on localhost or a server
-const pathParts = window.location.pathname.split('/');
-pathParts.pop(); // Remove 'index.html' or trailing slash
-const baseDir = pathParts.join('/');
-const PMTILES_URL = `https://www.mvoltz.com/music-map/data/music_data.pmtiles`;
+// 2. Relative Path Fix
+// Since your HTML is in the root, we point directly to the subfolder.
+const PMTILES_URL = 'music-map/data/music_data.pmtiles';
 
-console.log("Attempting to fetch tiles from:", PMTILES_URL);
+console.log("Attempting to fetch tiles from relative path:", PMTILES_URL);
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     center: [15, 30],
-    zoom: 2,
-    // THE SECRET SAUCE: transformRequest handles the headers for every single fetch
-    transformRequest: (url, resourceType) => {
-        if (resourceType === 'Tile' && url.startsWith('pmtiles://')) {
-            return {
-                url: url,
-                headers: { 'Access-Control-Allow-Origin': '*' }
-            };
-        }
-    }
+    zoom: 2
 });
 
 let currentYear = 1890;
@@ -76,7 +64,7 @@ map.on('load', () => {
         map.addSource('music-points', {
             type: 'vector',
             url: `pmtiles://${PMTILES_URL}`,
-            crossOrigin: 'anonymous'
+            // Removing crossOrigin: 'anonymous' for relative paths often helps on GH Pages
         });
     }
 
@@ -98,55 +86,58 @@ map.on('load', () => {
     initControls();
 });
 
-// ... keep the rest of your updateFilters, animate, and initControls functions ...
+function updateFilters() {
+    const isCumulative = document.getElementById('cumulative-toggle').checked;
+    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
+    
+    let yearFilter = isCumulative 
+        ? ['<=', ['get', 'year'], currentYear] 
+        : ['==', ['get', 'year'], currentYear];
 
-    function updateFilters() {
-        const isCumulative = document.getElementById('cumulative-toggle').checked;
-        const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-        
-        let yearFilter = isCumulative 
-            ? ['<=', ['get', 'year'], currentYear] 
-            : ['==', ['get', 'year'], currentYear];
+    let finalFilter = yearFilter;
 
-        let finalFilter = yearFilter;
-
-        if (searchTerm) {
-            finalFilter = ['all', yearFilter, ['>=', ['indexOf', searchTerm, ['downcase', ['get', 'genre']]], 0]];
-        }
-
-        if (map.getLayer('music-layer')) {
-            map.setFilter('music-layer', finalFilter);
-        }
-        document.getElementById('year-display').innerText = currentYear;
+    // Fixed the search logic to handle potential nulls in 'genre'
+    if (searchTerm) {
+        finalFilter = [
+            'all', 
+            yearFilter, 
+            ['>=', ['indexOf', searchTerm, ['downcase', ['coalesce', ['get', 'genre'], '']]], 0]
+        ];
     }
 
-    function initControls() {
-        const slider = document.getElementById('year-slider');
-        const playBtn = document.getElementById('play-btn');
-
-        slider.addEventListener('input', (e) => {
-            currentYear = parseInt(e.target.value);
-            updateFilters();
-        });
-
-        document.getElementById('genre-search').addEventListener('input', updateFilters);
-        document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
-
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playBtn.innerText = isPlaying ? "⏸ Pause" : "▶ Play Timeline";
-            if (isPlaying) animate();
-        });
+    if (map.getLayer('music-layer')) {
+        map.setFilter('music-layer', finalFilter);
     }
+    document.getElementById('year-display').innerText = currentYear;
+}
 
-    function animate() {
-        if (!isPlaying) return;
-        currentYear++;
-        if (currentYear > 2025) currentYear = 1890;
-        document.getElementById('year-slider').value = currentYear;
+function initControls() {
+    const slider = document.getElementById('year-slider');
+    const playBtn = document.getElementById('play-btn');
+
+    slider.addEventListener('input', (e) => {
+        currentYear = parseInt(e.target.value);
         updateFilters();
-        setTimeout(animate, 150);
-    }
+    });
+
+    document.getElementById('genre-search').addEventListener('input', updateFilters);
+    document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
+
+    playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playBtn.innerText = isPlaying ? "Pause" : "Play Timeline";
+        if (isPlaying) animate();
+    });
+}
+
+function animate() {
+    if (!isPlaying) return;
+    currentYear++;
+    if (currentYear > 2025) currentYear = 1890;
+    document.getElementById('year-slider').value = currentYear;
+    updateFilters();
+    setTimeout(animate, 150);
+}
 </script>
 
 </body>
