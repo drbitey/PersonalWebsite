@@ -21,6 +21,8 @@
         input, button { background: #222; color: #fff; border: 1px solid #555; padding: 8px; border-radius: 4px; }
         #year-display { font-size: 24px; font-weight: bold; color: #00ffcc; }
         .slider { width: 100%; accent-color: #00ffcc; }
+        /* Style for a small debug overlay if needed */
+        #debug-log { font-size: 10px; color: #aaa; margin-top: 10px; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -34,20 +36,40 @@
         <input type="text" id="genre-search" placeholder="Search Genre...">
         <label><input type="checkbox" id="cumulative-toggle"> Cumulative View</label>
         <button id="play-btn">▶ Play Timeline</button>
+        <div id="debug-log">Status: Initializing...</div>
     </div>
 </div>
 
 <script>
-// 1. Setup PMTiles
+// --- DIAGNOSTICS ---
+function logStatus(msg) {
+    console.log(`[MAP_DEBUG] ${msg}`);
+    document.getElementById('debug-log').innerText = `Status: ${msg}`;
+}
+
+async function runDiagnostics(url) {
+    try {
+        const res = await fetch(url, { headers: { 'Range': 'bytes=0-10' } });
+        if (res.status === 206) {
+            logStatus("Connection Success (206 OK)");
+        } else {
+            logStatus(`Connection Error: ${res.status}`);
+        }
+    } catch (e) {
+        logStatus(`Fetch Failed: ${e.message}`);
+    }
+}
+
+// --- CORE MAP LOGIC ---
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. Variables (Define these at the top so all functions can access them)
 let currentYear = 1890;
 let isPlaying = false;
 
-// 3. Use the automatic origin
+// Since HTML is at root and data is in music-map/data/
 const PMTILES_URL = "./music-map/data/music_data.pmtiles";
+const absoluteUrl = new URL(PMTILES_URL, window.location.href).href;
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -56,9 +78,10 @@ const map = new maplibregl.Map({
     zoom: 2
 });
 
-map.on('load', () => {
-    const absoluteUrl = new URL(PMTILES_URL, window.location.href).href;
-    
+map.on('load', async () => {
+    logStatus("Map style loaded. Testing PMTiles...");
+    await runDiagnostics(absoluteUrl);
+
     map.addSource('music-points', {
         type: 'vector',
         url: `pmtiles://${absoluteUrl}`
@@ -76,29 +99,39 @@ map.on('load', () => {
             'circle-stroke-width': 1,
             'circle-stroke-color': '#ffffff'
         },
-        'filter': ['==', ['get', 'year'], 1890] 
+        'filter': ['==', ['to-number', ['get', 'year']], 1890] 
     });
 
-    // Start the UI logic only after the map is ready
+    // Final Diagnostic: Verify layer metadata
+    protocol.tile({url: absoluteUrl, type: 'json'}).then(res => {
+        const layers = res.vector_layers.map(l => l.id);
+        logStatus(`Active Layers: ${layers.join(', ')}`);
+        if (!layers.includes('music_vector_master')) {
+            console.error("CRITICAL: Layer 'music_vector_master' not found in PMTiles file!");
+        }
+    });
+
     initControls();
-}); // THIS is where the 'load' bracket should actually close
+});
 
 function updateFilters() {
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
+    // Convert 'year' to number to avoid ArcGIS string-type mismatch
+    const yearValue = ['to-number', ['get', 'year']];
+    
     let yearFilter = isCumulative 
-        ? ['<=', ['get', 'year'], currentYear] 
-        : ['==', ['get', 'year'], currentYear];
+        ? ['<=', yearValue, currentYear] 
+        : ['==', yearValue, currentYear];
 
     let finalFilter = yearFilter;
 
     if (searchTerm) {
-        // MapLibre filter for searching substrings
         finalFilter = [
             'all', 
             yearFilter, 
-            ['in', searchTerm, ['downcase', ['coalesce', ['get', 'genre'], '']]]
+            ['in', searchTerm, ['downcase', ['to-string', ['coalesce', ['get', 'genre'], '']]]]
         ];
     }
 
@@ -133,7 +166,7 @@ function animate() {
     if (currentYear > 2025) currentYear = 1890;
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    setTimeout(animate, 150);
+    setTimeout(animate, 200); // Slightly slower to ensure smooth rendering
 }
 </script>
 </body>
