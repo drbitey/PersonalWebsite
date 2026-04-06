@@ -42,12 +42,11 @@
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. Relative Path Fix
-// Since your HTML is in the root, we point directly to the subfolder.
-// Bypass the custom domain routing entirely for the data source
-const PMTILES_URL = 'https://drbitey.github.io/PersonalWebsite/music-map/data/music_data.pmtiles';
+// 2. The Dynamic Same-Origin Fix
+// This ensures the fetch exactly matches your current URL, preventing all GitHub redirects
+const PMTILES_URL = `https://${window.location.host}/music-map/data/music_data.pmtiles`;
 
-console.log("Attempting to fetch tiles from GitHub directly:", PMTILES_URL);
+console.log("Fetching tiles from exact same origin:", PMTILES_URL);
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -60,14 +59,13 @@ let currentYear = 1890;
 let isPlaying = false;
 
 map.on('load', () => {
-    // Check if the source already exists to avoid double-loading errors
     if (!map.getSource('music-points')) {
         map.addSource('music-points', {
             type: 'vector',
-            url: `pmtiles://${PMTILES_URL}`,
-            // Removing crossOrigin: 'anonymous' for relative paths often helps on GH Pages
+            url: `pmtiles://${PMTILES_URL}`
         });
     }
+// ... rest of your code stays exactly the same
 
     map.addLayer({
         'id': 'music-layer',
