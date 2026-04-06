@@ -47,7 +47,7 @@ maplibregl.addProtocol("pmtiles", protocol.tile);
 const pathParts = window.location.pathname.split('/');
 pathParts.pop(); // Remove 'index.html' or trailing slash
 const baseDir = pathParts.join('/');
-const PMTILES_URL = `${window.location.origin}${baseDir}/data/music_data.pmtiles`;
+const PMTILES_URL = `https://www.mvoltz.com/music-map/data/music_data.pmtiles`;
 
 console.log("Attempting to fetch tiles from:", PMTILES_URL);
 
