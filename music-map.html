@@ -44,9 +44,10 @@ maplibregl.addProtocol("pmtiles", protocol.tile);
 
 // 2. Relative Path Fix
 // Since your HTML is in the root, we point directly to the subfolder.
-const PMTILES_URL = 'music-map/data/music_data.pmtiles';
+// Bypass the custom domain routing entirely for the data source
+const PMTILES_URL = 'https://drbitey.github.io/PersonalWebsite/music-map/data/music_data.pmtiles';
 
-console.log("Attempting to fetch tiles from relative path:", PMTILES_URL);
+console.log("Attempting to fetch tiles from GitHub directly:", PMTILES_URL);
 
 const map = new maplibregl.Map({
     container: 'map',
