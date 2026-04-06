@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.css" rel="stylesheet" />
     
-    <script src="https://unpkg.com/pmtiles@3.2.0/dist/index.js"></script>
+    <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
 
     <style>
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #111; color: white; }
@@ -47,12 +47,11 @@
 </div>
 
 <script>
-    // 1. Setup PMTiles v3 Protocol correctly for MapLibre v4
+    // 1. Setup PMTiles Protocol (v3 Browser Bundle uses the 'pmtiles' global)
     const protocol = new pmtiles.Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     
-    // Construct the URL dynamically to avoid CORS/Path issues
-    // This looks for the data folder relative to your domain root
+    // Use window.location.origin to ensure the path is absolute
     const PMTILES_URL = `${window.location.origin}/music-map/data/music_data.pmtiles`;
 
     // 2. Initialize Map
@@ -67,23 +66,20 @@
     let isPlaying = false;
 
     map.on('load', () => {
-        // Add Source with the pmtiles:// prefix
+        // Add Source
         map.addSource('music-points', {
             type: 'vector',
             url: `pmtiles://${PMTILES_URL}`
         });
 
+        // Add Layer
         map.addLayer({
             'id': 'music-layer',
             'type': 'circle',
             'source': 'music-points',
             'source-layer': 'music_vector_master', 
             'paint': {
-                'circle-radius': [
-                    'interpolate', ['linear'], ['zoom'],
-                    2, 2.5,
-                    10, 8
-                ],
+                'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 8],
                 'circle-color': '#00ffcc',
                 'circle-opacity': 0.8,
                 'circle-stroke-width': 0.5,
@@ -105,8 +101,8 @@
 
         let finalFilter = yearFilter;
 
-        // Using a more robust filter for searching
         if (searchTerm) {
+            // Updated to use a more robust check for modern vector tiles
             finalFilter = [
                 'all', 
                 yearFilter, 
