@@ -27,15 +27,6 @@
 
         #year-display { font-size: 24px; font-weight: bold; color: #00ffcc; margin-bottom: 5px; }
         .slider { width: 100%; cursor: pointer; accent-color: #00ffcc; }
-        
-        #notebook-container {
-            position: absolute; bottom: 30px; right: 10px; z-index: 1;
-            width: 350px; max-height: 400px; overflow-y: auto;
-            background: rgba(20, 20, 20, 0.85); padding: 15px; border-radius: 8px;
-            border-left: 4px solid #00ffcc;
-        }
-        .entry { margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .entry h3 { margin: 0; color: #00ffcc; font-size: 1.1em; }
     </style>
 </head>
 <body>
@@ -54,14 +45,11 @@
     </div>
 </div>
 
-<div id="notebook-container"></div>
-
 <script>
     // 1. Setup PMTiles
     const protocol = new pmtiles.Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     
-    // Updated to relative path based on your folder structure
     const PMTILES_URL = "music-map/data/music_data.pmtiles";
 
     // 2. Initialize Map
@@ -76,13 +64,11 @@
     let isPlaying = false;
 
     map.on('load', () => {
-        // Add the Vector Source
         map.addSource('music-points', {
             type: 'vector',
             url: `pmtiles://${PMTILES_URL}`
         });
 
-        // Add the Layer (Dot Map)
         map.addLayer({
             'id': 'music-layer',
             'type': 'circle',
@@ -98,9 +84,7 @@
             'filter': ['==', ['get', 'year'], 1890] 
         });
 
-        // Initialize UI Logic
         initControls();
-        loadNotebookEntries();
     });
 
     function updateFilters() {
@@ -148,31 +132,6 @@
         document.getElementById('year-slider').value = currentYear;
         updateFilters();
         setTimeout(animate, 150);
-    }
-
-    // Load dynamic notebook entries using relative path
-    async function loadNotebookEntries() {
-        try {
-            // Path adjusted to match your structure root -> music-map -> data
-            const response = await fetch('music-map/data/notebook_entries.json');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to load file: ${response.status}`);
-            }
-
-            const entries = await response.json();
-            const container = document.getElementById('notebook-container');
-            
-            container.innerHTML = entries.map(entry => `
-                <div class="entry">
-                    <h3>${entry.title}</h3>
-                    <p>${entry.content.replace(/\n/g, '<br>')}</p>
-                    <small>${entry.date}</small>
-                </div>
-            `).join('');
-        } catch (err) {
-            console.error("Could not find notebook entries. Check path: music-map/data/notebook_entries.json", err);
-        }
     }
 
     // Popup Logic
