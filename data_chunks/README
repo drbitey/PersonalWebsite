@@ -1,7 +1,0 @@
-MusicBrainz Data Chunks
------------------------
-This folder contains chunks of data downloaded from the musicbrainz archive for the music map.
-Releases are tracked in each csv split by their decade of release to reduce load time
-Releases are also split between two files for each decade- _music and _meta, where music contains only basic information : lat/long, release year, and genres
-Meta files contain the complex release information at the same row for each _music file : mbid, release year, artist, release name, genres
-Genres in the _music files are stored in a compressed manner where each genre searched is converted to a number stored in a dictionary file.

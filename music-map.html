@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Music History Mapper</title>
+
+    <script src="https://unpkg.com/maplibre-gl@^4.0.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@^4.0.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #111; color: white; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        .ui-panel {
+            position: absolute; top: 10px; left: 10px; z-index: 1;
+            background: rgba(20, 20, 20, 0.9); padding: 20px; border-radius: 8px;
+            width: 300px; border: 1px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        input, select, button { 
+            background: #222; color: #fff; border: 1px solid #555; 
+            padding: 8px; border-radius: 4px; outline: none;
+        }
+
+        #year-display { font-size: 24px; font-weight: bold; color: #00ffcc; margin-bottom: 5px; }
+        .slider { width: 100%; cursor: pointer; accent-color: #00ffcc; }
+        
+        #notebook-container {
+            position: absolute; bottom: 30px; right: 10px; z-index: 1;
+            width: 350px; max-height: 400px; overflow-y: auto;
+            background: rgba(20, 20, 20, 0.85); padding: 15px; border-radius: 8px;
+            border-left: 4px solid #00ffcc;
+        }
+        .entry { margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .entry h3 { margin: 0; color: #00ffcc; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="ui-panel">
+    <h2>Music History</h2>
+    <div id="year-display">1890</div>
+    <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1890">
+    
+    <div class="controls">
+        <input type="text" id="genre-search" placeholder="Search Genre (e.g. Jazz)...">
+        <label><input type="checkbox" id="cumulative-toggle"> Cumulative View</label>
+        <button id="play-btn">▶ Play Timeline</button>
+    </div>
+</div>
+
+<div id="notebook-container">
+    </div>
+
+<script>
+    // 1. Setup PMTiles
+    const protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+    const PMTILES_URL = "data/music_data.pmtiles";
+
+    // 2. Initialize Map
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        center: [15, 30],
+        zoom: 2
+    });
+
+    let currentYear = 1890;
+    let isPlaying = false;
+
+    map.on('load', () => {
+        // Add the Vector Source
+        map.addSource('music-points', {
+            type: 'vector',
+            url: `pmtiles://${PMTILES_URL}`
+        });
+
+        // Add the Layer (Dot Map)
+        map.addLayer({
+            'id': 'music-layer',
+            'type': 'circle',
+            'source': 'music-points',
+            'source-layer': 'music_vector_master', // Change this if metadata.json says otherwise
+            'paint': {
+                'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 8],
+                'circle-color': '#00ffcc',
+                'circle-opacity': 0.8,
+                'circle-stroke-width': 0.5,
+                'circle-stroke-color': '#fff'
+            },
+            'filter': ['==', ['get', 'year'], 1890] // Initial Filter
+        });
+
+        // Initialize UI Logic
+        initControls();
+        loadNotebookEntries();
+    });
+
+    function updateFilters() {
+        const isCumulative = document.getElementById('cumulative-toggle').checked;
+        const searchTerm = document.getElementById('genre-search').value.toLowerCase();
+        
+        // Build Filter Logic
+        let yearFilter = isCumulative 
+            ? ['<=', ['get', 'year'], currentYear] 
+            : ['==', ['get', 'year'], currentYear];
+
+        let finalFilter = yearFilter;
+
+        if (searchTerm) {
+            finalFilter = ['all', yearFilter, ['match', ['downcase', ['get', 'genre']], searchTerm, true, false]];
+        }
+
+        map.setFilter('music-layer', finalFilter);
+        document.getElementById('year-display').innerText = currentYear;
+    }
+
+    function initControls() {
+        const slider = document.getElementById('year-slider');
+        const playBtn = document.getElementById('play-btn');
+
+        slider.addEventListener('input', (e) => {
+            currentYear = parseInt(e.target.value);
+            updateFilters();
+        });
+
+        document.getElementById('genre-search').addEventListener('input', updateFilters);
+        document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
+
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.innerText = isPlaying ? "⏸ Pause" : "▶ Play Timeline";
+            if (isPlaying) animate();
+        });
+    }
+
+    function animate() {
+        if (!isPlaying) return;
+        currentYear++;
+        if (currentYear > 2025) currentYear = 1890;
+        
+        document.getElementById('year-slider').value = currentYear;
+        updateFilters();
+        setTimeout(animate, 150);
+    }
+
+    // Load dynamic notebook entries from JSON
+    async function loadNotebookEntries() {
+        try {
+            const response = await fetch('data/notebook_entries.json');
+            const entries = await response.json();
+            const container = document.getElementById('notebook-container');
+            
+            container.innerHTML = entries.map(entry => `
+                <div class="entry">
+                    <h3>${entry.title}</h3>
+                    <p>${entry.content.replace(/\n/g, '<br>')}</p>
+                    <small>${entry.date}</small>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error("Failed to load notebook entries:", err);
+        }
+    }
+
+    // Popup Logic
+    map.on('click', 'music-layer', (e) => {
+        const props = e.features[0].properties;
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(`<strong>${props.genre || 'Unknown Genre'}</strong><br>Year: ${props.year}`)
+            .addTo(map);
+    });
+
+    map.on('mouseenter', 'music-layer', () => map.getCanvas().style.cursor = 'pointer');
+    map.on('mouseleave', 'music-layer', () => map.getCanvas().style.cursor = '');
+
+</script>
+
+</body>
+</html>
