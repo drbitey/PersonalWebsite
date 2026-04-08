@@ -47,7 +47,7 @@
         .pan-btn {
             margin-top: 10px; width: 100%; padding: 6px; font-size: 10px; 
             background: transparent; border: 1px dashed #444; color: #00ffcc;
-            display: none; /* Hidden by default */
+            display: none; 
         }
 
         .toggle-group { display: flex; gap: 4px; background: #1a1a1a; padding: 4px; border-radius: 8px; }
@@ -55,7 +55,13 @@
 
         #debug-log { font-size: 10px; color: #555; margin-top: 12px; font-family: monospace; }
 
+        /* Pop-ups restored styling */
         .maplibregl-popup-content { background: #111; color: #fff; border: 1px solid #00ffcc; border-radius: 8px; padding: 15px; }
+        .popup-location { font-size: 10px; text-transform: uppercase; color: #00ffcc; border-bottom: 1px solid #333; padding-bottom: 4px; margin-bottom: 8px; font-weight: bold; }
+        .popup-artist { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .mb-link { display: inline-block; margin-top: 12px; color: #00ffcc; text-decoration: none; font-size: 10px; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; }
+        .popup-nav { margin-top: 12px; padding-top: 10px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .nav-btn { background: #222; color: white; border: 1px solid #444; padding: 2px 10px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -94,10 +100,17 @@
 </div>
 
 <script>
+/** --- RESTORED GLOBALS --- **/
 let currentYear = 1970; 
 let isPlaying = false;
 let genreDict = {}, musicMetadata = {}, locationLookup = [], genreStats = {};
 let searchTimeout, activePopup = null;
+
+// The missing variables that broke the pop-ups:
+let popupFeatures = [];
+let currentPopupIndex = 0;
+let mbidLookup = null;
+const MBID_URL = "https://www.mvoltz.com/music-map/data/mbid_lookup.json";
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -128,10 +141,10 @@ const map = new maplibregl.Map({
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     center: [15, 20],
     zoom: 2.2,
-    pitch: 0,           // Force 2D
-    bearing: 0,         // North up
-    dragRotate: false,  // Disable right-click rotate
-    touchPitch: false   // Disable multi-touch tilt
+    pitch: 0,           // Strict 2D
+    bearing: 0,         
+    dragRotate: false,  
+    touchPitch: false   
 });
 
 map.on('load', async () => {
@@ -145,7 +158,6 @@ map.on('load', async () => {
             'heatmap-weight': 1,
             'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 9, 3],
             'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.2, 'rgba(0, 255, 204, 0.2)', 0.4, 'rgba(0, 255, 204, 0.5)', 0.6, 'rgba(255, 255, 0, 0.7)', 0.8, 'rgba(255, 100, 0, 0.8)', 1, 'rgba(255, 0, 0, 0.9)'],
-            // INCREASED RADIUS HERE
             'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 5, 5, 15, 10, 40], 
             'heatmap-opacity': 0.8
         }
@@ -159,10 +171,62 @@ map.on('load', async () => {
         }
     });
 
+    // Cursors restored for BOTH layers
+    map.on('mouseenter', 'music-layer', () => map.getCanvas().style.cursor = 'pointer');
+    map.on('mouseleave', 'music-layer', () => map.getCanvas().style.cursor = '');
+    map.on('mouseenter', 'music-heat', () => map.getCanvas().style.cursor = 'pointer');
+    map.on('mouseleave', 'music-heat', () => map.getCanvas().style.cursor = '');
+
+    // Map-wide click listener to handle both Heatmap and Points
+    map.on('click', (e) => {
+        const activeLayer = map.getLayoutProperty('music-heat', 'visibility') === 'visible' ? 'music-heat' : 'music-layer';
+        popupFeatures = map.queryRenderedFeatures(e.point, { layers: [activeLayer] });
+        currentPopupIndex = 0;
+        
+        if (popupFeatures.length > 0) {
+            showPopup(e.lngLat);
+        }
+    });
+
     initControls();
     updateFilters();
 });
 
+/** --- POPUP LOGIC --- **/
+async function showPopup(lngLat) {
+    if (activePopup) activePopup.remove();
+    if (!popupFeatures || popupFeatures.length === 0) return;
+
+    const feat = popupFeatures[currentPopupIndex];
+    const muId = feat.properties.mu_id;
+    const details = musicMetadata[muId];
+    if (!details) return;
+
+    // Fetch MBID lookup if we don't have it yet
+    if (!mbidLookup) {
+        try { 
+            const res = await fetch(MBID_URL); 
+            mbidLookup = await res.json(); 
+        } catch (e) {
+            console.error("Failed to load MusicBrainz IDs", e);
+        }
+    }
+
+    const mbid = mbidLookup ? mbidLookup[muId] : null;
+    const mbHTML = mbid ? `<a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">↗ MusicBrainz</a>` : '';
+    let navHTML = popupFeatures.length > 1 ? `<div class="popup-nav"><button class="nav-btn" onclick="changePopup(-1)">◂</button><span style="font-size:10px; color:#888;">${currentPopupIndex + 1}/${popupFeatures.length}</span><button class="nav-btn" onclick="changePopup(1)">▸</button></div>` : '';
+
+    const html = `<div class="popup-location">${locationLookup[details[2]] || 'Unknown'}</div><div class="popup-artist">${details[0]}</div><div class="popup-release">${details[1]}</div><div class="popup-year" style="color:#00ffcc; font-weight:bold; margin-top:5px;">${details[4]}</div>${mbHTML}${navHTML}`;
+
+    activePopup = new maplibregl.Popup({ maxWidth: '280px', focusAfterOpen: false, closeButton: false }).setLngLat(lngLat).setHTML(html).addTo(map);
+}
+
+window.changePopup = (dir) => {
+    currentPopupIndex = (currentPopupIndex + dir + popupFeatures.length) % popupFeatures.length;
+    showPopup(activePopup.getLngLat());
+};
+
+/** --- FILTERING & UI --- **/
 function updateFilters() {
     if (!map.getLayer('music-layer')) return;
     const isCumulative = document.getElementById('cumulative-toggle').checked;
@@ -196,7 +260,6 @@ function updateStats() {
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     const panBtn = document.getElementById('pan-to-origin');
     
-    // Check for spotlight
     const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
     if (searchTerm && spotlight) {
         document.getElementById('stats-title').innerText = `${searchTerm.toUpperCase()} SPOTLIGHT`;
@@ -244,7 +307,6 @@ function initControls() {
         searchTimeout = setTimeout(updateFilters, 300);
     });
 
-    // Manual Pan Logic
     document.getElementById('pan-to-origin').onclick = () => {
         const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
         const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
