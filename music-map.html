@@ -1,36 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Music History Mapper</title>
+
+    <script src="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
+
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; background: #111; color: white; overflow: hidden; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        /* UI Panel Styling */
+        .ui-panel {
+            position: absolute; top: 10px; left: 10px; z-index: 1;
+            background: rgba(20, 20, 20, 0.9); padding: 20px; border-radius: 8px;
+            width: 320px; border: 1px solid #444; backdrop-filter: blur(5px);
+        }
+        .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
+        input[type="text"], button { 
+            background: #222; color: #fff; border: 1px solid #555; padding: 10px; border-radius: 4px; 
+        }
+        button { cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        button:hover { background: #333; border-color: #00ffcc; }
+        
+        #year-display { font-size: 28px; font-weight: bold; color: #00ffcc; margin-bottom: 5px; }
+        .slider { width: 100%; accent-color: #00ffcc; cursor: pointer; }
+        #debug-log { font-size: 10px; color: #888; margin-top: 10px; font-family: monospace; }
+
+        /* Dark Theme Pop-ups */
+        .maplibregl-popup-content {
+            background: #222; color: #fff; border: 1px solid #444;
+            border-radius: 6px; padding: 15px; box-shadow: 0px 4px 15px rgba(0,0,0,0.7);
+        }
+        .maplibregl-popup-tip { border-top-color: #222 !important; border-bottom-color: #222 !important; }
+        
+        .popup-artist { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #00ffcc; }
+        .popup-release { font-size: 14px; font-style: italic; color: #ccc; margin-bottom: 8px; }
+        .popup-year { font-size: 12px; color: #888; }
+        
+        /* Multi-point Nav buttons */
+        .popup-nav {
+            margin-top: 12px; padding-top: 10px; border-top: 1px solid #444;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-btn {
+            background: #333; color: white; border: 1px solid #555;
+            padding: 2px 10px; border-radius: 3px; font-size: 12px; cursor: pointer;
+        }
+        .nav-btn:hover { background: #444; }
+    </style>
+</head>
+<body>
+
 <div id="map"></div>
+
 <div class="ui-panel">
-    <h2>Music History</h2>
     <div id="year-display">1970</div>
     <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1970">
     
     <div class="controls">
-        <input type="text" id="genre-search" placeholder="Search Genre (Wait 300ms)...">
+        <input type="text" id="genre-search" placeholder="Filter by Genre (e.g. Jazz, Afro)...">
         
-        <div style="display:flex; justify-content: space-between; align-items: center;">
-            <label><input type="checkbox" id="cumulative-toggle" checked> Cumulative</label>
-            <div style="font-size: 11px; color: #888;">
-                Speed: <input type="range" id="speed-slider" min="20" max="500" value="200" style="width: 60px; vertical-align: middle;" dir="rtl">
+        <div style="display:flex; justify-content: space-between; align-items: center; font-size: 13px;">
+            <label style="cursor:pointer;"><input type="checkbox" id="cumulative-toggle" checked> Cumulative</label>
+            <div style="color: #888;">
+                Fast <input type="range" id="speed-slider" min="30" max="600" value="200" style="width: 70px; vertical-align: middle;" dir="rtl"> Slow
             </div>
         </div>
 
         <button id="play-btn">▶ Play Timeline</button>
-        <div id="debug-log">Status: Initializing...</div>
+        <div id="debug-log">Status: Initializing Assets...</div>
     </div>
 </div>
 
 <script>
-let currentYear = 1970; // Set to 1970 by default
+/** * CONFIGURATION
+ */
+let currentYear = 1970; 
 let isPlaying = false;
 let genreDict = {}; 
 let musicMetadata = {}; 
-let searchTimeout; // For the debouncer
+let searchTimeout;
 
-// For the multi-point popup
+// Multi-point popup state
 let popupFeatures = [];
 let currentPopupIndex = 0;
 let activePopup = null;
 
+/** * PMTILES SETUP
+ */
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
@@ -40,20 +101,26 @@ const META_URL = "https://www.mvoltz.com/music-map/data/metadata_lookup.json";
 
 async function loadAssets() {
     try {
-        logStatus("Loading assets...");
-        const [dictRes, metaRes] = await Promise.all([fetch(DICT_URL), fetch(META_URL)]);
+        logStatus("Fetching Dictionary & Metadata...");
+        const [dictRes, metaRes] = await Promise.all([
+            fetch(DICT_URL),
+            fetch(META_URL)
+        ]);
         genreDict = await dictRes.json();
         musicMetadata = await metaRes.json();
-        logStatus("Assets loaded. Ready.");
+        logStatus("Ready.");
     } catch (err) {
-        logStatus("Error loading assets.");
+        logStatus("Error loading data. Check paths.");
+        console.error(err);
     }
 }
 
+/** * MAP INITIALIZATION
+ */
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [0, 20], 
+    center: [17, 10], 
     zoom: 2.5
 });
 
@@ -71,32 +138,40 @@ map.on('load', async () => {
         'source': 'music-points',
         'source-layer': 'music', 
         'paint': {
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 8],
+            'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                2, 2.5,
+                10, 9
+            ],
             'circle-color': '#00ffcc',
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff',
-            'circle-opacity': 0.8
+            'circle-opacity': 0.75
         }
     });
 
+    // Interactivity
     map.on('mouseenter', 'music-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'music-layer', () => { map.getCanvas().style.cursor = ''; });
 
-    // --- MULTI-FEATURE POPUP LOGIC ---
     map.on('click', 'music-layer', (e) => {
-        // queryRenderedFeatures returns ALL points under the click
+        // Query ALL features under the click point
         popupFeatures = map.queryRenderedFeatures(e.point, { layers: ['music-layer'] });
         currentPopupIndex = 0;
-        showPopup(e.lngLat);
+        if (popupFeatures.length > 0) {
+            showPopup(e.lngLat);
+        }
     });
 
     initControls();
     updateFilters();
 });
 
+/** * POPUP SYSTEM
+ */
 function showPopup(lngLat) {
     if (activePopup) activePopup.remove();
-    if (!popupFeatures.length) return;
+    if (popupFeatures.length === 0) return;
 
     const feat = popupFeatures[currentPopupIndex];
     const details = musicMetadata[feat.properties.mu_id];
@@ -104,56 +179,62 @@ function showPopup(lngLat) {
     let navHTML = '';
     if (popupFeatures.length > 1) {
         navHTML = `
-            <div style="margin-top:10px; padding-top:10px; border-top:1px solid #444; display:flex; justify-content:space-between; align-items:center;">
-                <button onclick="changePopup(-1)" style="padding:2px 8px; font-size:10px;">←</button>
-                <span style="font-size:10px; color:#aaa;">${currentPopupIndex + 1} of ${popupFeatures.length}</span>
-                <button onclick="changePopup(1)" style="padding:2px 8px; font-size:10px;">→</button>
+            <div class="popup-nav">
+                <button class="nav-btn" onclick="changePopup(-1)">←</button>
+                <span style="font-size:11px; color:#aaa;">${currentPopupIndex + 1} of ${popupFeatures.length}</span>
+                <button class="nav-btn" onclick="changePopup(1)">→</button>
             </div>
         `;
     }
 
     const html = `
-        <div class="popup-artist">${details ? details.a : 'Unknown'}</div>
-        <div class="popup-release">${details ? details.r : 'Unknown'}</div>
+        <div class="popup-artist">${details ? details.a : 'Unknown Artist'}</div>
+        <div class="popup-release">${details ? details.r : 'Unknown Release'}</div>
         <div class="popup-year">Year: ${feat.properties.release_year}</div>
         ${navHTML}
     `;
 
-    activePopup = new maplibregl.Popup()
+    activePopup = new maplibregl.Popup({ maxWidth: '280px' })
         .setLngLat(lngLat)
         .setHTML(html)
         .addTo(map);
 }
 
-// Global function so the button clicks can find it
-window.changePopup = (dir) => {
-    currentPopupIndex += dir;
+// Global scope helper for popup buttons
+window.changePopup = (direction) => {
+    currentPopupIndex += direction;
     if (currentPopupIndex < 0) currentPopupIndex = popupFeatures.length - 1;
     if (currentPopupIndex >= popupFeatures.length) currentPopupIndex = 0;
     showPopup(activePopup.getLngLat());
 };
 
+/** * FILTERING LOGIC
+ */
 function updateFilters() {
     if (!map.getLayer('music-layer')) return;
 
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
+    // Year Logic
     const yearFilter = isCumulative 
         ? ['<=', ['get', 'release_year'], currentYear] 
         : ['==', ['get', 'release_year'], currentYear];
 
     let finalFilter = yearFilter; 
 
+    // Search Logic (mapping term to IDs)
     if (searchTerm && Object.keys(genreDict).length > 0) {
         let matchingIds = [];
         for (const [genre, id] of Object.entries(genreDict)) {
             if (genre.includes(searchTerm)) matchingIds.push(id);
         }
+
         if (matchingIds.length > 0) {
             let genreConditions = matchingIds.map(id => ['in', `|${id}|`, ['get', 'genre_ids']]);
             finalFilter = ['all', yearFilter, ['any', ...genreConditions]];
         } else {
+            // Hide everything if search yields no results
             finalFilter = ['==', ['get', 'release_year'], -1]; 
         }
     }
@@ -162,42 +243,51 @@ function updateFilters() {
     document.getElementById('year-display').innerText = currentYear;
 }
 
+/** * UI EVENT LISTENERS
+ */
 function initControls() {
+    // Year Slider
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
     });
 
-    // --- DEBOUNCED SEARCH ---
+    // Debounced Search Input
     document.getElementById('genre-search').addEventListener('input', () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             updateFilters();
-        }, 300); // 300ms delay
+        }, 300);
     });
 
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
-    
+
+    // Play/Pause
     document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
-        this.innerText = isPlaying ? "Pause" : "Play Timeline";
+        this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
         if (isPlaying) animate();
     });
 }
 
+/** * ANIMATION ENGINE
+ */
 function animate() {
     if (!isPlaying) return;
+    
     currentYear++;
     if (currentYear > 2025) currentYear = 1890;
+    
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
     
-    // Get speed from slider (inverted so right is faster)
-    const speed = parseInt(document.getElementById('speed-slider').value);
-    setTimeout(animate, speed);
+    const delay = parseInt(document.getElementById('speed-slider').value);
+    setTimeout(animate, delay);
 }
 
 function logStatus(msg) {
     document.getElementById('debug-log').innerText = `Status: ${msg}`;
 }
 </script>
+</body>
+</html>
