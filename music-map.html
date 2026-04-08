@@ -22,6 +22,27 @@
         #year-display { font-size: 24px; font-weight: bold; color: #00ffcc; }
         .slider { width: 100%; accent-color: #00ffcc; }
         #debug-log { font-size: 10px; color: #aaa; margin-top: 10px; font-family: monospace; }
+        
+        /* --- NEW: Dark Theme Pop-up Styling --- */
+        .maplibregl-popup-content {
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: sans-serif;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        }
+        /* Changes the little triangle pointer to match the dark background */
+        .maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: #222; }
+        .maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: #222; }
+        .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: #222; }
+        .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: #222; }
+        
+        /* Clean up the text inside the popup */
+        .popup-artist { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #00ffcc; }
+        .popup-release { font-size: 14px; font-style: italic; color: #ccc; }
+        .popup-year { font-size: 12px; color: #888; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -42,23 +63,37 @@
 <script>
 let currentYear = 1890; 
 let isPlaying = false;
+let genreDict = {}; 
 
-// 1. Initialize PMTiles Protocol
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. YOUR URL - Ensure this points to your hosted 'west_africa.pmtiles'
 const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
+const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
+
+async function loadDictionary() {
+    try {
+        logStatus("Fetching genre dictionary...");
+        const response = await fetch(DICT_URL);
+        genreDict = await response.json();
+        logStatus(`Dictionary loaded with ${Object.keys(genreDict).length} genres.`);
+    } catch (err) {
+        logStatus("Error loading dictionary. Check console.");
+        console.error("Dictionary Fetch Error:", err);
+    }
+}
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [3.33, 6.48], // Centered on West Africa for your subset
+    center: [3.33, 6.48], 
     zoom: 4
 });
 
-map.on('load', () => {
+map.on('load', async () => {
     logStatus("Map Style Loaded.");
+    
+    await loadDictionary();
 
     map.addSource('music-points', {
         type: 'vector',
@@ -69,7 +104,7 @@ map.on('load', () => {
         'id': 'music-layer',
         'type': 'circle',
         'source': 'music-points',
-        'source-layer': 'music', // Matches your Tippecanoe -l music
+        'source-layer': 'music', 
         'paint': {
             'circle-radius': [
                 'interpolate', ['linear'], ['zoom'],
@@ -83,6 +118,43 @@ map.on('load', () => {
         }
     });
 
+    // --- NEW: Interactivity Logic ---
+
+    // 1. Change cursor to pointer when hovering over a dot
+    map.on('mouseenter', 'music-layer', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // 2. Change cursor back when leaving the dot
+    map.on('mouseleave', 'music-layer', () => {
+        map.getCanvas().style.cursor = '';
+    });
+
+    // 3. Handle the Click
+    map.on('click', 'music-layer', (e) => {
+        // e.features[0] is the specific point you clicked
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const properties = e.features[0].properties;
+
+        // Ensure the popup appears over the correct copy of the map if zoomed out
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        // Build the HTML for inside the pop-up
+        const popupHTML = `
+            <div class="popup-artist">${properties.artist_name || 'Unknown Artist'}</div>
+            <div class="popup-release">${properties.release_name || 'Unknown Release'}</div>
+            <div class="popup-year">Released: ${properties.release_year || 'Unknown'}</div>
+        `;
+
+        // Create and add the popup to the map
+        new maplibregl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(popupHTML)
+            .addTo(map);
+    });
+
     initControls();
     updateFilters();
 });
@@ -91,19 +163,43 @@ function updateFilters() {
     if (!map.getLayer('music-layer')) return;
 
     const isCumulative = document.getElementById('cumulative-toggle').checked;
+    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    // THE FIX: Use 'release_year' instead of 'year' to match your data
     const yearValue = ['get', 'release_year'];
-    
     let yearFilter = isCumulative 
         ? ['<=', yearValue, currentYear] 
         : ['==', yearValue, currentYear];
 
-    map.setFilter('music-layer', yearFilter);
+    let finalFilter = yearFilter; 
+
+    if (searchTerm && Object.keys(genreDict).length > 0) {
+        let matchingIds = [];
+        
+        for (const [genre, id] of Object.entries(genreDict)) {
+            if (genre.includes(searchTerm)) {
+                matchingIds.push(id);
+            }
+        }
+
+        if (matchingIds.length > 0) {
+            let genreConditions = matchingIds.map(id => {
+                return ['in', `|${id}|`, ['get', 'genre_ids']];
+            });
+
+            finalFilter = [
+                'all',
+                yearFilter,
+                ['any', ...genreConditions]
+            ];
+        } else {
+            finalFilter = ['==', 'release_year', -1]; 
+        }
+    }
+
+    map.setFilter('music-layer', finalFilter);
     document.getElementById('year-display').innerText = currentYear;
 }
 
-// Helper for status updates
 function logStatus(msg) {
     console.log(`[MAP_DEBUG] ${msg}`);
     document.getElementById('debug-log').innerText = `Status: ${msg}`;
@@ -116,6 +212,7 @@ function initControls() {
         updateFilters();
     });
 
+    document.getElementById('genre-search').addEventListener('input', updateFilters);
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
 
     document.getElementById('play-btn').addEventListener('click', function() {
