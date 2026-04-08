@@ -23,7 +23,6 @@
         .slider { width: 100%; accent-color: #00ffcc; }
         #debug-log { font-size: 10px; color: #aaa; margin-top: 10px; font-family: monospace; }
         
-        /* --- NEW: Dark Theme Pop-up Styling --- */
         .maplibregl-popup-content {
             background: #222;
             color: #fff;
@@ -33,13 +32,11 @@
             font-family: sans-serif;
             box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         }
-        /* Changes the little triangle pointer to match the dark background */
         .maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: #222; }
         .maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: #222; }
         .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: #222; }
         .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: #222; }
         
-        /* Clean up the text inside the popup */
         .popup-artist { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #00ffcc; }
         .popup-release { font-size: 14px; font-style: italic; color: #ccc; }
         .popup-year { font-size: 12px; color: #888; margin-top: 4px; }
@@ -64,36 +61,44 @@
 let currentYear = 1890; 
 let isPlaying = false;
 let genreDict = {}; 
+let musicMetadata = {}; // Holds the heavy strings from metadata_lookup.json
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
+// Ensure these point to your new "Diet" file locations
 const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
 const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
+const META_URL = "https://www.mvoltz.com/music-map/data/metadata_lookup.json";
 
-async function loadDictionary() {
+async function loadAssets() {
     try {
-        logStatus("Fetching genre dictionary...");
-        const response = await fetch(DICT_URL);
-        genreDict = await response.json();
-        logStatus(`Dictionary loaded with ${Object.keys(genreDict).length} genres.`);
+        logStatus("Loading search dictionary...");
+        const dictRes = await fetch(DICT_URL);
+        genreDict = await dictRes.json();
+
+        logStatus("Loading metadata lookup (this may take a moment)...");
+        const metaRes = await fetch(META_URL);
+        musicMetadata = await metaRes.json();
+        
+        logStatus("Assets loaded. Ready.");
     } catch (err) {
-        logStatus("Error loading dictionary. Check console.");
-        console.error("Dictionary Fetch Error:", err);
+        logStatus("Error loading assets. Check console.");
+        console.error("Fetch Error:", err);
     }
 }
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [3.33, 6.48], 
-    zoom: 4
+    center: [0, 20], 
+    zoom: 2
 });
 
 map.on('load', async () => {
     logStatus("Map Style Loaded.");
     
-    await loadDictionary();
+    await loadAssets();
 
     map.addSource('music-points', {
         type: 'vector',
@@ -108,7 +113,7 @@ map.on('load', async () => {
         'paint': {
             'circle-radius': [
                 'interpolate', ['linear'], ['zoom'],
-                2, 2,
+                2, 2.5,
                 10, 8
             ],
             'circle-color': '#00ffcc',
@@ -118,37 +123,28 @@ map.on('load', async () => {
         }
     });
 
-    // --- NEW: Interactivity Logic ---
+    // Cursor handling
+    map.on('mouseenter', 'music-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', 'music-layer', () => { map.getCanvas().style.cursor = ''; });
 
-    // 1. Change cursor to pointer when hovering over a dot
-    map.on('mouseenter', 'music-layer', () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-
-    // 2. Change cursor back when leaving the dot
-    map.on('mouseleave', 'music-layer', () => {
-        map.getCanvas().style.cursor = '';
-    });
-
-    // 3. Handle the Click
+    // Updated Click Logic for Metadata Lookup
     map.on('click', 'music-layer', (e) => {
-        // e.features[0] is the specific point you clicked
+        const props = e.features[0].properties;
         const coordinates = e.features[0].geometry.coordinates.slice();
-        const properties = e.features[0].properties;
+        
+        // Use the mu_id to find the artist/release in our JSON object
+        const details = musicMetadata[props.mu_id];
 
-        // Ensure the popup appears over the correct copy of the map if zoomed out
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
 
-        // Build the HTML for inside the pop-up
-        const popupHTML = `
-            <div class="popup-artist">${properties.artist_name || 'Unknown Artist'}</div>
-            <div class="popup-release">${properties.release_name || 'Unknown Release'}</div>
-            <div class="popup-year">Released: ${properties.release_year || 'Unknown'}</div>
-        `;
+        const popupHTML = details ? `
+            <div class="popup-artist">${details.a}</div>
+            <div class="popup-release">${details.r}</div>
+            <div class="popup-year">Year: ${props.release_year}</div>
+        ` : `<div class="popup-year">Details not found for ID: ${props.mu_id}</div>`;
 
-        // Create and add the popup to the map
         new maplibregl.Popup()
             .setLngLat(coordinates)
             .setHTML(popupHTML)
@@ -174,25 +170,15 @@ function updateFilters() {
 
     if (searchTerm && Object.keys(genreDict).length > 0) {
         let matchingIds = [];
-        
         for (const [genre, id] of Object.entries(genreDict)) {
-            if (genre.includes(searchTerm)) {
-                matchingIds.push(id);
-            }
+            if (genre.includes(searchTerm)) matchingIds.push(id);
         }
 
         if (matchingIds.length > 0) {
-            let genreConditions = matchingIds.map(id => {
-                return ['in', `|${id}|`, ['get', 'genre_ids']];
-            });
-
-            finalFilter = [
-                'all',
-                yearFilter,
-                ['any', ...genreConditions]
-            ];
+            let genreConditions = matchingIds.map(id => ['in', `|${id}|`, ['get', 'genre_ids']]);
+            finalFilter = ['all', yearFilter, ['any', ...genreConditions]];
         } else {
-            finalFilter = ['==', 'release_year', -1]; 
+            finalFilter = ['==', ['get', 'release_year'], -1]; 
         }
     }
 
@@ -206,15 +192,12 @@ function logStatus(msg) {
 }
 
 function initControls() {
-    const slider = document.getElementById('year-slider');
-    slider.addEventListener('input', (e) => {
+    document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
     });
-
     document.getElementById('genre-search').addEventListener('input', updateFilters);
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
-
     document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
         this.innerText = isPlaying ? "Pause" : "Play Timeline";
