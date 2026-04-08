@@ -21,139 +21,75 @@
         }
         
         .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
-        
-        input[type="text"] { 
-            background: #1a1a1a; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: calc(100% - 26px);
-            outline: none; transition: border-color 0.2s;
-        }
-        input[type="text"]:focus { border-color: #00ffcc; }
-        
-        button { 
-            background: #222; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 6px; 
-            cursor: pointer; font-weight: bold; transition: all 0.2s; 
-        }
-        button:hover { border-color: #00ffcc; background: #2a2a2a; }
-        button.active { background: #00ffcc !important; color: #000 !important; border-color: #00ffcc; }
-        
         #year-display { font-size: 34px; font-weight: 900; color: #00ffcc; margin-bottom: 5px; }
         .slider { width: 100%; accent-color: #00ffcc; cursor: pointer; }
         
-        .stats-panel {
-            margin-top: 5px; padding: 15px; background: rgba(0, 255, 204, 0.03); 
-            border: 1px solid #222; border-radius: 8px; font-size: 12px;
-        }
+        button { background: #222; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        button:hover { border-color: #00ffcc; background: #2a2a2a; }
+        button.active { background: #00ffcc !important; color: #000 !important; }
+
+        .stats-panel { margin-top: 5px; padding: 15px; background: rgba(0, 255, 204, 0.03); border: 1px solid #222; border-radius: 8px; font-size: 12px; }
         .stats-title { color: #00ffcc; font-weight: bold; margin-bottom: 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #999; }
         .stat-val { color: #eee; font-weight: 600; text-align: right; }
 
-        /* Advanced Menu Styling */
-        .advanced-toggle {
-            font-size: 10px; color: #666; text-align: center; cursor: pointer; 
-            margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .advanced-toggle:hover { color: #aaa; }
-        .advanced-content {
-            display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #222;
-            flex-direction: column; gap: 10px;
-        }
-        .adv-label { font-size: 10px; color: #888; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .advanced-toggle { font-size: 10px; color: #666; text-align: center; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .advanced-content { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #222; flex-direction: column; gap: 10px; }
 
-        .pan-btn {
-            margin-top: 10px; width: 100%; padding: 6px; font-size: 10px; 
-            background: transparent; border: 1px dashed #444; color: #00ffcc; display: none; 
-        }
-
-        .toggle-group { display: flex; gap: 4px; background: #1a1a1a; padding: 4px; border-radius: 8px; }
-        .toggle-group button { flex: 1; padding: 6px; font-size: 11px; border: none; }
-
-        #debug-log { font-size: 10px; color: #444; margin-top: 12px; font-family: monospace; }
-        .maplibregl-popup-content { background: #111; color: #fff; border: 1px solid #00ffcc; border-radius: 8px; padding: 15px; }
+        /* POPUP STYLING */
+        .maplibregl-popup-content { background: #111; color: #fff; border: 1px solid #444; border-radius: 10px; padding: 0; overflow: hidden; width: 320px; }
+        .popup-header { background: #1a1a1a; padding: 8px 15px; border-bottom: 1px solid #333; font-size: 10px; text-transform: uppercase; color: #00ffcc; letter-spacing: 1px; font-weight: 900; }
+        .popup-body { display: flex; padding: 15px; gap: 15px; }
+        .popup-info { flex: 1; min-width: 0; }
+        .popup-artist { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .popup-release { font-size: 13px; color: #bbb; line-height: 1.2; margin-bottom: 8px; }
+        .popup-year { color: #00ffcc; font-weight: bold; font-size: 12px; }
+        .popup-art-container { width: 100px; height: 100px; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid #333; flex-shrink: 0; }
+        .popup-art { width: 100%; height: 100%; object-fit: cover; }
+        .popup-footer { background: #0a0a0a; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; }
+        .mb-link { color: #555; text-decoration: none; font-size: 10px; }
+        .mb-link:hover { color: #00ffcc; }
     </style>
 </head>
 <body>
 
 <div id="map"></div>
-
 <div class="ui-panel">
     <div id="year-display">1970</div>
     <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1970">
     
     <div class="controls">
-        <input type="text" id="genre-search" placeholder="Search Genre...">
-        
-        <div style="display:flex; justify-content: space-between; align-items: center; font-size: 13px; color: #bbb;">
-            <label style="cursor:pointer;"><input type="checkbox" id="cumulative-toggle" checked> Cumulative</label>
-        </div>
-
+        <input type="text" id="genre-search" placeholder="Search Genre..." style="background: #1a1a1a; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: calc(100% - 26px);">
         <button id="play-btn">▶ Play Timeline</button>
-
-        <div class="toggle-group">
-            <button id="btn-points" class="active">Points</button>
-            <button id="btn-heatmap">Heatmap</button>
+        <div class="toggle-group" style="display: flex; gap: 4px; background: #1a1a1a; padding: 4px; border-radius: 8px;">
+            <button id="btn-points" class="active" style="flex:1;">Points</button>
+            <button id="btn-heatmap" style="flex:1;">Heatmap</button>
         </div>
         
         <div class="stats-panel">
-            <div class="stats-title" id="stats-title">Global Discovery Stats</div>
+            <div class="stats-title" id="stats-title">Global Stats</div>
             <div class="stat-row"><span>Records:</span> <span id="stat-total" class="stat-val">0</span></div>
             <div class="stat-row"><span>First Year:</span> <span id="stat-first-year" class="stat-val">-</span></div>
-            <div class="stat-row"><span>Primary Hub:</span> <span id="stat-mode-loc" class="stat-val">-</span></div>
-            <button id="pan-to-origin" class="pan-btn">⌖ Pan to Origin</button>
+            <button id="pan-to-origin" style="margin-top:10px; width:100%; padding:6px; font-size:10px; background:transparent; border:1px dashed #444; color:#00ffcc; display:none;">⌖ Pan to Origin</button>
         </div>
 
         <div class="advanced-toggle" id="adv-toggle">Advanced Settings ▾</div>
         <div class="advanced-content" id="adv-content">
-            <div>
-                <div class="adv-label"><span>Animation Speed</span> <span>Slow ↔ Fast</span></div>
-                <input type="range" id="speed-slider" min="50" max="1000" value="200" class="slider" dir="rtl">
-            </div>
-            <div>
-                <div class="adv-label"><span>Heatmap Radius</span> <span id="val-radius">20</span></div>
-                <input type="range" id="heat-radius-slider" min="5" max="80" value="20" class="slider">
-            </div>
-            <div>
-                <div class="adv-label"><span>Heatmap Intensity</span> <span id="val-intensity">1.0</span></div>
-                <input type="range" id="heat-weight-slider" min="0.1" max="5.0" step="0.1" value="1.0" class="slider">
-            </div>
-            <div style="font-size: 11px; color: #bbb;">
-                <label style="cursor:pointer;"><input type="checkbox" id="loop-toggle" checked> Auto-Repeat Animation</label>
-            </div>
+            <div style="font-size: 10px; color: #888;">Animation Speed</div>
+            <input type="range" id="speed-slider" min="50" max="1000" value="200" class="slider" dir="rtl">
+            <div style="font-size: 10px; color: #888;">Heatmap Radius</div>
+            <input type="range" id="heat-radius-slider" min="5" max="80" value="20" class="slider">
+            <label style="font-size:11px; color:#bbb;"><input type="checkbox" id="loop-toggle" checked> Auto-Repeat</label>
         </div>
-
-        <div id="debug-log">Status: Initializing...</div>
+        <div id="debug-log" style="font-size:10px; color:#444; margin-top:10px;">Status: Ready</div>
     </div>
 </div>
 
 <script>
-/** --- GLOBALS --- **/
-let currentYear = 1970; 
-let isPlaying = false;
-let genreDict = {}, musicMetadata = {}, locationLookup = [], genreStats = {};
-let popupFeatures = [], currentPopupIndex = 0, mbidLookup = null, searchTimeout, activePopup = null;
+let currentYear = 1970, isPlaying = false, genreDict = {}, musicMetadata = {}, locationLookup = [], genreStats = {}, popupFeatures = [], currentPopupIndex = 0, mbidLookup = null, activePopup = null;
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
-
-const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
-const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
-const META_URL = "https://www.mvoltz.com/music-map/data/metadata_lookup.json";
-const LOC_URL = "https://www.mvoltz.com/music-map/data/location_lookup.json";
-const STATS_URL = "https://www.mvoltz.com/music-map/data/genre_stats.json";
-const MBID_URL = "https://www.mvoltz.com/music-map/data/mbid_lookup.json";
-
-async function loadAssets() {
-    try {
-        logStatus("Loading Assets...");
-        const [dictRes, metaRes, locRes, statsRes] = await Promise.all([
-            fetch(DICT_URL), fetch(META_URL), fetch(LOC_URL), fetch(STATS_URL)
-        ]);
-        genreDict = await dictRes.json();
-        musicMetadata = await metaRes.json();
-        locationLookup = await locRes.json();
-        genreStats = await statsRes.json();
-        logStatus("Ready.");
-        updateStats(); 
-    } catch (err) { logStatus("Data Error."); }
-}
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -162,28 +98,18 @@ const map = new maplibregl.Map({
 });
 
 map.on('load', async () => {
-    await loadAssets();
-    map.addSource('music-points', { type: 'vector', url: `pmtiles://${PMTILES_URL}` });
+    const [dictRes, metaRes, locRes, statsRes, mbidRes] = await Promise.all([
+        fetch("https://www.mvoltz.com/music-map/data/genre_dictionary.json"),
+        fetch("https://www.mvoltz.com/music-map/data/metadata_lookup.json"),
+        fetch("https://www.mvoltz.com/music-map/data/location_lookup.json"),
+        fetch("https://www.mvoltz.com/music-map/data/genre_stats.json"),
+        fetch("https://www.mvoltz.com/music-map/data/mbid_lookup.json")
+    ]);
+    genreDict = await dictRes.json(); musicMetadata = await metaRes.json(); locationLookup = await locRes.json(); genreStats = await statsRes.json(); mbidLookup = await mbidRes.json();
 
-    map.addLayer({
-        'id': 'music-heat', 'type': 'heatmap', 'source': 'music-points', 'source-layer': 'music',
-        'layout': { 'visibility': 'none' },
-        'paint': {
-            'heatmap-weight': 1,
-            'heatmap-intensity': 1,
-            'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.2, 'rgba(0, 255, 204, 0.2)', 0.4, 'rgba(0, 255, 204, 0.5)', 0.6, 'rgba(255, 255, 0, 0.7)', 0.8, 'rgba(255, 100, 0, 0.8)', 1, 'rgba(255, 0, 0, 0.9)'],
-            'heatmap-radius': 20, 
-            'heatmap-opacity': 0.8
-        }
-    });
-
-    map.addLayer({
-        'id': 'music-layer', 'type': 'circle', 'source': 'music-points', 'source-layer': 'music',
-        'paint': {
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2, 10, 8],
-            'circle-color': '#00ffcc', 'circle-stroke-width': 1, 'circle-stroke-color': '#fff', 'circle-opacity': 0.7
-        }
-    });
+    map.addSource('music-points', { type: 'vector', url: `pmtiles://https://www.mvoltz.com/music-map/data/music_data.pmtiles` });
+    map.addLayer({ 'id': 'music-heat', 'type': 'heatmap', 'source': 'music-points', 'source-layer': 'music', 'layout': { 'visibility': 'none' }, 'paint': { 'heatmap-weight': 1, 'heatmap-intensity': 1, 'heatmap-radius': 20, 'heatmap-opacity': 0.8 } });
+    map.addLayer({ 'id': 'music-layer', 'type': 'circle', 'source': 'music-points', 'source-layer': 'music', 'paint': { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2, 10, 8], 'circle-color': '#00ffcc', 'circle-opacity': 0.7 } });
 
     map.on('click', (e) => {
         const activeLayer = map.getLayoutProperty('music-heat', 'visibility') === 'visible' ? 'music-heat' : 'music-layer';
@@ -196,139 +122,39 @@ map.on('load', async () => {
     updateFilters();
 });
 
-/** --- LOGIC --- **/
-
-function updateFilters() {
-    if (!map.getLayer('music-layer')) return;
-    const isCumulative = document.getElementById('cumulative-toggle').checked;
-    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-    
-    const yearFilter = isCumulative ? ['<=', ['get', 'release_year'], currentYear] : ['==', ['get', 'release_year'], currentYear];
-    let finalFilter = yearFilter; 
-
-    if (searchTerm) {
-        let matchingIds = [];
-        for (const [genre, id] of Object.entries(genreDict)) {
-            if (genre.includes(searchTerm)) matchingIds.push(id);
-        }
-        if (matchingIds.length > 0) {
-            let genreConditions = matchingIds.map(id => ['in', `|${id}|`, ['get', 'genre_ids']]);
-            finalFilter = ['all', yearFilter, ['any', ...genreConditions]];
-        } else {
-            finalFilter = ['==', ['get', 'release_year'], -1]; 
-        }
-    }
-
-    map.setFilter('music-layer', finalFilter);
-    map.setFilter('music-heat', finalFilter);
-    document.getElementById('year-display').innerText = currentYear;
-    updateStats(); 
-}
-
-function animate() {
-    if (!isPlaying) return;
-    currentYear++;
-
-    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-    const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
-    const shouldLoop = document.getElementById('loop-toggle').checked;
-
-    if (currentYear > 2025) {
-        if (shouldLoop) {
-            // Loop back to genre birth if spotlighted, else 1890
-            currentYear = spotlight ? spotlight.first_year : 1890;
-        } else {
-            isPlaying = false;
-            document.getElementById('play-btn').innerText = "▶ Play Timeline";
-            return;
-        }
-    }
-    
-    document.getElementById('year-slider').value = currentYear;
-    updateFilters();
-    setTimeout(animate, parseInt(document.getElementById('speed-slider').value));
-}
-
-function initControls() {
-    // Advanced Menu Toggle
-    document.getElementById('adv-toggle').onclick = function() {
-        const content = document.getElementById('adv-content');
-        const isHidden = content.style.display !== 'flex';
-        content.style.display = isHidden ? 'flex' : 'none';
-        this.innerText = isHidden ? 'Advanced Settings ▴' : 'Advanced Settings ▾';
-    };
-
-    // Year Slider
-    document.getElementById('year-slider').addEventListener('input', (e) => {
-        currentYear = parseInt(e.target.value);
-        updateFilters();
-    });
-
-    // Heatmap Controls
-    document.getElementById('heat-radius-slider').oninput = function() {
-        map.setPaintProperty('music-heat', 'heatmap-radius', parseInt(this.value));
-        document.getElementById('val-radius').innerText = this.value;
-    };
-    document.getElementById('heat-weight-slider').oninput = function() {
-        map.setPaintProperty('music-heat', 'heatmap-intensity', parseFloat(this.value));
-        document.getElementById('val-intensity').innerText = this.value;
-    };
-
-    // Genre Search
-    document.getElementById('genre-search').oninput = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(updateFilters, 300);
-    };
-
-    // Pan Button Logic
-    document.getElementById('pan-to-origin').onclick = () => {
-        const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-        const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
-        if (spotlight) {
-            map.flyTo({ center: spotlight.origin, zoom: 5, essential: true });
-            currentYear = spotlight.first_year;
-            document.getElementById('year-slider').value = currentYear;
-            updateFilters();
-        }
-    };
-
-    document.getElementById('play-btn').onclick = function() {
-        isPlaying = !isPlaying;
-        this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
-        if (isPlaying) animate();
-    };
-
-    document.getElementById('btn-points').onclick = () => toggleLayer('points');
-    document.getElementById('btn-heatmap').onclick = () => toggleLayer('heat');
-    document.getElementById('cumulative-toggle').onchange = updateFilters;
-}
-
-function toggleLayer(type) {
-    const isHeat = type === 'heat';
-    map.setLayoutProperty('music-layer', 'visibility', isHeat ? 'none' : 'visible');
-    map.setLayoutProperty('music-heat', 'visibility', isHeat ? 'visible' : 'none');
-    document.getElementById('btn-points').classList.toggle('active', !isHeat);
-    document.getElementById('btn-heatmap').classList.toggle('active', isHeat);
-}
-
 async function showPopup(lngLat) {
     if (activePopup) activePopup.remove();
     const feat = popupFeatures[currentPopupIndex];
-    const details = musicMetadata[feat.properties.mu_id];
-    if (!details) return;
+    const muId = feat.properties.mu_id;
+    const d = musicMetadata[muId];
+    if (!d) return;
 
-    if (!mbidLookup) { try { const res = await fetch(MBID_URL); mbidLookup = await res.json(); } catch (e) {} }
+    const mbid = mbidLookup ? mbidLookup[muId] : null;
+    const artUrl = mbid ? `https://coverartarchive.org/release-group/${mbid}/front-250` : '';
 
-    const mbid = mbidLookup ? mbidLookup[feat.properties.mu_id] : null;
     const html = `
-        <div class="popup-location">${locationLookup[details[2]] || 'Unknown'}</div>
-        <div class="popup-artist">${details[0]}</div>
-        <div class="popup-release">${details[1]}</div>
-        <div class="popup-year" style="color:#00ffcc; font-weight:bold; margin-top:5px;">${details[4]}</div>
-        ${mbid ? `<a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">↗ MusicBrainz</a>` : ''}
-        ${popupFeatures.length > 1 ? `<div class="popup-nav"><button class="nav-btn" onclick="changePopup(-1)">◂</button><span style="font-size:10px;">${currentPopupIndex + 1}/${popupFeatures.length}</span><button class="nav-btn" onclick="changePopup(1)">▸</button></div>` : ''}`;
+        <div class="popup-header">${locationLookup[d[2]] || 'Unknown Location'}</div>
+        <div class="popup-body">
+            <div class="popup-info">
+                <div class="popup-artist">${d[0]}</div>
+                <div class="popup-release">${d[1]}</div>
+                <div class="popup-year">${d[4]}</div>
+            </div>
+            ${mbid ? `<div class="popup-art-container">
+                <img class="popup-art" src="${artUrl}" onerror="this.parentElement.style.display='none'">
+            </div>` : ''}
+        </div>
+        <div class="popup-footer">
+            <a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">MUSICBRAINZ ↗</a>
+            ${popupFeatures.length > 1 ? `<div style="font-size:10px;">
+                <button onclick="changePopup(-1)" style="padding:2px 5px; font-size:9px;">◀</button>
+                <span style="margin:0 5px;">${currentPopupIndex+1}/${popupFeatures.length}</span>
+                <button onclick="changePopup(1)" style="padding:2px 5px; font-size:9px;">▶</button>
+            </div>` : ''}
+        </div>
+    `;
 
-    activePopup = new maplibregl.Popup({ maxWidth: '280px', closeButton: false }).setLngLat(lngLat).setHTML(html).addTo(map);
+    activePopup = new maplibregl.Popup({ maxWidth: 'none', closeButton: false }).setLngLat(lngLat).setHTML(html).addTo(map);
 }
 
 window.changePopup = (dir) => {
@@ -336,49 +162,67 @@ window.changePopup = (dir) => {
     showPopup(activePopup.getLngLat());
 };
 
-function updateStats() {
-    if (!musicMetadata) return;
-    const isCumulative = document.getElementById('cumulative-toggle').checked;
+function updateFilters() {
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-    const panBtn = document.getElementById('pan-to-origin');
-    const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
+    const yearFilter = ['<=', ['get', 'release_year'], currentYear];
+    let finalFilter = yearFilter;
 
-    if (searchTerm && spotlight) {
-        document.getElementById('stats-title').innerText = `${searchTerm.toUpperCase()} SPOTLIGHT`;
-        document.getElementById('stat-first-year').innerText = spotlight.first_year;
-        panBtn.style.display = 'block';
-    } else {
-        document.getElementById('stats-title').innerText = "GLOBAL DISCOVERY STATS";
-        document.getElementById('stat-first-year').innerText = "-";
-        panBtn.style.display = 'none';
-    }
-
-    let total = 0, locCounts = {}, maxLocCount = 0, modeLocId = -1, firstFound = Infinity;
-    let targetGenreIds = new Set();
     if (searchTerm) {
-        for (const [name, id] of Object.entries(genreDict)) { if (name.includes(searchTerm)) targetGenreIds.add(id); }
+        let ids = Object.entries(genreDict).filter(([g]) => g.includes(searchTerm)).map(([_, id]) => id);
+        if (ids.length) finalFilter = ['all', yearFilter, ['any', ...ids.map(id => ['in', `|${id}|`, ['get', 'genre_ids']])]];
+        else finalFilter = ['==', ['get', 'release_year'], -1];
     }
-
-    for (const id in musicMetadata) {
-        const item = musicMetadata[id];
-        if (isCumulative ? (item[4] > currentYear) : (item[4] !== currentYear)) continue;
-        if (searchTerm && !item[3].some(gid => targetGenreIds.has(gid))) continue;
-        total++;
-        if (item[4] < firstFound) firstFound = item[4];
-        const locId = item[2];
-        locCounts[locId] = (locCounts[locId] || 0) + 1;
-        if (locCounts[locId] > maxLocCount) { maxLocCount = locCounts[locId]; modeLocId = locId; }
-    }
-
-    document.getElementById('stat-total').innerText = total.toLocaleString();
-    if (document.getElementById('stat-first-year').innerText === "-") {
-        document.getElementById('stat-first-year').innerText = firstFound === Infinity ? "-" : firstFound;
-    }
-    const modeName = modeLocId !== -1 ? locationLookup[modeLocId]?.split(',')[0] : "-";
-    document.getElementById('stat-mode-loc').innerText = maxLocCount > 0 ? `${modeName} (${maxLocCount})` : "-";
+    map.setFilter('music-layer', finalFilter);
+    map.setFilter('music-heat', finalFilter);
+    document.getElementById('year-display').innerText = currentYear;
+    updateStats();
 }
 
-function logStatus(msg) { document.getElementById('debug-log').innerText = `Status: ${msg}`; }
+function updateStats() {
+    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
+    const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
+    document.getElementById('pan-to-origin').style.display = spotlight ? 'block' : 'none';
+    if (spotlight) {
+        document.getElementById('stats-title').innerText = `${searchTerm.toUpperCase()} ORIGIN`;
+        document.getElementById('stat-first-year').innerText = spotlight.first_year;
+    }
+}
+
+function initControls() {
+    document.getElementById('adv-toggle').onclick = function() {
+        const c = document.getElementById('adv-content');
+        c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
+    };
+    document.getElementById('year-slider').oninput = (e) => { currentYear = parseInt(e.target.value); updateFilters(); };
+    document.getElementById('play-btn').onclick = function() {
+        isPlaying = !isPlaying;
+        this.innerText = isPlaying ? "⏸ Pause" : "▶ Play";
+        if (isPlaying) animate();
+    };
+    document.getElementById('btn-points').onclick = () => toggleLayer(false);
+    document.getElementById('btn-heatmap').onclick = () => toggleLayer(true);
+    document.getElementById('heat-radius-slider').oninput = function() { map.setPaintProperty('music-heat', 'heatmap-radius', parseInt(this.value)); };
+}
+
+function toggleLayer(isHeat) {
+    map.setLayoutProperty('music-layer', 'visibility', isHeat ? 'none' : 'visible');
+    map.setLayoutProperty('music-heat', 'visibility', isHeat ? 'visible' : 'none');
+    document.getElementById('btn-points').classList.toggle('active', !isHeat);
+    document.getElementById('btn-heatmap').classList.toggle('active', isHeat);
+}
+
+function animate() {
+    if (!isPlaying) return;
+    currentYear++;
+    if (currentYear > 2025) {
+        const s = document.getElementById('genre-search').value.toLowerCase();
+        const spotlight = genreStats[s] || genreStats['#' + s];
+        currentYear = spotlight ? spotlight.first_year : 1890;
+    }
+    document.getElementById('year-slider').value = currentYear;
+    updateFilters();
+    setTimeout(animate, parseInt(document.getElementById('speed-slider').value));
+}
 </script>
 </body>
 </html>
