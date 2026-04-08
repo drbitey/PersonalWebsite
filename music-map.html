@@ -10,68 +10,57 @@
     <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; font-family: sans-serif; background: #111; color: white; overflow: hidden; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; overflow: hidden; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
         
         /* UI Panel Styling */
         .ui-panel {
-            position: absolute; top: 10px; left: 10px; z-index: 1;
-            background: rgba(20, 20, 20, 0.9); padding: 20px; border-radius: 8px;
-            width: 320px; border: 1px solid #444; backdrop-filter: blur(5px);
+            position: absolute; top: 15px; left: 15px; z-index: 1;
+            background: rgba(15, 15, 15, 0.92); padding: 20px; border-radius: 12px;
+            width: 320px; border: 1px solid #333; backdrop-filter: blur(10px);
+            max-height: 92vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
+        
         .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
-        input[type="text"], button { 
-            background: #222; color: #fff; border: 1px solid #555; padding: 10px; border-radius: 4px; 
-        }
-        button { cursor: pointer; font-weight: bold; transition: background 0.2s; }
-        button:hover { background: #333; border-color: #00ffcc; }
         
-        #year-display { font-size: 28px; font-weight: bold; color: #00ffcc; margin-bottom: 5px; }
-        .slider { width: 100%; accent-color: #00ffcc; cursor: pointer; }
-        #debug-log { font-size: 10px; color: #888; margin-top: 10px; font-family: monospace; }
+        input[type="text"] { 
+            background: #1a1a1a; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: calc(100% - 26px);
+        }
+        
+        button { 
+            background: #222; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 6px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s; 
+        }
+        button:hover { border-color: #00ffcc; background: #2a2a2a; }
+        button.active { background: #00ffcc !important; color: #000 !important; border-color: #00ffcc; }
+        
+        #year-display { font-size: 32px; font-weight: 900; color: #00ffcc; margin-bottom: 5px; letter-spacing: -1px; }
+        .slider { width: 100%; accent-color: #00ffcc; cursor: pointer; margin: 10px 0; }
+        
+        /* Stats Styling */
+        .stats-panel {
+            margin-top: 5px; padding: 15px; background: rgba(0, 255, 204, 0.03); 
+            border: 1px solid #222; border-radius: 8px; font-size: 12px;
+        }
+        .stats-title { color: #00ffcc; font-weight: bold; margin-bottom: 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #999; }
+        .stat-val { color: #eee; font-weight: 600; text-align: right; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Dark Theme Pop-ups */
-        .maplibregl-popup-content {
-            background: #222; color: #fff; border: 1px solid #444;
-            border-radius: 6px; padding: 15px; box-shadow: 0px 4px 15px rgba(0,0,0,0.7);
-        }
-        .maplibregl-popup-tip { border-top-color: #222 !important; border-bottom-color: #222 !important; }
-        
-        .popup-location { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #888; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
-        .popup-artist { font-size: 18px; font-weight: 900; color: #00ffcc; line-height: 1.1; margin-bottom: 4px; }
-        .popup-release { font-size: 14px; font-style: italic; color: #fff; margin-bottom: 4px; }
-        .popup-genres { font-size: 11px; color: #aaa; margin-bottom: 8px; line-height: 1.3; }
-        .popup-year { font-size: 11px; color: #666; font-weight: bold; margin-bottom: 10px; }
+        /* View Toggle Group */
+        .toggle-group { display: flex; gap: 4px; background: #1a1a1a; padding: 4px; border-radius: 8px; margin-top: 5px; }
+        .toggle-group button { flex: 1; padding: 6px; font-size: 11px; border: none; }
 
-        /* MusicBrainz Link Style */
-        .mb-link {
-            display: inline-block;
-            margin-top: 5px;
-            color: #00ffcc;
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: bold;
-            border: 1px solid #444;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .mb-link:hover {
-            background: #00ffcc;
-            color: #111;
-            border-color: #00ffcc;
-        }
+        #debug-log { font-size: 10px; color: #555; margin-top: 12px; font-family: monospace; }
+
+        /* Pop-ups */
+        .maplibregl-popup-content { background: #111; color: #fff; border: 1px solid #00ffcc; border-radius: 8px; padding: 15px; box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
+        .popup-location { font-size: 10px; text-transform: uppercase; color: #00ffcc; border-bottom: 1px solid #333; padding-bottom: 4px; margin-bottom: 8px; font-weight: bold; }
+        .popup-artist { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .mb-link { display: inline-block; margin-top: 12px; color: #00ffcc; text-decoration: none; font-size: 10px; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; transition: 0.2s; }
+        .mb-link:hover { background: #00ffcc; color: #000; }
         
-        /* Multi-point Nav buttons */
-        .popup-nav {
-            margin-top: 12px; padding-top: 10px; border-top: 1px solid #444;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .nav-btn {
-            background: #333; color: white; border: 1px solid #555;
-            padding: 2px 10px; border-radius: 3px; font-size: 12px; cursor: pointer;
-        }
-        .nav-btn:hover { background: #444; }
+        .popup-nav { margin-top: 12px; padding-top: 10px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .nav-btn { background: #222; color: white; border: 1px solid #444; padding: 2px 10px; border-radius: 4px; cursor: pointer; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -80,181 +69,196 @@
 
 <div class="ui-panel">
     <div id="year-display">1970</div>
-    <input type="range" id="year-slider" class="slider" min="1900" max="2025" value="1970">
+    <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1970">
     
     <div class="controls">
-        <input type="text" id="genre-search" placeholder="Filter by Genre (e.g. Jazz, Psychedelic Rock)...">
+        <input type="text" id="genre-search" placeholder="Filter Genre (e.g. Jazz, Electronic)...">
         
-        <div style="display:flex; justify-content: space-between; align-items: center; font-size: 13px;">
+        <div style="display:flex; justify-content: space-between; align-items: center; font-size: 13px; color: #bbb;">
             <label style="cursor:pointer;"><input type="checkbox" id="cumulative-toggle" checked> Cumulative</label>
-            <div style="color: #888;">
-                Slower <input type="range" id="speed-slider" min="30" max="600" value="200" style="width: 70px; vertical-align: middle;" dir="rtl"> Faster
+            <div>
+                <span style="font-size:10px;">Speed:</span>
+                <input type="range" id="speed-slider" min="30" max="400" value="200" style="width: 60px; vertical-align: middle;" dir="rtl">
             </div>
         </div>
 
-        <button id="play-btn">▶ Play Timeline</button>
+        <button id="play-btn" style="background: #1a1a1a; border-color: #444;">▶ Play Timeline</button>
+
+        <div class="toggle-group">
+            <button id="btn-points" class="active">Point Map</button>
+            <button id="btn-heatmap">Heatmap</button>
+        </div>
+        
+        <div class="stats-panel" id="stats-panel">
+            <div class="stats-title">Global Discovery Stats</div>
+            <div class="stat-row"><span>Total Records:</span> <span id="stat-total" class="stat-val">0</span></div>
+            <div class="stat-row"><span>Earliest Year:</span> <span id="stat-first-year" class="stat-val">-</span></div>
+            <div class="stat-row"><span>Primary Hub:</span> <span id="stat-mode-loc" class="stat-val">-</span></div>
+        </div>
+
         <div id="debug-log">Status: Initializing Assets...</div>
     </div>
 </div>
 
 <script>
-/** * CONFIGURATION */
+/** --- CONFIG & GLOBALS --- **/
 let currentYear = 1970; 
 let isPlaying = false;
 let genreDict = {}; 
 let musicMetadata = {}; 
-let mbidLookup = null; // Lazy-loaded later
+let locationLookup = [];
+let mbidLookup = null; 
 let searchTimeout;
-
-// Multi-point popup state
 let popupFeatures = [];
 let currentPopupIndex = 0;
 let activePopup = null;
 
-/** * PMTILES SETUP */
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
+// Assets
 const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
 const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
 const META_URL = "https://www.mvoltz.com/music-map/data/metadata_lookup.json";
+const LOC_URL = "https://www.mvoltz.com/music-map/data/location_lookup.json";
 const MBID_URL = "https://www.mvoltz.com/music-map/data/mbid_lookup.json";
 
 async function loadAssets() {
     try {
-        logStatus("Fetching Dictionary & Metadata...");
-        const [dictRes, metaRes] = await Promise.all([
-            fetch(DICT_URL),
-            fetch(META_URL)
+        logStatus("Fetching Metadata...");
+        const [dictRes, metaRes, locRes] = await Promise.all([
+            fetch(DICT_URL), 
+            fetch(META_URL),
+            fetch(LOC_URL)
         ]);
         genreDict = await dictRes.json();
         musicMetadata = await metaRes.json();
+        locationLookup = await locRes.json();
         logStatus("Ready.");
+        updateStats(); 
     } catch (err) {
-        logStatus("Error loading data. Check paths.");
-        console.error(err);
+        logStatus("Error loading data.");
+        console.error("Asset Load Failure:", err);
     }
 }
 
-/** * MAP INITIALIZATION */
+/** --- MAP INITIALIZATION --- **/
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [17, 10], 
-    zoom: 2.5
+    center: [15, 20], 
+    zoom: 2.2,
+    pitch: 30
 });
 
 map.on('load', async () => {
     await loadAssets();
+    
+    map.addSource('music-points', { type: 'vector', url: `pmtiles://${PMTILES_URL}` });
 
-    map.addSource('music-points', {
-        type: 'vector',
-        url: `pmtiles://${PMTILES_URL}`
+    // 1. HEATMAP LAYER (Visual Density)
+    map.addLayer({
+        'id': 'music-heat',
+        'type': 'heatmap',
+        'source': 'music-points',
+        'source-layer': 'music',
+        'layout': { 'visibility': 'none' },
+        'paint': {
+            'heatmap-weight': 1,
+            'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 9, 3],
+            'heatmap-color': [
+                'interpolate', ['linear'], ['heatmap-density'],
+                0, 'rgba(0,0,0,0)',
+                0.2, 'rgba(0, 255, 204, 0.2)',
+                0.4, 'rgba(0, 255, 204, 0.5)',
+                0.6, 'rgba(255, 255, 0, 0.7)',
+                0.8, 'rgba(255, 100, 0, 0.8)',
+                1, 'rgba(255, 0, 0, 0.9)'
+            ],
+            'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 15],
+            'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 7, 0.8, 10, 0]
+        }
     });
 
+    // 2. CIRCLE LAYER (Individual Records)
     map.addLayer({
         'id': 'music-layer',
         'type': 'circle',
         'source': 'music-points',
-        'source-layer': 'music', 
+        'source-layer': 'music',
         'paint': {
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 9],
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2, 10, 8],
             'circle-color': '#00ffcc',
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff',
-            'circle-opacity': 0.75
+            'circle-opacity': 0.7
         }
     });
 
-    map.on('mouseenter', 'music-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
+    // Interaction Events
+    map.on('mouseenter', 'music-layer', () => { if(map.getLayoutProperty('music-layer', 'visibility') !== 'none') map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'music-layer', () => { map.getCanvas().style.cursor = ''; });
-
     map.on('click', 'music-layer', (e) => {
         popupFeatures = map.queryRenderedFeatures(e.point, { layers: ['music-layer'] });
         currentPopupIndex = 0;
-        if (popupFeatures.length > 0) {
-            showPopup(e.lngLat);
-        }
+        if (popupFeatures.length > 0) showPopup(e.lngLat);
     });
 
     initControls();
     updateFilters();
 });
 
-/** * POPUP SYSTEM */
+/** --- CORE LOGIC --- **/
+
 async function showPopup(lngLat) {
     if (activePopup) activePopup.remove();
-    if (popupFeatures.length === 0) return;
-
     const feat = popupFeatures[currentPopupIndex];
     const muId = feat.properties.mu_id;
-    const details = musicMetadata[muId];
+    const details = musicMetadata[muId]; // [Artist, Release, LocID, [G_IDs], Year]
     
-    // Lazy-load MBID lookup if it hasn't been fetched yet
+    if (!details) return;
+
     if (!mbidLookup) {
-        logStatus("Loading MBID records...");
         try {
             const res = await fetch(MBID_URL);
             mbidLookup = await res.json();
-            logStatus("Ready.");
-        } catch (e) {
-            console.error("Failed to load MBIDs", e);
-        }
+        } catch (e) {}
     }
 
-    // Build the MusicBrainz link if ID exists
     const mbid = mbidLookup ? mbidLookup[muId] : null;
-    const mbHTML = mbid 
-        ? `<a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">↗ MusicBrainz</a>`
-        : '';
+    const mbHTML = mbid ? `<a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">↗ View on MusicBrainz</a>` : '';
     
-    let navHTML = '';
-    if (popupFeatures.length > 1) {
-        navHTML = `
-            <div class="popup-nav">
-                <button class="nav-btn" onclick="changePopup(-1)"> < </button>
-                <span style="font-size:10px; color:#666; font-family: monospace;">
-                    ${currentPopupIndex + 1} / ${popupFeatures.length}
-                </span>
-                <button class="nav-btn" onclick="changePopup(1)"> > </button>
-            </div>
-        `;
-    }
+    let navHTML = popupFeatures.length > 1 ? `
+        <div class="popup-nav">
+            <button class="nav-btn" onclick="changePopup(-1)">◂</button>
+            <span style="font-size:10px; color:#888;">Record ${currentPopupIndex + 1} of ${popupFeatures.length}</span>
+            <button class="nav-btn" onclick="changePopup(1)">▸</button>
+        </div>` : '';
 
     const html = `
-        <div class="popup-location">${details ? details.l : 'Unknown Location'}</div>
-        <div class="popup-artist">${details ? details.a : 'Unknown Artist'}</div>
-        <div class="popup-release">${details ? details.r : 'Unknown Release'}</div>
-        <div class="popup-genres">Tagged: ${details ? details.g : 'None'}</div>
-        <div class="popup-year">${feat.properties.release_year}</div>
-        ${mbHTML}
-        ${navHTML}
-    `;
+        <div class="popup-location">${locationLookup[details[2]] || 'Unknown'}</div>
+        <div class="popup-artist">${details[0]}</div>
+        <div class="popup-release">${details[1]}</div>
+        <div class="popup-year" style="color:#00ffcc; font-weight:bold; margin-top:5px;">Year: ${details[4]}</div>
+        ${mbHTML}${navHTML}`;
 
-    activePopup = new maplibregl.Popup({ maxWidth: '260px', focusAfterOpen: false })
+    activePopup = new maplibregl.Popup({ maxWidth: '280px', focusAfterOpen: false, closeButton: false })
         .setLngLat(lngLat)
         .setHTML(html)
         .addTo(map);
 }
 
-window.changePopup = (direction) => {
-    currentPopupIndex += direction;
-    if (currentPopupIndex < 0) currentPopupIndex = popupFeatures.length - 1;
-    if (currentPopupIndex >= popupFeatures.length) currentPopupIndex = 0;
+window.changePopup = (dir) => {
+    currentPopupIndex = (currentPopupIndex + dir + popupFeatures.length) % popupFeatures.length;
     showPopup(activePopup.getLngLat());
 };
 
-/** * FILTERING LOGIC */
 function updateFilters() {
     if (!map.getLayer('music-layer')) return;
-
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    const yearFilter = isCumulative 
-        ? ['<=', ['get', 'release_year'], currentYear] 
-        : ['==', ['get', 'release_year'], currentYear];
-
+    const yearFilter = isCumulative ? ['<=', ['get', 'release_year'], currentYear] : ['==', ['get', 'release_year'], currentYear];
     let finalFilter = yearFilter; 
 
     if (searchTerm && Object.keys(genreDict).length > 0) {
@@ -262,7 +266,6 @@ function updateFilters() {
         for (const [genre, id] of Object.entries(genreDict)) {
             if (genre.includes(searchTerm)) matchingIds.push(id);
         }
-
         if (matchingIds.length > 0) {
             let genreConditions = matchingIds.map(id => ['in', `|${id}|`, ['get', 'genre_ids']]);
             finalFilter = ['all', yearFilter, ['any', ...genreConditions]];
@@ -272,49 +275,115 @@ function updateFilters() {
     }
 
     map.setFilter('music-layer', finalFilter);
+    map.setFilter('music-heat', finalFilter);
     document.getElementById('year-display').innerText = currentYear;
+    updateStats(); 
 }
 
-/** * UI EVENT LISTENERS */
+function updateStats() {
+    if (Object.keys(musicMetadata).length === 0 || locationLookup.length === 0) return;
+
+    const isCumulative = document.getElementById('cumulative-toggle').checked;
+    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
+    
+    let targetGenreIds = new Set();
+    if (searchTerm) {
+        for (const [name, id] of Object.entries(genreDict)) {
+            if (name.includes(searchTerm)) targetGenreIds.add(id);
+        }
+    }
+
+    let total = 0;
+    let minYear = Infinity;
+    let locCounts = {};
+    let maxLocCount = 0;
+    let modeLocId = -1;
+
+    for (const id in musicMetadata) {
+        const item = musicMetadata[id]; 
+        const itemYear = item[4]; 
+        
+        if (isCumulative ? (itemYear > currentYear) : (itemYear !== currentYear)) continue;
+
+        if (searchTerm) {
+            if (!item[3].some(gid => targetGenreIds.has(gid))) continue;
+        }
+
+        total++;
+        if (itemYear < minYear) minYear = itemYear;
+
+        const locId = item[2];
+        locCounts[locId] = (locCounts[locId] || 0) + 1;
+        if (locCounts[locId] > maxLocCount) {
+            maxLocCount = locCounts[locId];
+            modeLocId = locId;
+        }
+    }
+
+    document.getElementById('stat-total').innerText = total.toLocaleString();
+    document.getElementById('stat-first-year').innerText = minYear === Infinity ? "-" : minYear;
+    
+    const modeName = modeLocId !== -1 ? locationLookup[modeLocId].split(',')[0] : "-";
+    document.getElementById('stat-mode-loc').innerText = maxLocCount > 0 ? `${modeName} (${maxLocCount})` : "-";
+    document.getElementById('stat-mode-loc').title = modeLocId !== -1 ? locationLookup[modeLocId] : "";
+}
+
 function initControls() {
+    // Year Slider
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
     });
 
+    // Genre Search
     document.getElementById('genre-search').addEventListener('input', () => {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            updateFilters();
-        }, 300);
+        searchTimeout = setTimeout(updateFilters, 300);
     });
 
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
 
+    // Play/Pause
     document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
         this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
+        this.style.borderColor = isPlaying ? "#00ffcc" : "#444";
         if (isPlaying) animate();
     });
+
+    // View Toggles
+    const btnPoints = document.getElementById('btn-points');
+    const btnHeatmap = document.getElementById('btn-heatmap');
+
+    btnPoints.onclick = () => {
+        map.setLayoutProperty('music-layer', 'visibility', 'visible');
+        map.setLayoutProperty('music-heat', 'visibility', 'none');
+        btnPoints.classList.add('active');
+        btnHeatmap.classList.remove('active');
+    };
+
+    btnHeatmap.onclick = () => {
+        map.setLayoutProperty('music-layer', 'visibility', 'none');
+        map.setLayoutProperty('music-heat', 'visibility', 'visible');
+        btnHeatmap.classList.add('active');
+        btnPoints.classList.remove('active');
+    };
 }
 
-/** * ANIMATION ENGINE */
 function animate() {
     if (!isPlaying) return;
-    
     currentYear++;
-    if (currentYear > 2025) currentYear = 1890;
-    
+    if (currentYear > 2025) {
+        currentYear = 1890;
+        isPlaying = false;
+        document.getElementById('play-btn').innerText = "▶ Play Timeline";
+    }
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    
-    const delay = parseInt(document.getElementById('speed-slider').value);
-    setTimeout(animate, delay);
+    setTimeout(animate, parseInt(document.getElementById('speed-slider').value));
 }
 
-function logStatus(msg) {
-    document.getElementById('debug-log').innerText = `Status: ${msg}`;
-}
+function logStatus(msg) { document.getElementById('debug-log').innerText = `Status: ${msg}`; }
 </script>
 </body>
 </html>
