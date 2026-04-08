@@ -13,11 +13,11 @@
         body { margin: 0; padding: 0; font-family: sans-serif; background: #111; color: white; overflow: hidden; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
         
-        /* UI Panel Styling */
         .ui-panel {
             position: absolute; top: 10px; left: 10px; z-index: 1;
             background: rgba(20, 20, 20, 0.9); padding: 20px; border-radius: 8px;
             width: 320px; border: 1px solid #444; backdrop-filter: blur(5px);
+            max-height: 90vh; overflow-y: auto;
         }
         .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
         input[type="text"], button { 
@@ -30,48 +30,20 @@
         .slider { width: 100%; accent-color: #00ffcc; cursor: pointer; }
         #debug-log { font-size: 10px; color: #888; margin-top: 10px; font-family: monospace; }
 
-        /* Dark Theme Pop-ups */
-        .maplibregl-popup-content {
-            background: #222; color: #fff; border: 1px solid #444;
-            border-radius: 6px; padding: 15px; box-shadow: 0px 4px 15px rgba(0,0,0,0.7);
+        .stats-panel {
+            margin-top: 10px; padding: 12px; background: rgba(0, 255, 204, 0.05); 
+            border: 1px solid #333; border-radius: 6px; font-size: 12px;
         }
-        .maplibregl-popup-tip { border-top-color: #222 !important; border-bottom-color: #222 !important; }
-        
-        .popup-location { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #888; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
-        .popup-artist { font-size: 18px; font-weight: 900; color: #00ffcc; line-height: 1.1; margin-bottom: 4px; }
-        .popup-release { font-size: 14px; font-style: italic; color: #fff; margin-bottom: 4px; }
-        .popup-genres { font-size: 11px; color: #aaa; margin-bottom: 8px; line-height: 1.3; }
-        .popup-year { font-size: 11px; color: #666; font-weight: bold; margin-bottom: 10px; }
+        .stats-title { color: #00ffcc; font-weight: bold; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #aaa; }
+        .stat-val { color: #fff; font-weight: bold; text-align: right; max-width: 65%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* MusicBrainz Link Style */
-        .mb-link {
-            display: inline-block;
-            margin-top: 5px;
-            color: #00ffcc;
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: bold;
-            border: 1px solid #444;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .mb-link:hover {
-            background: #00ffcc;
-            color: #111;
-            border-color: #00ffcc;
-        }
-        
-        /* Multi-point Nav buttons */
-        .popup-nav {
-            margin-top: 12px; padding-top: 10px; border-top: 1px solid #444;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .nav-btn {
-            background: #333; color: white; border: 1px solid #555;
-            padding: 2px 10px; border-radius: 3px; font-size: 12px; cursor: pointer;
-        }
-        .nav-btn:hover { background: #444; }
+        .maplibregl-popup-content { background: #222; color: #fff; border: 1px solid #444; border-radius: 6px; padding: 15px; }
+        .popup-location { font-size: 10px; text-transform: uppercase; color: #888; border-bottom: 1px solid #333; padding-bottom: 4px; margin-bottom: 8px; }
+        .popup-artist { font-size: 18px; font-weight: 900; color: #00ffcc; margin-bottom: 4px; }
+        .mb-link { display: inline-block; margin-top: 10px; color: #00ffcc; text-decoration: none; font-size: 10px; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; }
+        .popup-nav { margin-top: 12px; padding-top: 10px; border-top: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
+        .nav-btn { background: #333; color: white; border: 1px solid #555; padding: 2px 10px; border-radius: 3px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -80,63 +52,72 @@
 
 <div class="ui-panel">
     <div id="year-display">1970</div>
-    <input type="range" id="year-slider" class="slider" min="1900" max="2025" value="1970">
+    <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1970">
     
     <div class="controls">
-        <input type="text" id="genre-search" placeholder="Filter by Genre (e.g. Jazz, Psychedelic Rock)...">
+        <input type="text" id="genre-search" placeholder="Filter Genre (e.g. Jazz, Afro)...">
         
         <div style="display:flex; justify-content: space-between; align-items: center; font-size: 13px;">
             <label style="cursor:pointer;"><input type="checkbox" id="cumulative-toggle" checked> Cumulative</label>
             <div style="color: #888;">
-                Slower <input type="range" id="speed-slider" min="30" max="600" value="200" style="width: 70px; vertical-align: middle;" dir="rtl"> Faster
+                Slower <input type="range" id="speed-slider" min="30" max="400" value="200" style="width: 70px; vertical-align: middle;" dir="rtl"> Faster
             </div>
         </div>
 
         <button id="play-btn">▶ Play Timeline</button>
+        
+        <div class="stats-panel" id="stats-panel">
+            <div class="stats-title">Global History Stats</div>
+            <div class="stat-row"><span>Total Records:</span> <span id="stat-total" class="stat-val">0</span></div>
+            <div class="stat-row"><span>Earliest Record:</span> <span id="stat-first-year" class="stat-val">-</span></div>
+            <div class="stat-row"><span>Primary Hub:</span> <span id="stat-mode-loc" class="stat-val">-</span></div>
+        </div>
+
         <div id="debug-log">Status: Initializing Assets...</div>
     </div>
 </div>
 
 <script>
-/** * CONFIGURATION */
 let currentYear = 1970; 
 let isPlaying = false;
 let genreDict = {}; 
 let musicMetadata = {}; 
-let mbidLookup = null; // Lazy-loaded later
+let locationLookup = [];
+let mbidLookup = null; 
 let searchTimeout;
-
-// Multi-point popup state
 let popupFeatures = [];
 let currentPopupIndex = 0;
 let activePopup = null;
 
-/** * PMTILES SETUP */
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
+// Paths
 const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
 const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
 const META_URL = "https://www.mvoltz.com/music-map/data/metadata_lookup.json";
+const LOC_URL = "https://www.mvoltz.com/music-map/data/location_lookup.json";
 const MBID_URL = "https://www.mvoltz.com/music-map/data/mbid_lookup.json";
 
 async function loadAssets() {
     try {
-        logStatus("Fetching Dictionary & Metadata...");
-        const [dictRes, metaRes] = await Promise.all([
-            fetch(DICT_URL),
-            fetch(META_URL)
+        logStatus("Fetching Metadata...");
+        const [dictRes, metaRes, locRes] = await Promise.all([
+            fetch(DICT_URL), 
+            fetch(META_URL),
+            fetch(LOC_URL)
         ]);
         genreDict = await dictRes.json();
         musicMetadata = await metaRes.json();
+        locationLookup = await locRes.json();
         logStatus("Ready.");
+        updateStats(); 
     } catch (err) {
-        logStatus("Error loading data. Check paths.");
+        logStatus("Error loading data.");
         console.error(err);
     }
 }
 
-/** * MAP INITIALIZATION */
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
@@ -146,123 +127,82 @@ const map = new maplibregl.Map({
 
 map.on('load', async () => {
     await loadAssets();
-
-    map.addSource('music-points', {
-        type: 'vector',
-        url: `pmtiles://${PMTILES_URL}`
-    });
-
+    map.addSource('music-points', { type: 'vector', url: `pmtiles://${PMTILES_URL}` });
     map.addLayer({
-        'id': 'music-layer',
-        'type': 'circle',
-        'source': 'music-points',
-        'source-layer': 'music', 
+        'id': 'music-layer', 'type': 'circle', 'source': 'music-points', 'source-layer': 'music', 
         'paint': {
             'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 9],
-            'circle-color': '#00ffcc',
-            'circle-stroke-width': 1,
-            'circle-stroke-color': '#fff',
-            'circle-opacity': 0.75
+            'circle-color': '#00ffcc', 'circle-stroke-width': 1, 'circle-stroke-color': '#fff', 'circle-opacity': 0.75
         }
     });
 
     map.on('mouseenter', 'music-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'music-layer', () => { map.getCanvas().style.cursor = ''; });
-
     map.on('click', 'music-layer', (e) => {
         popupFeatures = map.queryRenderedFeatures(e.point, { layers: ['music-layer'] });
         currentPopupIndex = 0;
-        if (popupFeatures.length > 0) {
-            showPopup(e.lngLat);
-        }
+        if (popupFeatures.length > 0) showPopup(e.lngLat);
     });
 
     initControls();
     updateFilters();
 });
 
-/** * POPUP SYSTEM */
 async function showPopup(lngLat) {
     if (activePopup) activePopup.remove();
-    if (popupFeatures.length === 0) return;
-
     const feat = popupFeatures[currentPopupIndex];
     const muId = feat.properties.mu_id;
-    const details = musicMetadata[muId];
+    const details = musicMetadata[muId]; // [Artist, Release, LocID, [G_IDs], Year]
     
-    // Lazy-load MBID lookup if it hasn't been fetched yet
+    if (!details) return;
+
     if (!mbidLookup) {
-        logStatus("Loading MBID records...");
         try {
             const res = await fetch(MBID_URL);
             mbidLookup = await res.json();
-            logStatus("Ready.");
-        } catch (e) {
-            console.error("Failed to load MBIDs", e);
-        }
+        } catch (e) {}
     }
 
-    // Build the MusicBrainz link if ID exists
     const mbid = mbidLookup ? mbidLookup[muId] : null;
-    const mbHTML = mbid 
-        ? `<a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">↗ MusicBrainz</a>`
-        : '';
+    const mbHTML = mbid ? `<a href="https://musicbrainz.org/release-group/${mbid}" target="_blank" class="mb-link">↗ MusicBrainz</a>` : '';
     
-    let navHTML = '';
-    if (popupFeatures.length > 1) {
-        navHTML = `
-            <div class="popup-nav">
-                <button class="nav-btn" onclick="changePopup(-1)"> < </button>
-                <span style="font-size:10px; color:#666; font-family: monospace;">
-                    ${currentPopupIndex + 1} / ${popupFeatures.length}
-                </span>
-                <button class="nav-btn" onclick="changePopup(1)"> > </button>
-            </div>
-        `;
-    }
+    let navHTML = popupFeatures.length > 1 ? `
+        <div class="popup-nav">
+            <button class="nav-btn" onclick="changePopup(-1)"> < </button>
+            <span style="font-size:10px; color:#666;">${currentPopupIndex + 1} / ${popupFeatures.length}</span>
+            <button class="nav-btn" onclick="changePopup(1)"> > </button>
+        </div>` : '';
 
     const html = `
-        <div class="popup-location">${details ? details.l : 'Unknown Location'}</div>
-        <div class="popup-artist">${details ? details.a : 'Unknown Artist'}</div>
-        <div class="popup-release">${details ? details.r : 'Unknown Release'}</div>
-        <div class="popup-genres">Tagged: ${details ? details.g : 'None'}</div>
-        <div class="popup-year">${feat.properties.release_year}</div>
-        ${mbHTML}
-        ${navHTML}
-    `;
+        <div class="popup-location">${locationLookup[details[2]]}</div>
+        <div class="popup-artist">${details[0]}</div>
+        <div class="popup-release">${details[1]}</div>
+        <div class="popup-year">${details[4]}</div>
+        ${mbHTML}${navHTML}`;
 
-    activePopup = new maplibregl.Popup({ maxWidth: '260px', focusAfterOpen: false })
-        .setLngLat(lngLat)
-        .setHTML(html)
-        .addTo(map);
+    activePopup = new maplibregl.Popup({ maxWidth: '260px', focusAfterOpen: false }).setLngLat(lngLat).setHTML(html).addTo(map);
 }
 
-window.changePopup = (direction) => {
-    currentPopupIndex += direction;
-    if (currentPopupIndex < 0) currentPopupIndex = popupFeatures.length - 1;
-    if (currentPopupIndex >= popupFeatures.length) currentPopupIndex = 0;
+window.changePopup = (dir) => {
+    currentPopupIndex = (currentPopupIndex + dir + popupFeatures.length) % popupFeatures.length;
     showPopup(activePopup.getLngLat());
 };
 
-/** * FILTERING LOGIC */
+/** * FILTERING & GLOBAL STATS */
 function updateFilters() {
     if (!map.getLayer('music-layer')) return;
-
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    const yearFilter = isCumulative 
-        ? ['<=', ['get', 'release_year'], currentYear] 
-        : ['==', ['get', 'release_year'], currentYear];
-
+    const yearFilter = isCumulative ? ['<=', ['get', 'release_year'], currentYear] : ['==', ['get', 'release_year'], currentYear];
     let finalFilter = yearFilter; 
 
+    // Search logic using existing genre dictionary mapping
     if (searchTerm && Object.keys(genreDict).length > 0) {
         let matchingIds = [];
         for (const [genre, id] of Object.entries(genreDict)) {
             if (genre.includes(searchTerm)) matchingIds.push(id);
         }
-
         if (matchingIds.length > 0) {
             let genreConditions = matchingIds.map(id => ['in', `|${id}|`, ['get', 'genre_ids']]);
             finalFilter = ['all', yearFilter, ['any', ...genreConditions]];
@@ -273,24 +213,74 @@ function updateFilters() {
 
     map.setFilter('music-layer', finalFilter);
     document.getElementById('year-display').innerText = currentYear;
+    updateStats(); 
 }
 
-/** * UI EVENT LISTENERS */
+/** * GLOBAL STATISTICS ENGINE */
+function updateStats() {
+    if (Object.keys(musicMetadata).length === 0 || locationLookup.length === 0) return;
+
+    const isCumulative = document.getElementById('cumulative-toggle').checked;
+    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
+    
+    // Find matching genre IDs for the global filter
+    let targetGenreIds = new Set();
+    if (searchTerm) {
+        for (const [name, id] of Object.entries(genreDict)) {
+            if (name.includes(searchTerm)) targetGenreIds.add(id);
+        }
+    }
+
+    let total = 0;
+    let minYear = Infinity;
+    let locCounts = {};
+    let maxLocCount = 0;
+    let modeLocId = -1;
+
+    for (const id in musicMetadata) {
+        const item = musicMetadata[id]; // [Artist, Release, LocID, [G_IDs], Year]
+        
+        // Year check
+        const itemYear = item[4]; 
+        const yearMatch = isCumulative ? (itemYear <= currentYear) : (itemYear === currentYear);
+        if (!yearMatch) continue;
+
+        // Genre check
+        if (searchTerm) {
+            const recordGenreIds = item[3];
+            const hasMatch = recordGenreIds.some(gid => targetGenreIds.has(gid));
+            if (!hasMatch) continue;
+        }
+
+        total++;
+        if (itemYear < minYear) minYear = itemYear;
+
+        const locId = item[2];
+        locCounts[locId] = (locCounts[locId] || 0) + 1;
+        if (locCounts[locId] > maxLocCount) {
+            maxLocCount = locCounts[locId];
+            modeLocId = locId;
+        }
+    }
+
+    document.getElementById('stat-total').innerText = total.toLocaleString();
+    document.getElementById('stat-first-year').innerText = minYear === Infinity ? "-" : minYear;
+    
+    const modeName = modeLocId !== -1 ? locationLookup[modeLocId].split(',')[0] : "-";
+    document.getElementById('stat-mode-loc').innerText = maxLocCount > 0 ? `${modeName} (${maxLocCount})` : "-";
+    document.getElementById('stat-mode-loc').title = modeLocId !== -1 ? locationLookup[modeLocId] : "";
+}
+
 function initControls() {
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
     });
-
     document.getElementById('genre-search').addEventListener('input', () => {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            updateFilters();
-        }, 300);
+        searchTimeout = setTimeout(updateFilters, 300);
     });
-
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
-
     document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
         this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
@@ -298,23 +288,16 @@ function initControls() {
     });
 }
 
-/** * ANIMATION ENGINE */
 function animate() {
     if (!isPlaying) return;
-    
     currentYear++;
     if (currentYear > 2025) currentYear = 1890;
-    
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    
-    const delay = parseInt(document.getElementById('speed-slider').value);
-    setTimeout(animate, delay);
+    setTimeout(animate, parseInt(document.getElementById('speed-slider').value));
 }
 
-function logStatus(msg) {
-    document.getElementById('debug-log').innerText = `Status: ${msg}`;
-}
+function logStatus(msg) { document.getElementById('debug-log').innerText = `Status: ${msg}`; }
 </script>
 </body>
 </html>
