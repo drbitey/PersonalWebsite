@@ -37,9 +37,30 @@
         }
         .maplibregl-popup-tip { border-top-color: #222 !important; border-bottom-color: #222 !important; }
         
-        .popup-artist { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #00ffcc; }
-        .popup-release { font-size: 14px; font-style: italic; color: #ccc; margin-bottom: 8px; }
-        .popup-year { font-size: 12px; color: #888; }
+        .popup-location { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #888; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+        .popup-artist { font-size: 18px; font-weight: 900; color: #00ffcc; line-height: 1.1; margin-bottom: 4px; }
+        .popup-release { font-size: 14px; font-style: italic; color: #fff; margin-bottom: 4px; }
+        .popup-genres { font-size: 11px; color: #aaa; margin-bottom: 8px; line-height: 1.3; }
+        .popup-year { font-size: 11px; color: #666; font-weight: bold; margin-bottom: 10px; }
+
+        /* MusicBrainz Link Style */
+        .mb-link {
+            display: inline-block;
+            margin-top: 5px;
+            color: #00ffcc;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid #444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .mb-link:hover {
+            background: #00ffcc;
+            color: #111;
+            border-color: #00ffcc;
+        }
         
         /* Multi-point Nav buttons */
         .popup-nav {
@@ -77,12 +98,12 @@
 </div>
 
 <script>
-/** * CONFIGURATION
- */
+/** * CONFIGURATION */
 let currentYear = 1970; 
 let isPlaying = false;
 let genreDict = {}; 
 let musicMetadata = {}; 
+let mbidLookup = null; // Lazy-loaded later
 let searchTimeout;
 
 // Multi-point popup state
@@ -90,14 +111,14 @@ let popupFeatures = [];
 let currentPopupIndex = 0;
 let activePopup = null;
 
-/** * PMTILES SETUP
- */
+/** * PMTILES SETUP */
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
 const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
 const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
 const META_URL = "https://www.mvoltz.com/music-map/data/metadata_lookup.json";
+const MBID_URL = "https://www.mvoltz.com/music-map/data/mbid_lookup.json";
 
 async function loadAssets() {
     try {
@@ -115,8 +136,7 @@ async function loadAssets() {
     }
 }
 
-/** * MAP INITIALIZATION
- */
+/** * MAP INITIALIZATION */
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
@@ -138,11 +158,7 @@ map.on('load', async () => {
         'source': 'music-points',
         'source-layer': 'music', 
         'paint': {
-            'circle-radius': [
-                'interpolate', ['linear'], ['zoom'],
-                2, 2.5,
-                10, 9
-            ],
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2.5, 10, 9],
             'circle-color': '#00ffcc',
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff',
@@ -150,12 +166,10 @@ map.on('load', async () => {
         }
     });
 
-    // Interactivity
     map.on('mouseenter', 'music-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'music-layer', () => { map.getCanvas().style.cursor = ''; });
 
     map.on('click', 'music-layer', (e) => {
-        // Query ALL features under the click point
         popupFeatures = map.queryRenderedFeatures(e.point, { layers: ['music-layer'] });
         currentPopupIndex = 0;
         if (popupFeatures.length > 0) {
@@ -167,40 +181,62 @@ map.on('load', async () => {
     updateFilters();
 });
 
-/** * POPUP SYSTEM
- */
-function showPopup(lngLat) {
+/** * POPUP SYSTEM */
+async function showPopup(lngLat) {
     if (activePopup) activePopup.remove();
     if (popupFeatures.length === 0) return;
 
     const feat = popupFeatures[currentPopupIndex];
-    const details = musicMetadata[feat.properties.mu_id];
+    const muId = feat.properties.mu_id;
+    const details = musicMetadata[muId];
+    
+    // Lazy-load MBID lookup if it hasn't been fetched yet
+    if (!mbidLookup) {
+        logStatus("Loading MBID records...");
+        try {
+            const res = await fetch(MBID_URL);
+            mbidLookup = await res.json();
+            logStatus("Ready.");
+        } catch (e) {
+            console.error("Failed to load MBIDs", e);
+        }
+    }
+
+    // Build the MusicBrainz link if ID exists
+    const mbid = mbidLookup ? mbidLookup[muId] : null;
+    const mbHTML = mbid 
+        ? `<a href="https://musicbrainz.org/release/${mbid}" target="_blank" class="mb-link">↗ MusicBrainz</a>`
+        : '';
     
     let navHTML = '';
     if (popupFeatures.length > 1) {
         navHTML = `
             <div class="popup-nav">
-                <button class="nav-btn" onclick="changePopup(-1)">←</button>
-                <span style="font-size:11px; color:#aaa;">${currentPopupIndex + 1} of ${popupFeatures.length}</span>
-                <button class="nav-btn" onclick="changePopup(1)">→</button>
+                <button class="nav-btn" onclick="changePopup(-1)"> < </button>
+                <span style="font-size:10px; color:#666; font-family: monospace;">
+                    ${currentPopupIndex + 1} / ${popupFeatures.length}
+                </span>
+                <button class="nav-btn" onclick="changePopup(1)"> > </button>
             </div>
         `;
     }
 
     const html = `
+        <div class="popup-location">${details ? details.l : 'Unknown Location'}</div>
         <div class="popup-artist">${details ? details.a : 'Unknown Artist'}</div>
         <div class="popup-release">${details ? details.r : 'Unknown Release'}</div>
-        <div class="popup-year">Year: ${feat.properties.release_year}</div>
+        <div class="popup-genres">Tagged: ${details ? details.g : 'None'}</div>
+        <div class="popup-year">${feat.properties.release_year}</div>
+        ${mbHTML}
         ${navHTML}
     `;
 
-    activePopup = new maplibregl.Popup({ maxWidth: '280px' })
+    activePopup = new maplibregl.Popup({ maxWidth: '260px', focusAfterOpen: false })
         .setLngLat(lngLat)
         .setHTML(html)
         .addTo(map);
 }
 
-// Global scope helper for popup buttons
 window.changePopup = (direction) => {
     currentPopupIndex += direction;
     if (currentPopupIndex < 0) currentPopupIndex = popupFeatures.length - 1;
@@ -208,22 +244,19 @@ window.changePopup = (direction) => {
     showPopup(activePopup.getLngLat());
 };
 
-/** * FILTERING LOGIC
- */
+/** * FILTERING LOGIC */
 function updateFilters() {
     if (!map.getLayer('music-layer')) return;
 
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    // Year Logic
     const yearFilter = isCumulative 
         ? ['<=', ['get', 'release_year'], currentYear] 
         : ['==', ['get', 'release_year'], currentYear];
 
     let finalFilter = yearFilter; 
 
-    // Search Logic (mapping term to IDs)
     if (searchTerm && Object.keys(genreDict).length > 0) {
         let matchingIds = [];
         for (const [genre, id] of Object.entries(genreDict)) {
@@ -234,7 +267,6 @@ function updateFilters() {
             let genreConditions = matchingIds.map(id => ['in', `|${id}|`, ['get', 'genre_ids']]);
             finalFilter = ['all', yearFilter, ['any', ...genreConditions]];
         } else {
-            // Hide everything if search yields no results
             finalFilter = ['==', ['get', 'release_year'], -1]; 
         }
     }
@@ -243,16 +275,13 @@ function updateFilters() {
     document.getElementById('year-display').innerText = currentYear;
 }
 
-/** * UI EVENT LISTENERS
- */
+/** * UI EVENT LISTENERS */
 function initControls() {
-    // Year Slider
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
     });
 
-    // Debounced Search Input
     document.getElementById('genre-search').addEventListener('input', () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
@@ -262,7 +291,6 @@ function initControls() {
 
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
 
-    // Play/Pause
     document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
         this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
@@ -270,8 +298,7 @@ function initControls() {
     });
 }
 
-/** * ANIMATION ENGINE
- */
+/** * ANIMATION ENGINE */
 function animate() {
     if (!isPlaying) return;
     
