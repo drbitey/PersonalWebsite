@@ -42,23 +42,41 @@
 <script>
 let currentYear = 1890; 
 let isPlaying = false;
+let genreDict = {}; // We will store the loaded dictionary here
 
 // 1. Initialize PMTiles Protocol
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-// 2. YOUR URL - Ensure this points to your hosted 'west_africa.pmtiles'
+// Ensure these point to your hosted files!
 const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
+const DICT_URL = "https://www.mvoltz.com/music-map/data/genre_dictionary.json";
+
+// --- LOAD THE DICTIONARY ---
+async function loadDictionary() {
+    try {
+        logStatus("Fetching genre dictionary...");
+        const response = await fetch(DICT_URL);
+        genreDict = await response.json();
+        logStatus(`Dictionary loaded with ${Object.keys(genreDict).length} genres.`);
+    } catch (err) {
+        logStatus("Error loading dictionary. Check console.");
+        console.error("Dictionary Fetch Error:", err);
+    }
+}
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [3.33, 6.48], // Centered on West Africa for your subset
+    center: [3.33, 6.48], 
     zoom: 4
 });
 
-map.on('load', () => {
+map.on('load', async () => {
     logStatus("Map Style Loaded.");
+    
+    // Load the dictionary BEFORE we finish setting up
+    await loadDictionary();
 
     map.addSource('music-points', {
         type: 'vector',
@@ -69,7 +87,7 @@ map.on('load', () => {
         'id': 'music-layer',
         'type': 'circle',
         'source': 'music-points',
-        'source-layer': 'music', // Matches your Tippecanoe -l music
+        'source-layer': 'music', 
         'paint': {
             'circle-radius': [
                 'interpolate', ['linear'], ['zoom'],
@@ -91,15 +109,47 @@ function updateFilters() {
     if (!map.getLayer('music-layer')) return;
 
     const isCumulative = document.getElementById('cumulative-toggle').checked;
+    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    // THE FIX: Use 'release_year' instead of 'year' to match your data
+    // 1. Setup the Year Filter
     const yearValue = ['get', 'release_year'];
-    
     let yearFilter = isCumulative 
         ? ['<=', yearValue, currentYear] 
         : ['==', yearValue, currentYear];
 
-    map.setFilter('music-layer', yearFilter);
+    let finalFilter = yearFilter; // Default to just filtering by year
+
+    // 2. Setup the Genre Filter (if the user typed something)
+    if (searchTerm && Object.keys(genreDict).length > 0) {
+        let matchingIds = [];
+        
+        // Find all genre IDs that match the search term (partial matches work!)
+        for (const [genre, id] of Object.entries(genreDict)) {
+            if (genre.includes(searchTerm)) {
+                matchingIds.push(id);
+            }
+        }
+
+        if (matchingIds.length > 0) {
+            // Create an array of conditions checking if any matching ID is in the data
+            // Example output: ['in', '|1004|', ['get', 'genre_ids']]
+            let genreConditions = matchingIds.map(id => {
+                return ['in', `|${id}|`, ['get', 'genre_ids']];
+            });
+
+            // Combine Year filter AND (Genre A OR Genre B OR ...)
+            finalFilter = [
+                'all',
+                yearFilter,
+                ['any', ...genreConditions]
+            ];
+        } else {
+            // They typed a genre that doesn't exist -> hide all points
+            finalFilter = ['==', 'release_year', -1]; 
+        }
+    }
+
+    map.setFilter('music-layer', finalFilter);
     document.getElementById('year-display').innerText = currentYear;
 }
 
@@ -116,6 +166,8 @@ function initControls() {
         updateFilters();
     });
 
+    // Fire updateFilters every time the user types in the search box
+    document.getElementById('genre-search').addEventListener('input', updateFilters);
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
 
     document.getElementById('play-btn').addEventListener('click', function() {
