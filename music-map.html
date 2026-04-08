@@ -21,7 +21,6 @@
         input, button { background: #222; color: #fff; border: 1px solid #555; padding: 8px; border-radius: 4px; }
         #year-display { font-size: 24px; font-weight: bold; color: #00ffcc; }
         .slider { width: 100%; accent-color: #00ffcc; }
-        /* Style for a small debug overlay if needed */
         #debug-log { font-size: 10px; color: #aaa; margin-top: 10px; font-family: monospace; }
     </style>
 </head>
@@ -41,75 +40,25 @@
 </div>
 
 <script>
-// --- DEEP DIVE DIAGNOSTICS ---
-async function runDeepDiagnostics(url) {
-    logStatus("Deep Scan Starting...");
-    try {
-        const p = new pmtiles.PMTiles(url);
-        
-        // Diagnostic 1: Header Check
-        const header = await p.getHeader();
-        console.log("PMTiles Header:", header);
-        logStatus(`Header Read: Zoom ${header.minZoom}-${header.maxZoom}, Type: ${header.tileType === 1 ? 'Vector' : 'Raster'}`);
-
-        // Diagnostic 2: Metadata Raw Check
-        const metadata = await p.getMetadata();
-        console.log("Raw Metadata Object:", metadata);
-        
-        if (!metadata.vector_layers) {
-            logStatus("CRITICAL: No vector_layers found in metadata!");
-        } else {
-            const names = metadata.vector_layers.map(l => l.id);
-            logStatus(`Internal Layers: ${names.join(', ')}`);
-        }
-
-        // Diagnostic 3: Test Tile Fetch
-        // Attempting to fetch a tile at zoom 0, x0, y0
-        try {
-            const tile = await p.getZxy(0, 0, 0);
-            if (tile) {
-                logStatus("Data Check: Successfully decompressed a tile.");
-            } else {
-                logStatus("Data Check: Tile (0,0,0) is empty.");
-            }
-        } catch (tileErr) {
-            logStatus(`Decompression Error: ${tileErr.message}`);
-        }
-
-    } catch (err) {
-        logStatus(`Deep Scan Error: ${err.message}`);
-        console.error("Full Error Trace:", err);
-    }
-}
-
-function logStatus(msg) {
-    console.log(`[MAP_DEBUG] ${msg}`);
-    const debugEl = document.getElementById('debug-log');
-    if (debugEl) debugEl.innerText = `Status: ${msg}`;
-}
-
-// --- CORE MAP LOGIC ---
-// Define these globally so updateFilters can see them!
 let currentYear = 1890; 
 let isPlaying = false;
 
+// 1. Initialize PMTiles Protocol
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles";
+// 2. YOUR URL - Ensure this points to your hosted 'west_africa.pmtiles'
+const PMTILES_URL = "https://www.mvoltz.com/music-map/data/music_data.pmtiles"; 
 
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    center: [0, 20],
-    zoom: 1
+    center: [3.33, 6.48], // Centered on West Africa for your subset
+    zoom: 4
 });
 
-map.on('load', async () => {
+map.on('load', () => {
     logStatus("Map Style Loaded.");
-    
-    // Run deep diagnostics
-    runDeepDiagnostics(PMTILES_URL);
 
     map.addSource('music-points', {
         type: 'vector',
@@ -120,43 +69,44 @@ map.on('load', async () => {
         'id': 'music-layer',
         'type': 'circle',
         'source': 'music-points',
-        'source-layer': 'music', 
+        'source-layer': 'music', // Matches your Tippecanoe -l music
         'paint': {
-            'circle-radius': 4,
+            'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                2, 2,
+                10, 8
+            ],
             'circle-color': '#00ffcc',
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff',
-            'circle-opacity': 0.7
+            'circle-opacity': 0.8
         }
     });
 
     initControls();
-    updateFilters(); // Now currentYear is defined globally
+    updateFilters();
 });
 
 function updateFilters() {
     if (!map.getLayer('music-layer')) return;
 
     const isCumulative = document.getElementById('cumulative-toggle').checked;
-    const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     
-    const yearValue = ['to-number', ['get', 'year']];
+    // THE FIX: Use 'release_year' instead of 'year' to match your data
+    const yearValue = ['get', 'release_year'];
+    
     let yearFilter = isCumulative 
         ? ['<=', yearValue, currentYear] 
         : ['==', yearValue, currentYear];
 
-    let finalFilter = yearFilter;
-
-    if (searchTerm) {
-        finalFilter = [
-            'all', 
-            yearFilter, 
-            ['in', searchTerm, ['downcase', ['to-string', ['coalesce', ['get', 'genre'], '']]]]
-        ];
-    }
-
-    map.setFilter('music-layer', finalFilter);
+    map.setFilter('music-layer', yearFilter);
     document.getElementById('year-display').innerText = currentYear;
+}
+
+// Helper for status updates
+function logStatus(msg) {
+    console.log(`[MAP_DEBUG] ${msg}`);
+    document.getElementById('debug-log').innerText = `Status: ${msg}`;
 }
 
 function initControls() {
@@ -166,7 +116,6 @@ function initControls() {
         updateFilters();
     });
 
-    document.getElementById('genre-search').addEventListener('input', updateFilters);
     document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
 
     document.getElementById('play-btn').addEventListener('click', function() {
@@ -182,7 +131,7 @@ function animate() {
     if (currentYear > 2025) currentYear = 1890;
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    setTimeout(animate, 250);
+    setTimeout(animate, 200);
 }
 </script>
 </body>
