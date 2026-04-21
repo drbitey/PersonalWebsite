@@ -266,11 +266,28 @@ function updateFilters() {
 
 function updateStats() {
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-    const spotlight = genreStats[searchTerm] || genreStats['#' + searchTerm];
-    document.getElementById('pan-to-origin').style.display = spotlight ? 'block' : 'none';
-    if (spotlight) {
-        document.getElementById('stats-title').innerText = `${searchTerm.toUpperCase()} ORIGIN`;
+    const spotlight = genreStats[searchTerm]; // Removed the '#' check since we cleaned the data
+    
+    const panBtn = document.getElementById('pan-to-origin');
+    
+    if (spotlight && searchTerm.length > 2) {
+        panBtn.style.display = 'block';
+        document.getElementById('stats-title').innerText = `${searchTerm.toUpperCase()} OVERVIEW`;
+        document.getElementById('stat-total').innerText = spotlight.total_count.toLocaleString();
         document.getElementById('stat-first-year').innerText = spotlight.first_year;
+        
+        panBtn.onclick = () => {
+            map.flyTo({
+                center: spotlight.origin_coords,
+                zoom: 5,
+                essential: true
+            });
+        };
+    } else {
+        panBtn.style.display = 'none';
+        document.getElementById('stats-title').innerText = `Global Stats`;
+        document.getElementById('stat-total').innerText = "0"; // You could sum all points here if you wanted
+        document.getElementById('stat-first-year').innerText = "-";
     }
 }
 
@@ -348,9 +365,12 @@ function animate() {
     currentYear++;
     
     if (currentYear > 2025) {
-        const s = document.getElementById('genre-search').value.toLowerCase();
-        const spotlight = genreStats[s] || genreStats['#' + s];
-        currentYear = spotlight ? spotlight.first_year : 1890;
+        const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
+        const spotlight = genreStats[searchTerm];
+        
+        // Loop back to genre origin if searching, else back to 1890
+        currentYear = (spotlight) ? spotlight.first_year : 1890;
+        
         if (!document.getElementById('loop-toggle').checked) {
             isPlaying = false;
             document.getElementById('play-btn').innerText = "▶ Play Timeline";
@@ -359,11 +379,11 @@ function animate() {
     }
 
     document.getElementById('year-slider').value = currentYear;
-    updateFilters();
+    // Using triggerMapUpdate instead of updateFilters directly for better performance
+    triggerMapUpdate();
 
     const speedVal = parseInt(document.getElementById('speed-slider').value);
-    const delay = 1050 - speedVal; 
-    
+    const delay = 1000 - speedVal; 
     setTimeout(animate, delay);
 }
 </script>
