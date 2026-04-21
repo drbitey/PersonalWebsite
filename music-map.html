@@ -101,7 +101,8 @@
 </div>
 
 <script>
-let currentYear = 1970, isPlaying = false, genreDict = {}, idToGenre = {}, musicMetadata = {}, locationLookup = [], genreStats = {}, popupFeatures = [], currentPopupIndex = 0, mbidLookup = null, activePopup = null;
+// Added searchTimeout here to fix the ReferenceError
+let currentYear = 1970, isPlaying = false, genreDict = {}, idToGenre = {}, musicMetadata = {}, locationLookup = [], genreStats = {}, popupFeatures = [], currentPopupIndex = 0, mbidLookup = null, activePopup = null, searchTimeout;
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -224,24 +225,26 @@ function updateStats() {
 }
 
 function initControls() {
+    // Year Slider
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         updateFilters();
     });
 
+    // Debounced Genre Search
     document.getElementById('genre-search').addEventListener('input', () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(updateFilters, 300);
     });
-
-    document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
     
+    // Play Button
     document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
         this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
         if (isPlaying) animate();
     });
 
+    // Layer Toggles
     document.getElementById('btn-points').onclick = () => {
         map.setLayoutProperty('music-layer', 'visibility', 'visible');
         map.setLayoutProperty('music-heat', 'visibility', 'none');
@@ -255,13 +258,18 @@ function initControls() {
         document.getElementById('btn-heatmap').classList.add('active');
         document.getElementById('btn-points').classList.remove('active');
     };
-}
 
-function toggleLayer(isHeat) {
-    map.setLayoutProperty('music-layer', 'visibility', isHeat ? 'none' : 'visible');
-    map.setLayoutProperty('music-heat', 'visibility', isHeat ? 'visible' : 'none');
-    document.getElementById('btn-points').classList.toggle('active', !isHeat);
-    document.getElementById('btn-heatmap').classList.toggle('active', isHeat);
+    // Advanced Settings Listeners
+    document.getElementById('adv-toggle').onclick = function() {
+        const content = document.getElementById('adv-content');
+        const isHidden = content.style.display === 'none' || content.style.display === '';
+        content.style.display = isHidden ? 'flex' : 'none';
+        this.innerText = isHidden ? 'Advanced Settings ▴' : 'Advanced Settings ▾';
+    };
+
+    document.getElementById('heat-radius-slider').oninput = function() {
+        map.setPaintProperty('music-heat', 'heatmap-radius', parseInt(this.value));
+    };
 }
 
 function animate() {
@@ -270,7 +278,15 @@ function animate() {
     if (currentYear > 2025) {
         const s = document.getElementById('genre-search').value.toLowerCase();
         const spotlight = genreStats[s] || genreStats['#' + s];
+        // Only loop back to genre birth if we're in a spotlight, otherwise back to start
         currentYear = spotlight ? spotlight.first_year : 1890;
+        
+        // Stop if auto-repeat is off
+        if (!document.getElementById('loop-toggle').checked) {
+            isPlaying = false;
+            document.getElementById('play-btn').innerText = "▶ Play Timeline";
+            return;
+        }
     }
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
