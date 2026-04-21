@@ -91,8 +91,21 @@
         <div class="advanced-content" id="adv-content">
             <div style="font-size: 10px; color: #888;">Animation Speed</div>
             <input type="range" id="speed-slider" min="50" max="1000" value="200" class="slider" dir="rtl">
+    
             <div style="font-size: 10px; color: #888;">Heatmap Radius</div>
             <input type="range" id="heat-radius-slider" min="5" max="80" value="20" class="slider">
+
+            <div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #333;">
+                <label style="font-size:11px; color:#bbb; display: block; margin-bottom: 8px;">
+                    <input type="checkbox" id="cumulative-toggle" checked> Cumulative Mode
+                </label>
+        
+                <div id="buffer-label-container" style="display: none;">
+                    <div style="font-size: 10px; color: #888;">Year Buffer: ±<span id="buffer-display">0</span> years</div>
+                    <input type="range" id="buffer-slider" min="0" max="25" value="0" class="slider">
+                </div>
+            </div>
+
             <label style="font-size:11px; color:#bbb;"><input type="checkbox" id="loop-toggle" checked> Auto-Repeat</label>
         </div>
         <div id="debug-log" style="font-size:10px; color:#444; margin-top:10px;">Status: Ready</div>
@@ -104,6 +117,9 @@
 // Added searchTimeout here to fix the ReferenceError
 let currentYear = 1970, isPlaying = false, genreDict = {}, idToGenre = {}, musicMetadata = {}, locationLookup = [], genreStats = {}, popupFeatures = [], currentPopupIndex = 0, mbidLookup = null, activePopup = null, searchTimeout;
 
+// Global flag for frame-syncing map updates
+let rafPending = false;
+
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
@@ -112,7 +128,6 @@ const map = new maplibregl.Map({
     style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     center: [15, 20], zoom: 2.2, pitch: 0, bearing: 0, dragRotate: false, touchPitch: false   
 });
-
 map.on('load', async () => {
     const [dictRes, metaRes, locRes, statsRes, mbidRes] = await Promise.all([
         fetch("https://www.mvoltz.com/music-map/data/genre_dictionary.json"),
@@ -198,16 +213,45 @@ window.changePopup = (dir) => {
     showPopup(activePopup.getLngLat());
 };
 
+function triggerMapUpdate() {
+    if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(() => {
+            updateFilters();
+            rafPending = false;
+        });
+    }
+}
+
 function updateFilters() {
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
-    const yearFilter = ['<=', ['get', 'release_year'], currentYear];
+    const isCumulative = document.getElementById('cumulative-toggle').checked;
+    const buffer = parseInt(document.getElementById('buffer-slider').value);
+
+    // Dynamic Year Logic
+    let yearFilter;
+    if (isCumulative) {
+        yearFilter = ['<=', ['get', 'release_year'], currentYear];
+    } else {
+        // Buffer logic: shows [current - buffer] to [current + buffer]
+        yearFilter = [
+            'all',
+            ['>=', ['get', 'release_year'], currentYear - buffer],
+            ['<=', ['get', 'release_year'], currentYear + buffer]
+        ];
+    }
+
     let finalFilter = yearFilter;
 
     if (searchTerm) {
         let ids = Object.entries(genreDict).filter(([g]) => g.includes(searchTerm)).map(([_, id]) => id);
-        if (ids.length) finalFilter = ['all', yearFilter, ['any', ...ids.map(id => ['in', `|${id}|`, ['get', 'genre_ids']])]];
-        else finalFilter = ['==', ['get', 'release_year'], -1];
+        if (ids.length) {
+            finalFilter = ['all', yearFilter, ['any', ...ids.map(id => ['in', `|${id}|`, ['get', 'genre_ids']])]];
+        } else {
+            finalFilter = ['==', ['get', 'release_year'], -1];
+        }
     }
+
     map.setFilter('music-layer', finalFilter);
     map.setFilter('music-heat', finalFilter);
     document.getElementById('year-display').innerText = currentYear;
@@ -226,25 +270,25 @@ function updateStats() {
 
 function initControls() {
     // Year Slider
-    let rafPending = false;
-    
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
-        
-        // Update the text display immediately (feels snappy)
         document.getElementById('year-display').innerText = currentYear;
-
-        // Only update the map filter on the next available animation frame
-        if (!rafPending) {
-            rafPending = true;
-            requestAnimationFrame(() => {
-                updateFilters();
-                rafPending = false;
-            });
-        }
+        triggerMapUpdate();
     });
 
-    // Debounced Genre Search
+    // Cumulative Toggle
+    document.getElementById('cumulative-toggle').addEventListener('change', (e) => {
+        document.getElementById('buffer-label-container').style.display = e.target.checked ? 'none' : 'block';
+        triggerMapUpdate();
+    });
+
+    // Buffer Slider
+    document.getElementById('buffer-slider').addEventListener('input', (e) => {
+        document.getElementById('buffer-display').innerText = e.target.value;
+        triggerMapUpdate();
+    });
+
+    // Search
     document.getElementById('genre-search').addEventListener('input', () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(updateFilters, 300);
@@ -257,22 +301,7 @@ function initControls() {
         if (isPlaying) animate();
     });
 
-    // Layer Toggles
-    document.getElementById('btn-points').onclick = () => {
-        map.setLayoutProperty('music-layer', 'visibility', 'visible');
-        map.setLayoutProperty('music-heat', 'visibility', 'none');
-        document.getElementById('btn-points').classList.add('active');
-        document.getElementById('btn-heatmap').classList.remove('active');
-    };
-
-    document.getElementById('btn-heatmap').onclick = () => {
-        map.setLayoutProperty('music-layer', 'visibility', 'none');
-        map.setLayoutProperty('music-heat', 'visibility', 'visible');
-        document.getElementById('btn-heatmap').classList.add('active');
-        document.getElementById('btn-points').classList.remove('active');
-    };
-
-    // Advanced Settings Listeners
+    // Advanced Panel
     document.getElementById('adv-toggle').onclick = function() {
         const content = document.getElementById('adv-content');
         const isHidden = content.style.display === 'none' || content.style.display === '';
@@ -280,9 +309,21 @@ function initControls() {
         this.innerText = isHidden ? 'Advanced Settings ▴' : 'Advanced Settings ▾';
     };
 
+    // Heatmap Size
     document.getElementById('heat-radius-slider').oninput = function() {
         map.setPaintProperty('music-heat', 'heatmap-radius', parseInt(this.value));
     };
+
+    // Standard Buttons
+    document.getElementById('btn-points').onclick = () => toggleLayer(false);
+    document.getElementById('btn-heatmap').onclick = () => toggleLayer(true);
+}
+
+function toggleLayer(isHeat) {
+    map.setLayoutProperty('music-layer', 'visibility', isHeat ? 'none' : 'visible');
+    map.setLayoutProperty('music-heat', 'visibility', isHeat ? 'visible' : 'none');
+    document.getElementById('btn-points').classList.toggle('active', !isHeat);
+    document.getElementById('btn-heatmap').classList.toggle('active', isHeat);
 }
 
 function animate() {
@@ -291,10 +332,7 @@ function animate() {
     if (currentYear > 2025) {
         const s = document.getElementById('genre-search').value.toLowerCase();
         const spotlight = genreStats[s] || genreStats['#' + s];
-        // Only loop back to genre birth if we're in a spotlight, otherwise back to start
         currentYear = spotlight ? spotlight.first_year : 1890;
-        
-        // Stop if auto-repeat is off
         if (!document.getElementById('loop-toggle').checked) {
             isPlaying = false;
             document.getElementById('play-btn').innerText = "▶ Play Timeline";
