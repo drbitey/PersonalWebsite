@@ -96,12 +96,15 @@
             <input type="range" id="heat-radius-slider" min="5" max="80" value="20" class="slider">
 
             <div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #333;">
-                <label style="font-size:11px; color:#bbb; display: block; margin-bottom: 8px;">
-                    <input type="checkbox" id="cumulative-toggle" checked> Cumulative Mode
-                </label>
-        
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <label style="font-size:11px; color:#bbb;">
+                        <input type="checkbox" id="cumulative-toggle" checked> Cumulative
+                    </label>
+                    <button id="range-mode-btn" style="padding: 2px 8px; font-size: 10px; display: none; background: #1a1a1a;">± Range</button>
+                </div>
+    
                 <div id="buffer-label-container" style="display: none;">
-                    <div style="font-size: 10px; color: #888;">Year Buffer: ±<span id="buffer-display">0</span> years</div>
+                    <div style="font-size: 10px; color: #888;">Year Buffer: <span id="buffer-prefix">±</span><span id="buffer-display">0</span> years</div>
                     <input type="range" id="buffer-slider" min="0" max="25" value="0" class="slider">
                 </div>
             </div>
@@ -119,6 +122,8 @@ let currentYear = 1970, isPlaying = false, genreDict = {}, idToGenre = {}, music
 
 // Global flag for frame-syncing map updates
 let rafPending = false;
+
+let isMinusOnly = false;
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -228,21 +233,22 @@ function updateFilters() {
     const isCumulative = document.getElementById('cumulative-toggle').checked;
     const buffer = parseInt(document.getElementById('buffer-slider').value);
 
-    // Dynamic Year Logic
     let yearFilter;
     if (isCumulative) {
         yearFilter = ['<=', ['get', 'release_year'], currentYear];
     } else {
-        // Buffer logic: shows [current - buffer] to [current + buffer]
+        // Buffer Logic
+        const startYear = currentYear - buffer;
+        const endYear = isMinusOnly ? currentYear : (currentYear + buffer);
+        
         yearFilter = [
             'all',
-            ['>=', ['get', 'release_year'], currentYear - buffer],
-            ['<=', ['get', 'release_year'], currentYear + buffer]
+            ['>=', ['get', 'release_year'], startYear],
+            ['<=', ['get', 'release_year'], endYear]
         ];
     }
 
     let finalFilter = yearFilter;
-
     if (searchTerm) {
         let ids = Object.entries(genreDict).filter(([g]) => g.includes(searchTerm)).map(([_, id]) => id);
         if (ids.length) {
@@ -278,9 +284,20 @@ function initControls() {
 
     // Cumulative Toggle
     document.getElementById('cumulative-toggle').addEventListener('change', (e) => {
-        document.getElementById('buffer-label-container').style.display = e.target.checked ? 'none' : 'block';
+        const isCumulative = e.target.checked;
+        document.getElementById('buffer-label-container').style.display = isCumulative ? 'none' : 'block';
+        document.getElementById('range-mode-btn').style.display = isCumulative ? 'none' : 'block';
         triggerMapUpdate();
     });
+
+    // Range Mode Toggle (± vs -)
+    document.getElementById('range-mode-btn').onclick = function() {
+        isMinusOnly = !isMinusOnly;
+        this.innerText = isMinusOnly ? "- Prior" : "± Range";
+        this.style.color = isMinusOnly ? "#ff6600" : "#00ffcc"; // Visual cue for mode
+        document.getElementById('buffer-prefix').innerText = isMinusOnly ? "-" : "±";
+        triggerMapUpdate();
+    };
 
     // Buffer Slider
     document.getElementById('buffer-slider').addEventListener('input', (e) => {
