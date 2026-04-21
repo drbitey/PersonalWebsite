@@ -224,20 +224,37 @@ function updateStats() {
 }
 
 function initControls() {
-    document.getElementById('adv-toggle').onclick = function() {
-        const c = document.getElementById('adv-content');
-        c.style.display = c.style.display === 'flex' ? 'none' : 'flex';
-        this.innerText = c.style.display === 'flex' ? 'Advanced Settings ▴' : 'Advanced Settings ▾';
-    };
-    document.getElementById('year-slider').oninput = (e) => { currentYear = parseInt(e.target.value); updateFilters(); };
-    document.getElementById('play-btn').onclick = function() {
+    document.getElementById('year-slider').addEventListener('input', (e) => {
+        currentYear = parseInt(e.target.value);
+        updateFilters();
+    });
+
+    document.getElementById('genre-search').addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(updateFilters, 300);
+    });
+
+    document.getElementById('cumulative-toggle').addEventListener('change', updateFilters);
+    
+    document.getElementById('play-btn').addEventListener('click', function() {
         isPlaying = !isPlaying;
-        this.innerText = isPlaying ? "⏸ Pause" : "▶ Play";
+        this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
         if (isPlaying) animate();
+    });
+
+    document.getElementById('btn-points').onclick = () => {
+        map.setLayoutProperty('music-layer', 'visibility', 'visible');
+        map.setLayoutProperty('music-heat', 'visibility', 'none');
+        document.getElementById('btn-points').classList.add('active');
+        document.getElementById('btn-heatmap').classList.remove('active');
     };
-    document.getElementById('btn-points').onclick = () => toggleLayer(false);
-    document.getElementById('btn-heatmap').onclick = () => toggleLayer(true);
-    document.getElementById('heat-radius-slider').oninput = function() { map.setPaintProperty('music-heat', 'heatmap-radius', parseInt(this.value)); };
+
+    document.getElementById('btn-heatmap').onclick = () => {
+        map.setLayoutProperty('music-layer', 'visibility', 'none');
+        map.setLayoutProperty('music-heat', 'visibility', 'visible');
+        document.getElementById('btn-heatmap').classList.add('active');
+        document.getElementById('btn-points').classList.remove('active');
+    };
 }
 
 function toggleLayer(isHeat) {
