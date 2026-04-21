@@ -226,9 +226,22 @@ function updateStats() {
 
 function initControls() {
     // Year Slider
+    let rafPending = false;
+    
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
-        updateFilters();
+        
+        // Update the text display immediately (feels snappy)
+        document.getElementById('year-display').innerText = currentYear;
+
+        // Only update the map filter on the next available animation frame
+        if (!rafPending) {
+            rafPending = true;
+            requestAnimationFrame(() => {
+                updateFilters();
+                rafPending = false;
+            });
+        }
     });
 
     // Debounced Genre Search
