@@ -90,7 +90,7 @@
         <div class="advanced-toggle" id="adv-toggle">Advanced Settings ▾</div>
         <div class="advanced-content" id="adv-content">
             <div style="font-size: 10px; color: #888;">Animation Speed</div>
-            <input type="range" id="speed-slider" min="50" max="1000" value="200" class="slider" dir="rtl">
+            <input type="range" id="speed-slider" min="50" max="1000" value="850" class="slider">
     
             <div style="font-size: 10px; color: #888;">Heatmap Radius</div>
             <input type="range" id="heat-radius-slider" min="5" max="80" value="20" class="slider">
@@ -346,6 +346,7 @@ function toggleLayer(isHeat) {
 function animate() {
     if (!isPlaying) return;
     currentYear++;
+    
     if (currentYear > 2025) {
         const s = document.getElementById('genre-search').value.toLowerCase();
         const spotlight = genreStats[s] || genreStats['#' + s];
@@ -356,9 +357,14 @@ function animate() {
             return;
         }
     }
+
     document.getElementById('year-slider').value = currentYear;
     updateFilters();
-    setTimeout(animate, parseInt(document.getElementById('speed-slider').value));
+
+    const speedVal = parseInt(document.getElementById('speed-slider').value);
+    const delay = 1050 - speedVal; 
+    
+    setTimeout(animate, delay);
 }
 </script>
 </body>
