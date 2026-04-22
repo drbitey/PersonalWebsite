@@ -344,48 +344,67 @@ function initControls() {
             1, '#fff'
         ]
     };
-    const artistInput = document.getElementById('artist-search');
-    const artistResults = document.getElementById('artist-results');
+let artistSearchTimeout;
+const artistInput = document.getElementById('artist-search');
+const artistResults = document.getElementById('artist-results');
 
-    artistInput.addEventListener('input', (e) => {
-        const val = e.target.value.toLowerCase();
+artistInput.addEventListener('input', (e) => {
+    clearTimeout(artistSearchTimeout);
+    const val = e.target.value.toLowerCase();
+
+    if (val.length < 3) { // Increased to 3 chars to prevent massive early result lists
+        artistResults.style.display = 'none';
         artistResults.innerHTML = '';
-    
-        if (val.length < 2) {
-            artistResults.style.display = 'none';
-            return;
+        return;
+    }
+
+    // Debounce: Wait 300ms after last keystroke before searching
+    artistSearchTimeout = setTimeout(() => {
+        const matches = [];
+        const keys = Object.keys(musicMetadata);
+        
+        // Using a standard loop for better performance on large objects
+        for (let i = 0; i < keys.length; i++) {
+            const muId = keys[i];
+            const d = musicMetadata[muId];
+            if (d[0].toLowerCase().includes(val)) {
+                matches.push([muId, d]);
+            }
+            if (matches.length >= 10) break; // Hard limit to 10 results to prevent DOM lag
         }
 
-        // Search through metadata for artist names (index 0)
-        const matches = Object.entries(musicMetadata)
-            .filter(([id, d]) => d[0].toLowerCase().includes(val))
-            .slice(0, 15); // Show top 15 matches
-
         if (matches.length > 0) {
-            artistResults.style.display = 'block';
-            matches.forEach(([muId, d]) => {
-                const div = document.createElement('div');
-                div.style = "padding: 12px; cursor: pointer; border-bottom: 1px solid #222; font-size: 13px; transition: background 0.2s;";
-                div.innerHTML = `
-                    <div style="font-weight: bold; color: #fff;">${d[0]}</div>
-                    <div style="font-size: 10px; color: #00ffcc;">${d[1]} (${d[4]})</div>
-                `;
-            
-                // Hover effect
-                div.onmouseover = () => div.style.background = "#1a1a1a";
-                div.onmouseout = () => div.style.background = "transparent";
-
-                div.onclick = () => {
-                    jumpToArtist(muId, d);
-                    artistResults.style.display = 'none';
-                    artistInput.value = d[0];
-                };
-                artistResults.appendChild(div);
-            });
+            renderArtistResults(matches);
         } else {
             artistResults.style.display = 'none';
         }
+    }, 300);
+});
+
+// Helper function to keep the input listener clean
+function renderArtistResults(matches) {
+    artistResults.innerHTML = '';
+    artistResults.style.display = 'block';
+    
+    matches.forEach(([muId, d]) => {
+        const div = document.createElement('div');
+        div.style = "padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #222; transition: background 0.1s;";
+        div.innerHTML = `
+            <div style="font-weight: bold; color: #fff; font-size: 13px;">${d[0]}</div>
+            <div style="font-size: 10px; color: #00ffcc; opacity: 0.8;">${d[1]} • ${d[4]}</div>
+        `;
+        
+        div.onclick = () => {
+            jumpToArtist(muId, d);
+            artistResults.style.display = 'none';
+            document.getElementById('artist-search').value = d[0];
+        };
+        
+        div.onmouseenter = () => div.style.background = "#1a1a1a";
+        div.onmouseleave = () => div.style.background = "transparent";
+        artistResults.appendChild(div);
     });
+}
 
     // Close results if the user clicks anywhere else
     document.addEventListener('click', (e) => {
@@ -498,8 +517,9 @@ function jumpToArtist(muId, d) {
     const coords = [d[6], d[5]];
     map.flyTo({
         center: coords,
-        zoom: 8,
-        pitch: 45,
+        zoom: 9,
+        pitch: 0,
+        bearing: 0,
         essential: true,
         speed: 1.5
     });
