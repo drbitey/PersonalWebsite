@@ -73,6 +73,11 @@
     <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1970">
     
     <div class="controls">
+        <div style="position: relative;">
+            <input type="text" id="artist-search" placeholder="Search Artist (e.g. Chat Pile)..." style="background: #1a1a1a; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: calc(100% - 26px);">
+            <div id="artist-results" style="display:none; position: absolute; top: 48px; left: 0; right: 0; background: #0f0f0f; border: 1px solid #333; z-index: 100; max-height: 250px; overflow-y: auto; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+            </div>
+        </div>
         <input type="text" id="genre-search" placeholder="Search Genre..." style="background: #1a1a1a; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: calc(100% - 26px);">
         <button id="play-btn">▶ Play Timeline</button>
         <div class="toggle-group" style="display: flex; gap: 4px; background: #1a1a1a; padding: 4px; border-radius: 8px;">
@@ -339,6 +344,54 @@ function initControls() {
             1, '#fff'
         ]
     };
+    const artistInput = document.getElementById('artist-search');
+    const artistResults = document.getElementById('artist-results');
+
+    artistInput.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase();
+        artistResults.innerHTML = '';
+    
+        if (val.length < 2) {
+            artistResults.style.display = 'none';
+            return;
+        }
+
+        // Search through metadata for artist names (index 0)
+        const matches = Object.entries(musicMetadata)
+            .filter(([id, d]) => d[0].toLowerCase().includes(val))
+            .slice(0, 15); // Show top 15 matches
+
+        if (matches.length > 0) {
+            artistResults.style.display = 'block';
+            matches.forEach(([muId, d]) => {
+                const div = document.createElement('div');
+                div.style = "padding: 12px; cursor: pointer; border-bottom: 1px solid #222; font-size: 13px; transition: background 0.2s;";
+                div.innerHTML = `
+                    <div style="font-weight: bold; color: #fff;">${d[0]}</div>
+                    <div style="font-size: 10px; color: #00ffcc;">${d[1]} (${d[4]})</div>
+                `;
+            
+                // Hover effect
+                div.onmouseover = () => div.style.background = "#1a1a1a";
+                div.onmouseout = () => div.style.background = "transparent";
+
+                div.onclick = () => {
+                    jumpToArtist(muId, d);
+                    artistResults.style.display = 'none';
+                    artistInput.value = d[0];
+                };
+                artistResults.appendChild(div);
+            });
+        } else {
+            artistResults.style.display = 'none';
+        }
+    });
+
+    // Close results if the user clicks anywhere else
+    document.addEventListener('click', (e) => {
+        if (!artistInput.contains(e.target)) artistResults.style.display = 'none';
+    });
+    
     // Year Slider
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
@@ -419,6 +472,7 @@ function initControls() {
         isPlaying = false;
         document.getElementById('play-btn').innerText = "▶ Play Timeline";
         document.getElementById('genre-search').value = "";
+        document.getElementById('artist-search').value = "";
         document.getElementById('year-slider').value = 1970;
     
         // Reset Map View
@@ -429,6 +483,36 @@ function initControls() {
     
         triggerMapUpdate();
     };
+}
+
+function jumpToArtist(muId, d) {
+    // 1. Set the year so the point is visible
+    currentYear = d[4]; 
+    document.getElementById('year-slider').value = currentYear;
+    document.getElementById('year-display').innerText = currentYear;
+
+    // 2. Clear genre search to avoid filter conflicts
+    document.getElementById('genre-search').value = "";
+
+    // 3. Fly the map to coordinates [lon, lat] from our new indices 6 and 5
+    const coords = [d[6], d[5]];
+    map.flyTo({
+        center: coords,
+        zoom: 8,
+        pitch: 45,
+        essential: true,
+        speed: 1.5
+    });
+
+    // 4. Update the map to show data for this year
+    triggerMapUpdate();
+
+    // 5. Open the popup automatically after a short delay
+    setTimeout(() => {
+        popupFeatures = [{ properties: { mu_id: muId } }];
+        currentPopupIndex = 0;
+        showPopup(coords);
+    }, 1600);
 }
 
 function toggleLayer(isHeat) {
