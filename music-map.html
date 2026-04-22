@@ -95,6 +95,9 @@
             <div style="font-size: 10px; color: #888;">Heatmap Radius</div>
             <input type="range" id="heat-radius-slider" min="5" max="80" value="20" class="slider">
 
+            <div style="font-size: 10px; color: #888;">Heatmap Intensity</div>
+            <input type="range" id="heat-intensity-slider" min="0.1" max="5" step="0.1" value="1" class="slider">
+
             <div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #333;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                     <label style="font-size:11px; color:#bbb;">
@@ -343,9 +346,14 @@ function initControls() {
         this.innerText = isHidden ? 'Advanced Settings ▴' : 'Advanced Settings ▾';
     };
 
-    // Heatmap Size
+    // Heatmap Radius
     document.getElementById('heat-radius-slider').oninput = function() {
         map.setPaintProperty('music-heat', 'heatmap-radius', parseInt(this.value));
+    };
+
+    // Heatmap Intensity
+    document.getElementById('heat-intensity-slider').oninput = function() {
+        map.setPaintProperty('music-heat', 'heatmap-intensity', parseFloat(this.value));
     };
 
     // Standard Buttons
