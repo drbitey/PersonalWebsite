@@ -168,7 +168,27 @@ map.on('load', async () => {
     idToGenre = Object.fromEntries(Object.entries(genreDict).map(([name, id]) => [id, name]));
 
     map.addSource('music-points', { type: 'vector', url: `pmtiles://https://www.mvoltz.com/music-map/data/music_data.pmtiles` });
-    map.addLayer({ 'id': 'music-heat', 'type': 'heatmap', 'source': 'music-points', 'source-layer': 'music', 'layout': { 'visibility': 'none' }, 'paint': { 'heatmap-weight': 1, 'heatmap-intensity': 1, 'heatmap-radius': 20, 'heatmap-opacity': 0.8 } });
+    map.addLayer({ 
+    'id': 'music-heat', 
+    'type': 'heatmap', 
+    'source': 'music-points', 
+    'source-layer': 'music', 
+    'layout': { 'visibility': 'none' }, 
+    'paint': { 
+        'heatmap-weight': 1, 
+        'heatmap-intensity': 1, 
+        'heatmap-radius': 20, 
+        'heatmap-opacity': 0.8,
+        'heatmap-color': [
+            'interpolate', ['linear'], ['heatmap-density'],
+            0, 'rgba(0, 255, 204, 0)',
+            0.2, 'rgba(0, 255, 204, 0.2)',
+            0.4, 'rgba(0, 255, 204, 0.5)',
+            0.6, 'rgba(0, 255, 204, 0.8)',
+            1, '#fff'
+        ]
+    } 
+});
     map.addLayer({ 'id': 'music-layer', 'type': 'circle', 'source': 'music-points', 'source-layer': 'music', 'paint': { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 2, 2, 10, 8], 'circle-color': '#00ffcc', 'circle-opacity': 0.7 } });
 
     map.on('click', (e) => {
