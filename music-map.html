@@ -23,6 +23,17 @@
 <div class="ui-panel">
     <div id="year-display">1970</div>
     <input type="range" id="year-slider" class="slider" min="1890" max="2025" value="1970">
+
+    <div id="mobile-hud" class="mobile-only">
+    	<button class="hud-btn" onclick="togglePanel('search')">🔍</button>
+    	<button class="hud-btn" onclick="togglePanel('filters')">⚙️</button>
+    	<button class="hud-btn" onclick="togglePanel('stats')">📊</button>
+    </div>
+
+    <div id="mobile-timeline-container" class="mobile-only">
+    	<div class="mobile-year-display" id="mobile-year-val">1970</div>
+    	<input type="range" id="mobile-timeline" min="1890" max="2025" value="1970">
+    </div>
     
     <div class="controls">
         <div style="position: relative;">

@@ -1,6 +1,78 @@
 body { margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0a0a; color: white; overflow: hidden; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
+/* 1. Hide mobile elements on desktop by default */
+.mobile-only { display: none; }
+
+@media (max-width: 600px) {
+    /* Hide the desktop sidebar */
+    .ui-panel { display: none; }
+    
+    .mobile-only { display: flex; }
+
+    /* Floating Icons HUD */
+    #mobile-hud {
+        position: fixed;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        flex-direction: column;
+        gap: 15px;
+        z-index: 100;
+    }
+
+    .hud-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        color: #00ffcc;
+        font-size: 20px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Bottom Timeline */
+    #mobile-timeline-container {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        background: rgba(10, 10, 10, 0.7);
+        backdrop-filter: blur(15px);
+        padding: 15px;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 255, 204, 0.2);
+        flex-direction: column;
+        align-items: center;
+        z-index: 100;
+    }
+
+    #mobile-timeline {
+        width: 100%;
+        accent-color: #00ffcc;
+    }
+
+    .mobile-year-display {
+        color: #00ffcc;
+        font-family: monospace;
+        font-weight: bold;
+        margin-bottom: 5px;
+        letter-spacing: 2px;
+    }
+    .ui-panel {
+        /* This ensures that when we set display: block via JS, it covers the screen */
+        position: fixed;
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(20px);
+        z-index: 1000;
+        overflow-y: auto;
+    }
+}
+
 .ui-panel {
     position: absolute; top: 15px; left: 15px; z-index: 1;
     background: rgba(15, 15, 15, 0.94); padding: 20px; border-radius: 12px;

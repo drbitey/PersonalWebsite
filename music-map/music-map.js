@@ -385,6 +385,47 @@ function initControls() {
         document.getElementById('year-display').innerText = "1970";
         triggerMapUpdate();
     };
+
+    const mobileSlider = document.getElementById('mobile-timeline');
+    const mobileYearLabel = document.getElementById('mobile-year-val');
+    const desktopSlider = document.getElementById('year-slider');
+    const desktopYearLabel = document.getElementById('year-display');
+
+    if (mobileSlider) {
+        mobileSlider.addEventListener('input', (e) => {
+            const year = parseInt(e.target.value);
+            
+            // 1. Update the Mobile UI
+            mobileYearLabel.innerText = year;
+            
+            // 2. Keep the Desktop UI in sync (in case user switches back)
+            currentYear = year;
+            if (desktopSlider) desktopSlider.value = year;
+            if (desktopYearLabel) desktopYearLabel.innerText = year;
+            
+            // 3. Update the map
+            triggerMapUpdate();
+        });
+    }
+
+    // Define the toggle function globally so the HTML buttons can see it
+    window.togglePanel = function(type) {
+        console.log("HUD Action:", type);
+        
+        // Example: If they click search, we focus the desktop search box
+        // Even if the sidebar is hidden, we can programmatically open a modal later.
+        if (type === 'search') {
+            const sidebar = document.querySelector('.ui-panel');
+            const isHidden = window.getComputedStyle(sidebar).display === 'none';
+            
+            // Simple toggle for now: show/hide the main panel
+            sidebar.style.display = isHidden ? 'block' : 'none';
+            sidebar.style.width = '100%';
+            sidebar.style.height = '100%';
+            sidebar.style.left = '0';
+            sidebar.style.top = '0';
+        }
+    };
 }
 
 function jumpToArtist(muId, d) {
