@@ -72,6 +72,13 @@ map.on('load', async () => {
         if (popupFeatures.length > 0) showPopup(e.lngLat);
     });
 
+    const loader = document.getElementById('loader-screen');
+    if (loader) {
+        loader.classList.add('hidden');
+        // Update debug log status
+        document.getElementById('debug-log').innerText = "Status: Ready!";
+    }
+
     initControls();
     updateFilters();
 });

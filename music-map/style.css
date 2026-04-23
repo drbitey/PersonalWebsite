@@ -51,3 +51,49 @@ button.active { background: #00ffcc !important; color: #000 !important; }
 .mb-link { color: #555; text-decoration: none; font-size: 10px; }
 .mb-link:hover { color: #00ffcc; }
 .nav-btn { padding: 2px 8px; font-size: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; cursor: pointer; border-radius: 4px; }
+
+/* GLASS SPLASH LOAD SCREEN */
+#loader-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.6); /* Dark tint */
+    backdrop-filter: blur(15px);       /* The glass effect */
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 9999;                    /* Stay on top of everything */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+/* This class will be added via JS once loaded */
+#loader-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 255, 204, 0.1);
+    border-top-color: #00ffcc;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+.loader-text {
+    color: #00ffcc;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
