@@ -4,6 +4,9 @@ body { margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; ba
 /* 1. Hide mobile elements on desktop by default */
 .mobile-only { display: none; }
 
+/* Desktop default: Show all sections as a column */
+.panel-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+
 @media (max-width: 600px) {
     /* Hide the desktop sidebar */
     .ui-panel { display: none; }
@@ -63,14 +66,31 @@ body { margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; ba
         margin-bottom: 5px;
         letter-spacing: 2px;
     }
+    /* Fix the ui-panel to be a sleek centered card on mobile */
     .ui-panel {
-        /* This ensures that when we set display: block via JS, it covers the screen */
+        display: none; /* Hidden until a HUD button is clicked */
         position: fixed;
-        background: rgba(10, 10, 10, 0.95);
+        top: 45%; 
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 85vw; /* Much better for small screens */
+        max-height: 70vh;
+        background: rgba(15, 15, 15, 0.95);
         backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        border-radius: 16px;
         z-index: 1000;
-        overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+        padding: 25px 20px 20px 20px;
     }
+
+    /* Hide the desktop timeline inside the panel, since mobile has the bottom one */
+    #desktop-timeline-group { display: none; }
+
+    /* On mobile, only show the section that was requested */
+    .panel-section { display: none; margin-bottom: 0; }
+    .panel-section.active-mobile { display: flex; }
 }
 
 .ui-panel {

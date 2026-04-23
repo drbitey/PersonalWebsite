@@ -408,23 +408,26 @@ function initControls() {
         });
     }
 
-    // Define the toggle function globally so the HTML buttons can see it
+    // --- HUD TOGGLE LOGIC ---
     window.togglePanel = function(type) {
-        console.log("HUD Action:", type);
+        const sidebar = document.getElementById('main-ui-panel');
         
-        // Example: If they click search, we focus the desktop search box
-        // Even if the sidebar is hidden, we can programmatically open a modal later.
-        if (type === 'search') {
-            const sidebar = document.querySelector('.ui-panel');
-            const isHidden = window.getComputedStyle(sidebar).display === 'none';
-            
-            // Simple toggle for now: show/hide the main panel
-            sidebar.style.display = isHidden ? 'block' : 'none';
-            sidebar.style.width = '100%';
-            sidebar.style.height = '100%';
-            sidebar.style.left = '0';
-            sidebar.style.top = '0';
-        }
+        // Always show the panel container
+        sidebar.style.display = 'block';
+        
+        // Hide all internal sections first
+        document.getElementById('panel-search').classList.remove('active-mobile');
+        document.getElementById('panel-settings').classList.remove('active-mobile');
+        document.getElementById('panel-stats').classList.remove('active-mobile');
+        
+        // Show only the section the user asked for
+        if (type === 'search') document.getElementById('panel-search').classList.add('active-mobile');
+        if (type === 'filters') document.getElementById('panel-settings').classList.add('active-mobile');
+        if (type === 'stats') document.getElementById('panel-stats').classList.add('active-mobile');
+    };
+
+    window.closePanel = function() {
+        document.getElementById('main-ui-panel').style.display = 'none';
     };
 }
 
