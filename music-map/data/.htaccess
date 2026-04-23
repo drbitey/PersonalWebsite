@@ -1,6 +1,18 @@
 <IfModule mod_headers.c>
+    # Allow the browser to request specific byte ranges
     Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET, OPTIONS"
     Header set Access-Control-Allow-Headers "Range"
+    
+    # Make sure the JS library can actually read these headers
     Header set Access-Control-Expose-Headers "Content-Length, Content-Range"
+    
+    # Explicitly tell the client we support byte-serving
+    Header set Accept-Ranges "bytes"
+</IfModule>
+
+# Prevent the server from compressing .pmtiles files (which breaks Range requests)
+<IfModule mod_deflate.c>
+    SetOutputFilter DEFLATE
+    SetEnvIfNoCase Request_URI \.pmtiles$ no-gzip dont-vary
 </IfModule>
