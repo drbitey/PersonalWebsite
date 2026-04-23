@@ -200,7 +200,7 @@ button.active { background: #00ffcc !important; color: #000 !important; }
     width: 100%;
     text-align: center;
     font-size: 8px;
-    color: #444;
+    color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 1px;
     pointer-events: none; /* Won't block clicks */
