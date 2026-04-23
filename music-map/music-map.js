@@ -407,28 +407,6 @@ function initControls() {
             triggerMapUpdate();
         });
     }
-
-    // --- HUD TOGGLE LOGIC ---
-    window.togglePanel = function(type) {
-        const sidebar = document.getElementById('main-ui-panel');
-        
-        // Always show the panel container
-        sidebar.style.display = 'block';
-        
-        // Hide all internal sections first
-        document.getElementById('panel-search').classList.remove('active-mobile');
-        document.getElementById('panel-settings').classList.remove('active-mobile');
-        document.getElementById('panel-stats').classList.remove('active-mobile');
-        
-        // Show only the section the user asked for
-        if (type === 'search') document.getElementById('panel-search').classList.add('active-mobile');
-        if (type === 'filters') document.getElementById('panel-settings').classList.add('active-mobile');
-        if (type === 'stats') document.getElementById('panel-stats').classList.add('active-mobile');
-    };
-
-    window.closePanel = function() {
-        document.getElementById('main-ui-panel').style.display = 'none';
-    };
 }
 
 function jumpToArtist(muId, d) {
@@ -486,3 +464,28 @@ function animate() {
     const delay = 1000 - speedVal; 
     setTimeout(animate, delay);
 }
+
+// --- HUD TOGGLE LOGIC ---
+window.togglePanel = function(type) {
+    const sidebar = document.getElementById('main-ui-panel');
+    if (!sidebar) return; // Safety check
+    
+    sidebar.style.display = 'block';
+    
+    // Use the actual IDs from your HTML
+    const search = document.getElementById('panel-search');
+    const settings = document.getElementById('panel-settings'); // Changed from 'filters'
+    const stats = document.getElementById('panel-stats');
+
+    if (search) search.classList.remove('active-mobile');
+    if (settings) settings.classList.remove('active-mobile');
+    if (stats) stats.classList.remove('active-mobile');
+    
+    if (type === 'search' && search) search.classList.add('active-mobile');
+    if (type === 'filters' && settings) settings.classList.add('active-mobile');
+    if (type === 'stats' && stats) stats.classList.add('active-mobile');
+};
+
+window.closePanel = function() {
+    document.getElementById('main-ui-panel').style.display = 'none';
+};
