@@ -382,21 +382,26 @@ artistInput.addEventListener('input', (e) => {
     artistSearchTimeout = setTimeout(() => {
         const matches = [];
         const keys = Object.keys(musicMetadata);
-        
-        // Using a standard loop for better performance on large objects
+    
         for (let i = 0; i < keys.length; i++) {
             const muId = keys[i];
             const d = musicMetadata[muId];
             if (d[0].toLowerCase().includes(val)) {
                 matches.push([muId, d]);
             }
-            if (matches.length >= 10) break; // Hard limit to 10 results to prevent DOM lag
+            if (matches.length >= 10) break;
         }
 
         if (matches.length > 0) {
             renderArtistResults(matches);
         } else {
-            artistResults.style.display = 'none';
+            // Show the "No results" state instead of just hiding the menu
+            artistResults.innerHTML = `
+                <div style="padding: 15px; color: #666; font-size: 12px; text-align: center; border-top: 1px solid #222;">
+                    No artists found for "<span style="color: #00ffcc;">${val}</span>"
+                </div>
+            `;
+            artistResults.style.display = 'block';
         }
     }, 300);
 });
