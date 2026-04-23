@@ -63,16 +63,7 @@
                     <label style="display: flex; align-items: center; gap: 5px; font-size: 12px; color: #aaa;">
                         <input type="checkbox" id="cumulative-toggle" checked> Cumulative Timeline
                     </label>
-    
-                    <div id="buffer-label-container" style="display: none; font-size: 12px; color: #aaa;">
-                        Year Buffer: <span id="buffer-prefix">±</span><span id="buffer-display">0</span>
-                    </div>
-                    <input type="range" id="buffer-slider" class="slider" min="0" max="10" value="0" style="display: none;">
-                    <button id="range-mode-btn" style="display: none; background: #222; border: 1px solid #444; color: #00ffcc; font-size: 11px; padding: 4px;">± Range</button>
 
-                    <label style="display: flex; align-items: center; gap: 5px; font-size: 12px; color: #aaa;">
-                        <input type="checkbox" id="loop-toggle"> Loop Animation
-                    </label>
                     <div style="font-size: 12px; color: #aaa;">Playback Speed</div>
                     <input type="range" id="speed-slider" class="slider" min="100" max="950" value="700">
 
@@ -88,6 +79,22 @@
                         <option value="magma">Magma</option>
                         <option value="glacier">Glacier</option>
                     </select>
+
+                    <div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #333;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <label style="font-size:11px; color:#bbb;">
+                                <input type="checkbox" id="cumulative-toggle" checked> Cumulative
+                            </label>
+                            <button id="range-mode-btn" style="padding: 2px 8px; font-size: 10px; display: none; background: #1a1a1a;">± Range</button>
+                        </div>
+
+                        <div id="buffer-label-container" style="display: none;">
+                            <div style="font-size: 10px; color: #888;">Year Buffer: <span id="buffer-prefix">±</span><span id="buffer-display">0</span> years</div>
+                            <input type="range" id="buffer-slider" min="0" max="25" value="0" class="slider">
+                        </div>
+                    </div>
+
+                    <label style="font-size:11px; color:#bbb;"><input type="checkbox" id="loop-toggle" checked> Auto-Repeat</label>
                 </div>
             </div>
 
