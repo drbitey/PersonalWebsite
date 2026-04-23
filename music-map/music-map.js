@@ -142,11 +142,22 @@ function triggerMapUpdate() {
         rafPending = true;
         requestAnimationFrame(() => {
             updateFilters();
+            
+            // Sync all UI elements to currentYear
+            const mobileSlider = document.getElementById('mobile-timeline');
+            const mobileLabel = document.getElementById('mobile-year-val');
+            const desktopSlider = document.getElementById('year-slider');
+            const desktopLabel = document.getElementById('year-display');
+
+            if (mobileSlider) mobileSlider.value = currentYear;
+            if (mobileLabel) mobileLabel.innerText = currentYear;
+            if (desktopSlider) desktopSlider.value = currentYear;
+            if (desktopLabel) desktopLabel.innerText = currentYear;
+
             rafPending = false;
         });
     }
 }
-
 function updateFilters() {
     const searchTerm = document.getElementById('genre-search').value.trim().toLowerCase();
     const isCumulative = document.getElementById('cumulative-toggle').checked;
@@ -247,7 +258,24 @@ function initControls() {
     let artistSearchTimeout;
     const artistInput = document.getElementById('artist-search');
     const artistResults = document.getElementById('artist-results');
+    const mobilePlayBtn = document.getElementById('mobile-play-btn');
+    const desktopPlayBtn = document.getElementById('play-btn');
 
+    // --- SYNCED PLAYBACK LOGIC ---
+    const togglePlayback = () => {
+        isPlaying = !isPlaying;
+        
+        // Update both buttons regardless of which one was clicked
+        if (mobilePlayBtn) mobilePlayBtn.innerText = isPlaying ? "⏸" : "▶";
+        if (desktopPlayBtn) desktopPlayBtn.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
+        
+        if (isPlaying) animate();
+    };
+
+    if (mobilePlayBtn) mobilePlayBtn.onclick = togglePlayback;
+    if (desktopPlayBtn) desktopPlayBtn.onclick = togglePlayback;
+
+    // --- ARTIST SEARCH ---
     artistInput.addEventListener('input', (e) => {
         clearTimeout(artistSearchTimeout);
         const val = e.target.value.toLowerCase();
@@ -312,6 +340,7 @@ function initControls() {
         if (!artistInput.contains(e.target)) artistResults.style.display = 'none';
     });
     
+    // --- TIMELINE & FILTERS ---
     document.getElementById('year-slider').addEventListener('input', (e) => {
         currentYear = parseInt(e.target.value);
         document.getElementById('year-display').innerText = currentYear;
@@ -342,13 +371,8 @@ function initControls() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(updateFilters, 300);
     });
-    
-    document.getElementById('play-btn').addEventListener('click', function() {
-        isPlaying = !isPlaying;
-        this.innerText = isPlaying ? "⏸ Pause Timeline" : "▶ Play Timeline";
-        if (isPlaying) animate();
-    });
 
+    // --- ADVANCED SETTINGS ---
     document.getElementById('adv-toggle').onclick = function() {
         const content = document.getElementById('adv-content');
         const isHidden = content.style.display === 'none' || content.style.display === '';
@@ -371,13 +395,15 @@ function initControls() {
         }
     };
 
+    // --- MAP LAYERS ---
     document.getElementById('btn-points').onclick = () => toggleLayer(false);
     document.getElementById('btn-heatmap').onclick = () => toggleLayer(true);
 
     document.getElementById('reset-btn').onclick = () => {
         currentYear = 1970;
         isPlaying = false;
-        document.getElementById('play-btn').innerText = "▶ Play Timeline";
+        if (desktopPlayBtn) desktopPlayBtn.innerText = "▶ Play Timeline";
+        if (mobilePlayBtn) mobilePlayBtn.innerText = "▶";
         document.getElementById('genre-search').value = "";
         document.getElementById('artist-search').value = "";
         document.getElementById('year-slider').value = 1970;
@@ -386,6 +412,7 @@ function initControls() {
         triggerMapUpdate();
     };
 
+    // --- MOBILE TIMELINE SYNC ---
     const mobileSlider = document.getElementById('mobile-timeline');
     const mobileYearLabel = document.getElementById('mobile-year-val');
     const desktopSlider = document.getElementById('year-slider');
@@ -394,16 +421,12 @@ function initControls() {
     if (mobileSlider) {
         mobileSlider.addEventListener('input', (e) => {
             const year = parseInt(e.target.value);
-            
-            // 1. Update the Mobile UI
-            mobileYearLabel.innerText = year;
-            
-            // 2. Keep the Desktop UI in sync (in case user switches back)
             currentYear = year;
+            
+            mobileYearLabel.innerText = year;
             if (desktopSlider) desktopSlider.value = year;
             if (desktopYearLabel) desktopYearLabel.innerText = year;
             
-            // 3. Update the map
             triggerMapUpdate();
         });
     }
@@ -452,19 +475,22 @@ function animate() {
         
         if (!document.getElementById('loop-toggle').checked) {
             isPlaying = false;
-            document.getElementById('play-btn').innerText = "▶ Play Timeline";
+            // Update BOTH buttons to Play state
+            const mobilePlayBtn = document.getElementById('mobile-play-btn');
+            const desktopPlayBtn = document.getElementById('play-btn');
+            if (mobilePlayBtn) mobilePlayBtn.innerText = "▶";
+            if (desktopPlayBtn) desktopPlayBtn.innerText = "▶ Play Timeline";
             return;
         }
     }
 
-    document.getElementById('year-slider').value = currentYear;
+    // triggerMapUpdate now handles all the label/slider setting!
     triggerMapUpdate();
 
     const speedVal = parseInt(document.getElementById('speed-slider').value);
     const delay = 1000 - speedVal; 
     setTimeout(animate, delay);
 }
-
 // --- HUD TOGGLE LOGIC ---
 window.togglePanel = function(type) {
     const sidebar = document.getElementById('main-ui-panel');

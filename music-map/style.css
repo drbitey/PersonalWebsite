@@ -48,14 +48,53 @@ body { margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; ba
         z-index: 100;
     }
 
-    #mobile-timeline-container {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 85%;
-        z-index: 90; /* Keep it below the UI panel */
+    #desktop-timeline-group, #panel-settings #play-btn {
+        display: none !important;
     }
+
+    #mobile-timeline-container {
+    	background: rgba(15, 15, 15, 0.95);
+    	backdrop-filter: blur(15px);
+    	-webkit-backdrop-filter: blur(15px);
+    	border: 1px solid rgba(0, 255, 204, 0.3);
+    	padding: 12px 20px;
+    	border-radius: 50px; /* Pill shape */
+    	display: flex;
+    	align-items: center;
+    	gap: 15px;
+    }
+
+    .mobile-play-btn {
+    	background: #00ffcc;
+    	color: #000;
+    	border: none;
+    	border-radius: 50%;
+    	width: 35px;
+    	height: 35px;
+    	font-size: 14px;
+    	flex-shrink: 0;
+    }
+
+    .mobile-timeline-controls { flex-grow: 1; display: flex; flex-direction: column; }
+
+    #mobile-timeline {
+    	accent-color: #00ffcc;
+    	width: 100%;
+    	height: 6px;
+    }
+
+    .mobile-year-display {
+    	font-family: 'Courier New', Courier, monospace; /* Keeping it techy */
+    	color: #00ffcc;
+    	font-size: 14px;
+    	font-weight: bold;
+    }
+
+    /* Hide the old play button inside the settings menu on mobile only */
+    #panel-settings #play-btn {
+    	display: none;
+    }
+
 }
 
 .ui-panel {
@@ -153,4 +192,27 @@ button.active { background: #00ffcc !important; color: #000 !important; }
     text-transform: uppercase;
     letter-spacing: 4px;
     text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+.mobile-attribution {
+    position: fixed;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    pointer-events: none; /* Won't block clicks */
+}
+
+#artist-results {
+    position: absolute;
+    top: 50px;
+    background: #0f0f0f;
+    width: 100%;
+    z-index: 2000; /* Higher than the panel */
+    border: 1px solid #333;
+    max-height: 200px;
+    overflow-y: auto;
 }
